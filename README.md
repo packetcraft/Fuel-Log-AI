@@ -20,13 +20,35 @@
 - **Live Market Scan:** High-precision GPS uplink to fetch local fuel price insights and compare them with your pump cost.
 - **Protocol Logs:** Historical data visualization with Chart.js and high-tech skeleton pulse loaders.
 
-## 🛠️ Deployment (Uplink Setup)
-1. **Repository Link:** Clone this protocol to your local deck.
-2. **Backend Config:** Create a new [Google Apps Script](https://script.google.com/) project.
-3. **Environment Variables:**
-   - Open **Project Settings** > **Script Properties**.
-   - Add `GEMINI_API_KEY`: [Get your key from Google AI Studio](https://aistudio.google.com/).
-4. **Publish:** Deploy as a **Web App**. Set access to "Anyone with a Google Account" for personal use.
+## 🛠️ Deployment (How to Use)
+Since this project runs on Google's serverless infrastructure, you don't need to install Node.js or run a local server.
+
+1. **Initialize Database:**
+   - Create a new empty [Google Sheet](https://sheet.new). This will act as your database.
+
+2. **Install Engine:**
+   - In the Sheet, go to **Extensions > Apps Script**.
+   - **Code.gs:** Copy the content from this repo's `Code.gs` into the script editor.
+   - **Index.html:** Create a new HTML file ( `+` button > HTML) named `Index`, and copy the content from `Index.html`.
+
+3. **Inject Intelligence (Environment Variables):**
+   - Get your API Key from [Google AI Studio](https://aistudio.google.com/).
+   - In Apps Script, go to **Project Settings** (⚙️ icon) > **Script Properties**.
+   - Add a new property:
+     - **Property:** `GEMINI_API_KEY`
+     - **Value:** `your_actual_api_key_here`
+
+4. **Deploy Uplink:**
+   - Click **Deploy** > **New Deployment**.
+   - **Select type:** Web App.
+   - **Execute as:** Me.
+   - **Who has access:** Anyone (if you want to share with family) or Only Myself.
+   - Click **Deploy** and grant the necessary permissions.
+
+5. **Launch:**
+   - Copy the **Web App URL**.
+   - Open it on your phone's browser.
+   - Tap **Share > Add to Home Screen** for a full-screen, app-like experience.
 
 ## 📱 Mobile Optimization
 The interface is engineered with **svh (Small Viewport Height)** resilience and **16px anti-zoom** triggers to ensure a native-app experience on iOS and Android devices without the overhead of an app store.
