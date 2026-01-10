@@ -30,6 +30,12 @@ The interface is engineered with **svh (Small Viewport Height)** resilience and 
 ## 💾 Database Logic
 All telemetry is stored in a structured [Google Sheet](https://docs.google.com/spreadsheets/). The application automatically initializes the required headers in the **Log** tab on first uplink, and dynamically manages vehicle protocols based on your history.
 
+## 👥 Multi-User Protocol (Family Sharing)
+To log data to the same central database across multiple devices:
+1. **Share the Sheet:** Open the underlying Google Sheet and click **Share**. Add family members as **Editors**.
+2. **Web App Access:** When deploying the script, set **"Who has access"** to **"Anyone"**. 
+3. **The Link:** Send them the Web App URL. They can now log refills from their own devices, and the "Vehicle Protocol" dropdown will allow them to select their specific car.
+
 ---
 **Developed by:** [Your Name/Agency]  
 **License:** MIT Protocol  
