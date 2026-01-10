@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Fuel AI // Protocol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap");
+
+        :root {
+            font-size: 16px;
+            /* Accessibility: Base size 16px */
+            --neon-cyan: #00ffff;
+            --neon-pink: #ff00ff;
+            --bg-obsidian: #050505;
+        }
+
+        body {
+            font-family: "Space Grotesk", sans-serif;
+            background: var(--bg-obsidian);
+            color: #ffffff;
+            overflow: hidden;
+            height: 100svh;
+            /* Use svh for mobile address bar resilience */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cyber-card {
+            background: rgba(10, 20, 35, 0.9);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 8px;
+        }
+
+        input,
+        select {
+            background: #000 !important;
+            border: 1px solid var(--neon-cyan) !important;
+            color: #ffffff !important;
+            padding: 12px !important;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px !important;
+            /* Prevent iOS auto-zoom */
+        }
+
+        label {
+            font-size: 12px !important;
+            /* Improved readability */
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .neon-text-cyan {
+            text-shadow: 0 0 5px var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        .neon-text-pink {
+            text-shadow: 0 0 5px var(--neon-pink);
+            color: var(--neon-pink);
+        }
+
+        @keyframes pulse-cyan {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 255, 255, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 255, 0);
+            }
+        }
+
+        .ai-pulse {
+            animation: pulse-cyan 1.5s infinite;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #111 25%, #222 50%, #111 75%);
+            background-size: 200% 100%;
+            animation: skeleton-shift 1.5s infinite;
+        }
+
+        @keyframes skeleton-shift {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .theme-petrol {
+            --neon-cyan: #00ffff;
+        }
+
+        .theme-diesel {
+            --neon-cyan: #ff3131;
+        }
+
+        .theme-cng {
+            --neon-cyan: #39ff14;
+        }
+
+        #loadingOverlay,
+        #missionReport {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            backdrop-filter: blur(8px);
+        }
+
+        #missionReport {
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.98);
+            border: 2px solid var(--neon-cyan);
+        }
+
+        .grade-badge {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin: 1rem 0;
+            filter: drop-shadow(0 0 15px var(--neon-cyan));
+        }
+
+        .tab-panel {
+            display: none;
+            height: calc(100svh - 160px);
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .nav-active {
+            color: var(--neon-cyan);
+            border-bottom: 2px solid var(--neon-cyan);
+        }
+
+        table {
+            width: 100%;
+            font-size: 0.75rem;
+        }
+
+        th {
+            color: var(--neon-cyan);
+            border-bottom: 1px solid #333;
+            padding: 6px;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px 6px;
+            border-bottom: 1px solid #111;
+        }
+    </style>
+</head>
+
+<body class="max-w-md mx-auto p-4 flex flex-col">
+    <div id="loadingOverlay">
+        <div class="w-10 h-10 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p id="loadText" class="text-[10px] neon-text-cyan tracking-widest uppercase">
+            Initializing Link...
+        </p>
+    </div>
+
+    <div id="missionReport" style="display: none;" onclick="this.style.display='none'">
+        <p class="text-cyan-400 font-bold tracking-[0.3em] uppercase text-[10px] mb-2">Refill Cycle Complete</p>
+        <h2 class="text-3xl font-black italic tracking-tighter neon-text-cyan">MISSION_CONFIRMED</h2>
+        <div id="grade" class="grade-badge neon-text-cyan animate-bounce">A</div>
+        <div class="grid grid-cols-2 gap-8 text-center my-4 w-64">
+            <div>
+                <p class="text-[9px] text-slate-400 uppercase font-bold">Efficiency</p>
+                <p id="effVal" class="text-xl font-black text-white">-- <span class="text-[10px]">KM/L</span></p>
+            </div>
+            <div>
+                <p class="text-[9px] text-slate-400 uppercase font-bold">Trend</p>
+                <p id="effTrend" class="text-xl font-black text-cyan-400">STABLE</p>
+            </div>
+        </div>
+        <p class="text-slate-500 font-mono text-[9px] mt-6 uppercase animate-pulse">Tap screen to return to deck</p>
+    </div>
+
+    <header class="flex justify-between items-center mb-4">
+        <h1 class="text-xl font-black neon-text-cyan italic tracking-tighter">
+            FUEL_AI.v2
+        </h1>
+        <div class="flex gap-2">
+            <button onclick="document.getElementById('cam').click()"
+                class="px-3 py-2 bg-cyan-600/30 border border-cyan-400 text-cyan-400 font-black text-[9px] rounded uppercase">
+                Scan
+            </button>
+            <button onclick="showMissionReport({vehicle_name:'TEST-01', km_reading:100, fuel_qty:10})"
+                class="px-3 py-2 bg-pink-900/30 border border-pink-500 text-pink-500 font-black text-[9px] rounded uppercase">
+                Test HUD
+            </button>
+        </div>
+        <input type="file" id="cam" accept="image/*" class="hidden" onchange="processImage(event)" />
+    </header>
+
+    <main class="flex-1 overflow-hidden">
+        <div id="tab0" class="tab-panel active">
+            <form id="f" onsubmit="sub(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="flex-1">
+                        <label class="text-[10px] font-bold text-cyan-400 uppercase ml-1">Vehicle Protocol</label>
+                        <select name="vehicle_name" id="vehicleSelect" class="h-12 font-bold"></select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-cyan-400 uppercase ml-1">Fuel Type</label>
+                        <select name="fuel_type" id="fuelType" class="h-12 font-bold"
+                            onchange="updateTheme(this.value)">
+                            <option value="petrol">PETROL</option>
+                            <option value="diesel">DIESEL</option>
+                            <option value="cng">CNG</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" onclick="addVehicle()"
+                    class="w-full h-10 bg-cyan-900/50 border border-cyan-400/30 font-bold text-[10px] uppercase rounded-lg">
+                    + Register New Vehicle
+                </button>
+
+                <div class="grid grid-cols-2 gap-3 items-center">
+                    <div class="cyber-card p-3">
+                        <label class="text-[10px] font-bold text-cyan-400 uppercase">Odo (KM)</label>
+                        <input type="number" name="km_reading" id="k" step="0.1" required class="mt-1" />
+                    </div>
+                    <div class="cyber-card p-3 h-full flex flex-col justify-center items-center gap-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Status</label>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" name="full_tank" id="ft" class="w-5 h-5 accent-cyan-400" checked />
+                            <span class="text-[10px] font-black">FULL TANK</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="cyber-card p-3">
+                        <label class="text-[10px] font-bold text-cyan-400 uppercase">Quantity (L)</label>
+                        <input type="number" name="fuel_qty" id="q" step="0.01" required oninput="calc()"
+                            class="mt-1" />
+                    </div>
+                    <div class="cyber-card p-3">
+                        <label class="text-[10px] font-bold text-cyan-400 uppercase">Price / L</label>
+                        <input type="number" name="fuel_price" id="p" step="0.01" required oninput="calc()"
+                            class="mt-1" />
+                    </div>
+                </div>
+
+                <div class="cyber-card p-4 flex justify-between items-center bg-cyan-900/20 border-2">
+                    <div>
+                        <p class="text-[10px] font-bold text-cyan-400 uppercase">
+                            Calculated Credits
+                        </p>
+                        <input type="number" name="refill_amount" id="t"
+                            class="!bg-transparent !border-none !p-0 text-3xl font-black neon-text-cyan" readonly />
+                    </div>
+                    <button type="button" onclick="fetchGPS()"
+                        class="bg-cyan-500 text-black w-10 h-10 rounded-full shadow-lg shadow-cyan-500/50 flex items-center justify-center">
+                        📍
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="date" name="refill_date" id="d" required class="font-bold" />
+                    <input type="text" name="pump_location" id="l" placeholder="Station Name" class="font-bold" />
+                </div>
+
+                <button type="submit" id="s"
+                    class="w-full py-5 bg-cyan-500 text-black font-black text-xl tracking-tighter uppercase rounded-xl active:scale-95 transition-transform">
+                    Commit Log_
+                </button>
+            </form>
+        </div>
+
+        <div id="tab1" class="tab-panel">
+            <div class="cyber-card overflow-hidden">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>DATE</th>
+                            <th>VEHICLE</th>
+                            <th>FT</th>
+                            <th>L</th>
+                            <th>TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab2" class="tab-panel space-y-4">
+            <div id="statsGrid" class="grid gap-2"></div>
+            <div class="p-3 cyber-card">
+                <canvas id="effChart"></canvas>
+            </div>
+        </div>
+
+        <div id="tab3" class="tab-panel space-y-4">
+            <div class="text-center">
+                <p id="mCity" class="text-xs font-bold text-cyan-400 uppercase tracking-widest">
+                    Scanning Network...
+                </p>
+                <div id="mInsight" class="text-sm font-bold mt-2 neon-text-pink animate-pulse"></div>
+            </div>
+            <div id="mMarket" class="grid grid-cols-2 gap-3 text-center"></div>
+            <div id="mSources" class="space-y-2"></div>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-black border-t-2 border-cyan-900 grid grid-cols-4 h-16">
+        <button onclick="setTab(0)" class="nav-btn flex items-center justify-center nav-active text-[10px] font-black">
+            ADD
+        </button>
+        <button onclick="setTab(1)" class="nav-btn flex items-center justify-center opacity-50 text-[10px] font-black">
+            LOGS
+        </button>
+        <button onclick="setTab(2)" class="nav-btn flex items-center justify-center opacity-50 text-[10px] font-black">
+            STATS
+        </button>
+        <button onclick="setTab(3)" class="nav-btn flex items-center justify-center opacity-50 text-[10px] font-black">
+            LIVE
+        </button>
+    </nav>
+
+    <script>
+        let logs = [];
+        let chart = null;
+        let vehicleList = [];
+        let lastUserPrice = 0;
+        const colors = ["#00ffff", "#ff00ff", "#ffff00", "#00ff00"];
+
+        function showLoading(t) {
+            document.getElementById("loadText").textContent = t;
+            document.getElementById("loadingOverlay").style.display =
+                "flex";
+        }
+        function hideLoading() {
+            document.getElementById("loadingOverlay").style.display =
+                "none";
+        }
+
+        function updateTheme(type) {
+            const b = document.body;
+            b.classList.remove('theme-petrol', 'theme-diesel', 'theme-cng');
+            b.classList.add('theme-' + type);
+        }
+
+        function handleError(err) {
+            hideLoading();
+            const msg = err.message || "Uplink Failed. Check connectivity.";
+            alert("PROTOCOL ERROR: " + msg);
+            console.error(err);
+        }
+
+        window.onload = () => {
+            document.getElementById("d").value = new Date()
+                .toISOString()
+                .split("T")[0];
+            ref();
+        };
+
+        function addVehicle() {
+            const n = prompt("Protocol Name (e.g., Tesla M3):");
+            if (n) {
+                const s = document.getElementById("vehicleSelect");
+                s.add(new Option(n, n));
+                s.value = n;
+            }
+        }
+
+        function setTab(idx) {
+            document
+                .querySelectorAll(".tab-panel")
+                .forEach((p, i) => p.classList.toggle("active", i === idx));
+            document.querySelectorAll(".nav-btn").forEach((b, i) => {
+                b.classList.toggle("nav-active", i === idx);
+                b.classList.toggle("opacity-50", i !== idx);
+            });
+            if (idx === 1) rend();
+            if (idx === 2) stats();
+            if (idx === 3) loadMarket();
+        }
+
+        function ref() {
+            showLoading("Establishing Link...");
+            google.script.run
+                .withSuccessHandler((res) => {
+                    hideLoading();
+                    if (res.success) {
+                        logs = res.data;
+                        vehicleList = res.vehicles;
+                        lastUserPrice = res.lastPrice;
+                        const s = document.getElementById("vehicleSelect");
+                        if (!s.options.length) {
+                            res.vehicles.forEach((v) =>
+                                s.add(new Option(v, v)),
+                            );
+                            if (!res.vehicles.length)
+                                s.add(new Option("V-01 (Primary)", "V-01"));
+                        }
+                    } else {
+                        alert("Database Sync Failed.");
+                    }
+                })
+                .withFailureHandler(handleError)
+                .getDataProtocol();
+        }
+
+        function calc() {
+            const q = parseFloat(document.getElementById("q").value) || 0;
+            const p = parseFloat(document.getElementById("p").value) || 0;
+            document.getElementById("t").value = (q * p).toFixed(2);
+        }
+
+        function sub(e) {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target));
+            data.full_tank = document.getElementById("ft").checked;
+            showLoading("Transmitting Data...");
+            google.script.run
+                .withSuccessHandler(() => {
+                    hideLoading();
+                    setTimeout(() => {
+                        console.log("TRIGGERING_HUD");
+                        showMissionReport(data);
+                    }, 100);
+                    e.target.reset();
+                    document.getElementById("d").value = new Date().toISOString().split("T")[0];
+                    setTimeout(ref, 3000);
+                })
+                .withFailureHandler(handleError)
+                .saveEntryDirect(data);
+        }
+
+        function showMissionReport(currentEntry) {
+            console.log("Mission Report Activation Initiated", currentEntry);
+            const el = document.getElementById("missionReport");
+            if (!el) return console.error("HUD Element Missing");
+
+            // 1. Reset Defaults
+            document.getElementById("effVal").innerHTML = `-- <span class="text-[10px]">KM/L</span>`;
+            document.getElementById("effTrend").textContent = "STABLE";
+            document.getElementById("effTrend").className = "text-xl font-black text-cyan-400";
+            document.getElementById("grade").textContent = "B";
+
+            // 2. Try Calculations
+            try {
+                const vName = currentEntry.vehicle_name;
+                const vLogs = logs.filter(l => l.vehicle_name === vName);
+
+                if (vLogs.length > 0) {
+                    const last = vLogs[0];
+                    const dist = parseFloat(currentEntry.km_reading) - parseFloat(last.km_reading);
+                    const fuel = parseFloat(currentEntry.fuel_qty);
+
+                    if (dist > 0 && fuel > 0) {
+                        const eff = (dist / fuel).toFixed(1);
+                        document.getElementById("effVal").innerHTML = `${eff} <span class="text-[10px]">KM/L</span>`;
+
+                        let grade = "C";
+                        if (eff > 15) grade = "B";
+                        if (eff > 18) grade = "A";
+                        if (eff > 22) grade = "S";
+                        document.getElementById("grade").textContent = grade;
+
+                        // Compare current to previous log in the array
+                        if (logs.length > 1) {
+                            const prevDist = logs[0].km_reading - logs[1].km_reading;
+                            const prevFuel = logs[0].fuel_qty;
+                            const prevEff = prevDist / prevFuel;
+                            if (prevEff > 0) {
+                                const diff = ((eff - prevEff) / prevEff * 100).toFixed(1);
+                                document.getElementById("effTrend").textContent = (diff > 0 ? "+" : "") + diff + "%";
+                                document.getElementById("effTrend").className = diff >= 0 ? "text-xl font-black text-cyan-400" : "text-xl font-black text-pink-400";
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn("HUD Calc Error:", err);
+            }
+
+            // 3. Force Show
+            el.style.display = 'flex';
+
+            // 4. Auto Hide
+            setTimeout(() => {
+                el.style.display = "none";
+            }, 6000);
+        }
+
+        function rend() {
+            const b = document.getElementById("logTable");
+            if (logs.length === 0) {
+                b.innerHTML = `<tr><td colspan="5" class="p-8"><div class="skeleton h-4 mb-2"></div><div class="skeleton h-4 mb-2 w-2/3"></div><div class="skeleton h-4 w-1/2"></div></td></tr>`;
+                return;
+            }
+            b.innerHTML = "";
+            logs.slice(0, 15).forEach((e) => {
+                b.innerHTML += `<tr><td>${e.refill_date.split("T")[0].slice(5)}</td><td class="font-black uppercase">${e.vehicle_name}</td><td>${e.full_tank == true || e.full_tank == "true" ? "⛽" : "—"}</td><td>${parseFloat(e.fuel_qty).toFixed(1)}</td><td class="neon-text-cyan font-bold">₹${parseFloat(e.refill_amount).toFixed(0)}</td></tr>`;
+            });
+        }
+
+        function stats() {
+            const container = document.getElementById("statsGrid");
+            container.innerHTML = "";
+            const datasets = [];
+            vehicleList.forEach((vName, idx) => {
+                const vLogs = logs
+                    .filter((e) => e.vehicle_name === vName)
+                    .reverse();
+                if (vLogs.length < 2) return;
+
+                const fuel = vLogs.reduce(
+                    (s, e) => s + (parseFloat(e.fuel_qty) || 0),
+                    0,
+                );
+                const odos = vLogs.map(
+                    (e) => parseFloat(e.km_reading) || 0,
+                );
+                const dist = Math.max(...odos) - Math.min(...odos);
+                const eff = dist > 0 ? (dist / fuel).toFixed(2) : "0.0";
+                const color = colors[idx % colors.length];
+
+                container.innerHTML += `
+                    <div class="cyber-card p-4 flex justify-between items-center border-l-4" style="border-left-color: ${color}">
+                        <span class="text-xs font-black uppercase text-slate-300">${vName}</span>
+                        <span class="text-2xl font-black" style="color: ${color}">${eff} <span class="text-xs">KM/L</span></span>
+                    </div>`;
+
+                const chartData = [];
+                for (let i = 1; i < vLogs.length; i++) {
+                    const d = vLogs[i].km_reading - vLogs[i - 1].km_reading;
+                    const f = vLogs[i].fuel_qty;
+                    if (
+                        d > 0 &&
+                        f > 0 &&
+                        (vLogs[i].full_tank == true ||
+                            vLogs[i].full_tank == "true")
+                    ) {
+                        chartData.push({
+                            x: vLogs[i].refill_date.split("T")[0].slice(5),
+                            y: (d / f).toFixed(2),
+                        });
+                    }
+                }
+                datasets.push({
+                    label: vName,
+                    data: chartData,
+                    borderColor: color,
+                    backgroundColor: color + "11",
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 5,
+                });
+            });
+
+            if (chart) chart.destroy();
+            chart = new Chart(document.getElementById("effChart"), {
+                type: "line",
+                data: { datasets: datasets },
+                options: {
+                    scales: {
+                        y: {
+                            grid: { color: "#111" },
+                            ticks: { color: "#00ffff", font: { size: 10 } },
+                        },
+                        x: {
+                            type: "category",
+                            grid: { display: false },
+                            ticks: { color: "#00ffff", font: { size: 10 } },
+                        },
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: "#fff",
+                                font: { size: 11, weight: "bold" },
+                            },
+                        },
+                    },
+                },
+            });
+        }
+
+        function loadMarket() {
+            showLoading("Scanning Network...");
+            navigator.geolocation.getCurrentPosition((p) => {
+                google.script.run
+                    .withSuccessHandler((res) => {
+                        hideLoading();
+                        if (!res || !res.success) return;
+                        const m = res.market;
+                        document.getElementById("mCity").textContent =
+                            "Uplink Region: " + m.city.toUpperCase();
+                        document.getElementById("mInsight").textContent =
+                            m.insight.toUpperCase();
+                        document.getElementById("mMarket").innerHTML = `
+                        <div class="cyber-card p-4"><p class="text-[9px] text-cyan-400 font-bold uppercase">Petrol</p><p class="text-2xl font-black">₹${m.petrol}</p></div>
+                        <div class="cyber-card p-4"><p class="text-[9px] text-pink-400 font-bold uppercase">Diesel</p><p class="text-2xl font-black">₹${m.diesel}</p></div>`;
+                        document.getElementById("mSources").innerHTML =
+                            m.sources
+                                .map(
+                                    (s) =>
+                                        `<a href="${s.url}" target="_blank" class="block p-3 cyber-card text-[10px] text-cyan-400 font-bold border-dashed uppercase">Source: ${s.title} ↗</a>`,
+                                )
+                                .join("");
+                    })
+                    .withFailureHandler(handleError)
+                    .getMarketData(
+                        p.coords.latitude,
+                        p.coords.longitude,
+                        lastUserPrice,
+                    );
+            }, (err) => {
+                hideLoading();
+                alert("Location Access Denied. Live Market unavailable.");
+            }, { enableHighAccuracy: true, timeout: 5000 });
+        }
+
+        function fetchGPS() {
+            navigator.geolocation.getCurrentPosition((p) => {
+                document.getElementById("l").value =
+                    p.coords.latitude.toFixed(3) +
+                    "," +
+                    p.coords.longitude.toFixed(3);
+            }, (err) => {
+                alert("GPS Signal Blocked.");
+            }, { enableHighAccuracy: true, timeout: 5000 });
+        }
+
+        function processImage(e) {
+            const f = e.target.files[0];
+            if (!f) return;
+            const r = new FileReader();
+            r.onload = (ev) => {
+                const i = new Image();
+                i.onload = () => {
+                    const c = document.createElement("canvas");
+                    let w = i.width,
+                        h = i.height;
+                    if (w > 800) {
+                        h *= 800 / w;
+                        w = 800;
+                    }
+                    c.width = w;
+                    c.height = h;
+                    c.getContext("2d").drawImage(i, 0, 0, w, h);
+                    showLoading("Decoding Receipt...");
+                    google.script.run
+                        .withSuccessHandler((res) => {
+                            hideLoading();
+                            if (res && res.success) {
+                                const q = document.getElementById("q");
+                                const p = document.getElementById("p");
+                                const l = document.getElementById("l");
+
+                                q.value = res.data.fuel_qty || "";
+                                p.value = res.data.fuel_price || "";
+                                l.value = res.data.pump_location || "";
+
+                                [q, p, l].forEach(el => {
+                                    if (el.value) {
+                                        el.classList.add('ai-pulse');
+                                        setTimeout(() => el.classList.remove('ai-pulse'), 3000);
+                                    }
+                                });
+                                calc();
+                            }
+                        })
+                        .withFailureHandler(handleError)
+                        .processReceiptWithAI(
+                            c.toDataURL("image/jpeg", 0.6).split(",")[1],
+                        );
+                };
+                i.src = ev.target.result;
+            };
+            r.readAsDataURL(f);
+        }
+    </script>
+</body>
+
+</html>

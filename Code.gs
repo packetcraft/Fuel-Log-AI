@@ -1,4 +1,4 @@
-const GEMINI_API_KEY = 'PASTE-YOUR-GEMINI-API';
+const GEMINI_API_KEY = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
 
 function doGet() {
   return HtmlService.createTemplateFromFile('Index')
