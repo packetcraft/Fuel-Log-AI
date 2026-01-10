@@ -7,7 +7,7 @@
 ## 🌌 Overview
 **Fuel Log AI** is a high-performance, mobile-optimized telemetry suite designed to track vehicle efficiency using sentient-grade AI. By combining Google's Gemini 2.0 with the flexibility of Google Sheets, it transforms the mundane task of fuel logging into a rewarding feedback loop.
 
-![UI Screenshot](https://raw.githubusercontent.com/packetcraft/Fuel-Log-AI/refs/heads/main/ScreenShots.png) *(Note: Replace with actual screenshot path)*
+![UI Screenshot](https://raw.githubusercontent.com/packetcraft/Fuel-Log-AI/refs/heads/main/ScreenShots.png)
 
 ## 🚀 Core Protocols
 - **AI Receipt Decoding:** Pulse-scanning of fuel receipts to auto-extract Price, Quantity, and Location with 90%+ accuracy.
