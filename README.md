@@ -10,6 +10,7 @@
 ![UI Screenshot](https://raw.githubusercontent.com/packetcraft/Fuel-Log-AI/refs/heads/main/ScreenShots.png)
 
 ## 🚀 Core Protocols
+- **Dual-Trigger Scanning:** Dedicated 📸 Cam (direct rear-camera access) and 📁 File (gallery explorer) triggers for maximum flexibility.
 - **AI Receipt Decoding:** Pulse-scanning of fuel receipts to auto-extract Price, Quantity, and Location with 90%+ accuracy.
 - **Mission Report HUD:** Real-time post-log dashboard calculating KM/L efficiency and ranking your performance (S to C Grade).
 - **Dynamic Theming:** Visual protocols shift accent colors based on fuel type (Petrol-Cyan, Diesel-Red, CNG-Green).

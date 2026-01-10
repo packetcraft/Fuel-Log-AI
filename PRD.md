@@ -26,6 +26,7 @@
 ### Must Have (P0)
 -   **AI Receipt Scanning:**  
     -   User captures/uploads a receipt image.
+    -   **Dual-Trigger Input:** Specific buttons for direct Camera access vs. File explorer.
     -   System extracts: `Fuel Quantity`, `Fuel Price`, `Total Amount`, `Date`, `Pump Location`.
     -   Backend Model: Gemini 2.0 Flash-Lite (for speed and cost-efficiency).
 -   **Manual Entry & Validation:**  
@@ -141,6 +142,7 @@ The following core improvements were implemented to transform the initial protot
 - **Mission Report HUD:** Implemented a full-screen "Uplink Confirmed" HUD that calculates KM/L and assigns an Efficiency Grade (S, A, B, C) instantly after logging.
 - **Dynamic Theming:** Added logic to switch the entire application's neon color palette based on the fuel type selector (Petrol/Diesel/CNG).
 - **Skeleton States:** Replaced generic loaders with high-tech skeleton pulse animations for the Logs and Stats tabs.
+- **Dual-Trigger Scanner:** Updated UI to provide explicit "📸 Cam" and "📁 File" options, resolving browser-specific "image-only" capture issues.
 
 ---
 **End of Document**
