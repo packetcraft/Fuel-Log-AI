@@ -28,7 +28,7 @@
 The interface is engineered with **svh (Small Viewport Height)** resilience and **16px anti-zoom** triggers to ensure a native-app experience on iOS and Android devices without the overhead of an app store.
 
 ## 💾 Database Logic
-All telemetry is stored in a structured [Google Sheet](https://docs.google.com/spreadsheets/). The application automatically initializes the required headers (`Log` and `Vehicles` tabs) on first uplink.
+All telemetry is stored in a structured [Google Sheet](https://docs.google.com/spreadsheets/). The application automatically initializes the required headers in the **Log** tab on first uplink, and dynamically manages vehicle protocols based on your history.
 
 ---
 **Developed by:** [Your Name/Agency]  
