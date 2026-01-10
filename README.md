@@ -5,7 +5,10 @@
 > **Engine:** Google Apps Script + Gemini 2.0 Flash
 
 ## 🌌 Overview
-**Fuel Log AI** is a high-performance, mobile-optimized telemetry suite designed to track vehicle efficiency using sentient-grade AI. By combining Google's Gemini 2.0 with the flexibility of Google Sheets, it transforms the mundane task of fuel logging into a rewarding feedback loop.
+**Fuel Log AI** is a high-performance, mobile-optimized telemetry suite designed to track vehicle efficiency using sentient-grade AI. 
+
+> [!IMPORTANT]
+> **Serverless & Free:** This application is hosted entirely on your own Google Infrastructure using **Google Apps Script** as the engine and **Google Sheets** as the database. No external hosting, servers, or subscriptions are required.
 
 ![UI Screenshot](https://raw.githubusercontent.com/packetcraft/Fuel-Log-AI/refs/heads/main/ScreenShots.png)
 

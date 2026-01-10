@@ -108,7 +108,8 @@
 
 ## 7. Technical Constraints & Architecture
 -   **Platform:** Google Apps Script Web App (`doGet`).
--   **Templating:** server-side HTML template (`HtmlService`).
+-   **Zero-Cost Hosting:** The application is entirely self-hosted within the user's Google Workspace/Drive account, requiring no external VPC or server instances.
+-   **Templating:** Server-side HTML template (`HtmlService`).
 -   **Quotas:** Subject to Consumer/Workspace Gmail quotas for `UrlFetchApp` and Script runtimes.
 -   **Security:** API Keys (Gemini) must be handled securely (currently hardcoded in `Code.gs` line 1 - **Recommendation: Move to Script Properties**).
 
