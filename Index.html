@@ -595,10 +595,16 @@
                         .withSuccessHandler((res) => {
                             hideLoading();
                             if (res && res.success) {
-                                ['fuel_qty', 'fuel_price', 'pump_location'].forEach(id => {
-                                   const el = document.getElementById(id.split('_')[1]);
-                                   if(res.data[id]) {
-                                        el.value = res.data[id];
+                                const fieldMap = {
+                                    'fuel_qty': 'q',
+                                    'fuel_price': 'p',
+                                    'pump_location': 'l'
+                                };
+                                Object.keys(fieldMap).forEach(key => {
+                                   const elId = fieldMap[key];
+                                   const el = document.getElementById(elId);
+                                   if(res.data[key] && el) {
+                                        el.value = res.data[key];
                                         el.classList.add('border-blue-500', 'ring-2', 'ring-blue-200');
                                         setTimeout(() => el.classList.remove('border-blue-500', 'ring-2', 'ring-blue-200'), 3000);
                                    }
