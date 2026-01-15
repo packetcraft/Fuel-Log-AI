@@ -13,10 +13,11 @@
 
         :root {
             font-size: 16px;
-            --primary-yellow: #fde047; /* High-saturation yellow */
-            --black: #1a1a1a;
+            --primary-yellow: #FFDE03;
+            --black: #1A1A1A;
             --white: #ffffff;
-            --background: #fafafa;
+            --background: #F4F4F4;
+            --accent-red: #FF4646;
         }
 
         body {
@@ -50,6 +51,13 @@
             box-shadow: 2px 2px 0px var(--black);
         }
 
+        input:focus {
+            outline: none;
+            background-color: #fffef0 !important; /* Subtle yellow tint */
+            transform: translate(-2px, -2px); /* Moves the box up */
+            box-shadow: 6px 6px 0px var(--black); /* Makes the shadow "longer" */
+        }
+
         label {
             font-size: 12px !important;
             font-weight: 800;
@@ -78,6 +86,12 @@
 
         .btn-secondary {
             background-color: var(--white);
+        }
+
+        #total_cost_card {
+            background-color: #FFD600;
+            box-shadow: 6px 6px 0px var(--black);
+            pointer-events: none;
         }
 
         #loadingOverlay {
@@ -210,11 +224,14 @@
             <form id="f" onsubmit="sub(event)" class="space-y-4">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label>Vehicle</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="!mb-0">Vehicle</label>
+                            <button type="button" onclick="addVehicle()" class="text-xs font-bold uppercase tracking-wider">+ Add</button>
+                        </div>
                         <select name="vehicle_name" id="vehicleSelect" class="h-12 font-bold"></select>
                     </div>
                     <div>
-                        <label>Fuel Type</label>
+                        <label>⛽ Type</label>
                         <select name="fuel_type" id="fuelType" class="h-12 font-bold">
                             <option value="petrol">Petrol</option>
                             <option value="diesel">Diesel</option>
@@ -222,14 +239,10 @@
                         </select>
                     </div>
                 </div>
-                 <button type="button" onclick="addVehicle()"
-                    class="w-full h-10 btn btn-secondary text-xs">
-                    + Add New Vehicle
-                </button>
 
                 <div class="grid grid-cols-2 gap-3 items-center">
                     <div class="card p-3">
-                        <label>Odometer (KM)</label>
+                        <label>🏎️ Odometer</label>
                         <input type="number" name="km_reading" id="k" step="0.1" required class="mt-1" />
                     </div>
                     <div class="card p-3 h-full flex flex-col justify-center items-center gap-1">
@@ -241,33 +254,41 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="card p-3">
-                        <label>Quantity (L)</label>
-                        <input type="number" name="fuel_qty" id="q" step="0.01" required oninput="calc()"
-                            class="mt-1" />
+                <div class="card p-4 space-y-2">
+                    <div class="grid grid-cols-[1fr_auto_1fr] items-end gap-x-3">
+                        <div>
+                            <label>Quantity (L)</label>
+                            <input type="number" name="fuel_qty" id="q" step="0.01" required oninput="calc()" />
+                        </div>
+                        <div class="text-3xl font-black pb-2">×</div>
+                        <div>
+                            <label>Price / L</label>
+                            <input type="number" name="fuel_price" id="p" step="0.01" required oninput="calc()" />
+                        </div>
                     </div>
-                    <div class="card p-3">
-                        <label>Price / L</label>
-                        <input type="number" name="fuel_price" id="p" step="0.01" required oninput="calc()"
-                            class="mt-1" />
+                    <div id="total_cost_card" class="card p-3">
+                        <div class="flex justify-between items-center">
+                             <label class="!mb-0">Total:</label>
+                             <div class="text-right text-3xl font-black">
+                                 <span>₹</span>
+                                 <span id="t_display">0.00</span>
+                                 <input type="hidden" name="refill_amount" id="t" />
+                             </div>
+                        </div>
                     </div>
-                </div>
-
-                <div class="card p-4">
-                    <label>Total Cost</label>
-                    <input type="number" name="refill_amount" id="t"
-                        class="!bg-transparent !border-none !p-0 !text-3xl !font-black !shadow-none" readonly />
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <input type="date" name="refill_date" id="d" required class="font-bold" />
-                    <div class="flex items-center">
-                        <input type="text" name="pump_location" id="l" placeholder="Station Name" class="font-bold rounded-r-none" />
-                        <button type="button" onclick="fetchGPS()"
-                            class="btn h-12 w-12 rounded-l-none text-2xl flex-shrink-0 p-0">
-                            📍
-                        </button>
+                    <div>
+                        <label>📍 Station</label>
+                        <div class="flex items-center">
+                            <input type="text" name="pump_location" id="l" placeholder="Station Name" class="font-bold rounded-r-none" />
+                            <button type="button" onclick="fetchGPS()"
+                                class="btn h-12 w-12 rounded-l-none text-2xl flex-shrink-0 p-0">
+                                📍
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -403,7 +424,9 @@
         function calc() {
             const q = parseFloat(document.getElementById("q").value) || 0;
             const p = parseFloat(document.getElementById("p").value) || 0;
-            document.getElementById("t").value = (q * p).toFixed(2);
+            const total = (q * p).toFixed(2);
+            document.getElementById("t").value = total;
+            document.getElementById("t_display").textContent = total;
         }
 
         function sub(e) {
