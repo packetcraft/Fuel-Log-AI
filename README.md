@@ -10,7 +10,7 @@
 > [!IMPORTANT]
 > **Serverless & Free:** This application is hosted entirely on your own Google Infrastructure using **Google Apps Script** as the engine and **Google Sheets** as the database. No external hosting, servers, or subscriptions are required.
 
-![UI Screenshot](https://raw.githubusercontent.com/packetcraft/Fuel-Log-AI/refs/heads/main/ScreenShots.png)
+![UI Screenshot](https://raw.githubusercontent.com/packetcraft/Fuel-Log-AI/refs/heads/main/ScreenShots2.jpg)
 
 ## 🚀 Core Protocols
 - **Dual-Trigger Scanning:** Dedicated 📸 Cam (direct rear-camera access) and 📁 File (gallery explorer) triggers for maximum flexibility.
