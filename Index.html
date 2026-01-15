@@ -246,15 +246,17 @@
                         <input type="number" name="refill_amount" id="t"
                             class="!bg-transparent !border-none !p-0 text-3xl font-black text-blue-600" readonly />
                     </div>
-                    <button type="button" onclick="fetchGPS()"
-                        class="bg-blue-500 text-white w-12 h-12 rounded-full shadow-lg shadow-blue-500/50 flex items-center justify-center text-2xl">
-                        📍
-                    </button>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <input type="date" name="refill_date" id="d" required class="font-bold" />
-                    <input type="text" name="pump_location" id="l" placeholder="Station Name" class="font-bold" />
+                    <div class="flex items-center">
+                        <input type="text" name="pump_location" id="l" placeholder="Station Name" class="font-bold rounded-r-none" />
+                        <button type="button" onclick="fetchGPS()"
+                            class="bg-blue-500 text-white h-12 w-12 rounded-l-none rounded-r-lg shadow-lg flex items-center justify-center text-2xl flex-shrink-0">
+                            📍
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" id="s"
