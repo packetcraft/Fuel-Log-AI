@@ -9,21 +9,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@800&display=swap");
 
         :root {
             font-size: 16px;
-            --primary-blue: #007bff;
-            --light-gray: #f8f9fa;
+            --primary-yellow: #fde047; /* High-saturation yellow */
+            --black: #1a1a1a;
             --white: #ffffff;
-            --dark-gray: #343a40;
-            --text-muted: #6c757d;
+            --background: #fafafa;
         }
 
         body {
             font-family: "Inter", sans-serif;
-            background: var(--light-gray);
-            color: var(--dark-gray);
+            font-weight: 800;
+            background: var(--background);
+            color: var(--black);
             overflow: hidden;
             height: 100svh;
             display: flex;
@@ -32,55 +32,55 @@
 
         .card {
             background: var(--white);
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 3px solid var(--black);
+            border-radius: 8px;
+            box-shadow: 4px 4px 0px var(--black); /* Hard shadow */
         }
 
         input,
         select {
-            background: #fff !important;
-            border: 1px solid #ced4da !important;
-            color: var(--dark-gray) !important;
+            background: var(--white) !important;
+            border: 3px solid var(--black) !important;
+            color: var(--black) !important;
             padding: 12px !important;
             width: 100%;
             border-radius: 8px;
             font-size: 16px !important;
+            font-weight: 800;
+            box-shadow: 2px 2px 0px var(--black);
         }
 
         label {
             font-size: 12px !important;
-            font-weight: 700;
-            color: var(--text-muted);
+            font-weight: 800;
+            color: var(--black);
             margin-bottom: 4px;
             display: block;
             text-transform: uppercase;
         }
 
-        .btn-primary {
-            background-color: var(--primary-blue);
-            color: white;
-            font-weight: 700;
+        .btn {
+            background-color: var(--primary-yellow);
+            color: var(--black);
+            border: 3px solid var(--black);
             border-radius: 8px;
-            padding: 1rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: background-color 0.2s ease;
+            box-shadow: 4px 4px 0px var(--black);
+            transition: all 0.1s ease-in-out;
+            text-align: center;
         }
 
-        .btn-primary:active {
-            transform: scale(0.98);
+        .btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px var(--black);
         }
 
         .btn-secondary {
-            background-color: #e9ecef;
-            color: var(--primary-blue);
-            font-weight: 700;
-            border-radius: 8px;
+            background-color: var(--white);
         }
 
-        #loadingOverlay,
-        #missionReport {
+        #loadingOverlay {
             display: none;
             position: fixed;
             inset: 0;
@@ -93,21 +93,35 @@
         }
 
         #missionReport {
-            background: var(--white);
-            color: var(--dark-gray);
-            border-radius: 16px;
-            max-width: 320px;
+             display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            backdrop-filter: blur(8px);
+        }
+
+        .mission-card {
+            background: var(--primary-yellow);
+            color: var(--black);
+            border: 3px solid var(--black);
+            border-radius: 12px;
+            max-width: 340px;
             padding: 2rem;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 8px 8px 0px var(--black);
         }
+
 
         .grade-badge {
             font-size: 5rem;
-            font-weight: 900;
+            font-weight: 800;
             line-height: 1;
             margin: 1rem 0;
-            color: var(--primary-blue);
+            color: var(--black);
         }
 
         .tab-panel {
@@ -122,8 +136,8 @@
         }
 
         .nav-active {
-            color: var(--primary-blue);
-            border-bottom: 3px solid var(--primary-blue);
+            background: var(--primary-yellow);
+            box-shadow: inset 4px 4px 0px #00000033;
         }
 
         table {
@@ -132,57 +146,59 @@
         }
 
         th {
-            color: var(--primary-blue);
-            border-bottom: 1px solid #dee2e6;
+            color: var(--black);
+            border-bottom: 3px solid var(--black);
             padding: 10px;
             text-align: left;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
         }
 
         td {
             padding: 12px 10px;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 3px solid var(--black);
         }
     </style>
 </head>
 
-<body class="max-w-md mx-auto p-4 flex flex-col">
+<body class="max-w-md mx-auto p-4 flex flex-col bg-background">
     <div id="loadingOverlay">
-        <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <div class="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mb-4"></div>
         <p id="loadText" class="text-xs text-white tracking-widest uppercase">
             Loading...
         </p>
     </div>
 
     <div id="missionReport" style="display: none;" onclick="this.style.display='none'">
-        <p class="text-blue-500 font-bold tracking-widest uppercase text-xs mb-2">Refill Complete</p>
-        <h2 class="text-3xl font-black tracking-tighter text-gray-800">Log Confirmed</h2>
-        <div id="grade" class="grade-badge">A</div>
-        <div class="grid grid-cols-2 gap-4 text-center my-4 w-full">
-            <div>
-                <p class="text-xs text-slate-500 uppercase font-bold">Efficiency</p>
-                <p id="effVal" class="text-2xl font-black text-gray-800">-- <span class="text-xs">KM/L</span></p>
+        <div class="mission-card">
+            <p class="font-bold tracking-widest uppercase text-xs mb-2">Refill Complete</p>
+            <h2 class="text-3xl font-black tracking-tighter">Log Confirmed</h2>
+            <div id="grade" class="grade-badge">A</div>
+            <div class="grid grid-cols-2 gap-4 text-center my-4 w-full">
+                <div>
+                    <p class="text-xs uppercase font-bold">Efficiency</p>
+                    <p id="effVal" class="text-2xl font-black">-- <span class="text-xs">KM/L</span></p>
+                </div>
+                <div>
+                    <p class="text-xs uppercase font-bold">Trend</p>
+                    <p id="effTrend" class="text-2xl font-black text-black">STABLE</p>
+                </div>
             </div>
-            <div>
-                <p class="text-xs text-slate-500 uppercase font-bold">Trend</p>
-                <p id="effTrend" class="text-2xl font-black text-blue-500">STABLE</p>
-            </div>
+            <p class="text-xs mt-6 uppercase">Tap to close</p>
         </div>
-        <p class="text-slate-400 font-mono text-xs mt-6 uppercase">Tap to close</p>
     </div>
 
-    <header class="flex justify-between items-center mb-4">
-        <h1 class="text-2xl font-black text-blue-600 tracking-tighter">
+    <header class="flex justify-between items-center mb-4 card p-2">
+        <h1 class="text-2xl font-black tracking-tighter">
             Fuel Log AI
         </h1>
         <div class="flex gap-2">
             <button onclick="openScanner(true)"
-                class="px-3 py-2 btn-secondary text-sm">
+                class="btn btn-secondary px-3 py-2 text-sm">
                 📷 Cam
             </button>
             <button onclick="openScanner(false)"
-                class="px-3 py-2 btn-secondary text-sm">
+                class="btn btn-secondary px-3 py-2 text-sm">
                 📁 File
             </button>
         </div>
@@ -207,7 +223,7 @@
                     </div>
                 </div>
                  <button type="button" onclick="addVehicle()"
-                    class="w-full h-10 btn-secondary text-xs">
+                    class="w-full h-10 btn btn-secondary text-xs">
                     + Add New Vehicle
                 </button>
 
@@ -219,7 +235,7 @@
                     <div class="card p-3 h-full flex flex-col justify-center items-center gap-1">
                         <label>Status</label>
                         <div class="flex items-center gap-2">
-                            <input type="checkbox" name="full_tank" id="ft" class="w-5 h-5 accent-blue-500" checked />
+                            <input type="checkbox" name="full_tank" id="ft" class="w-5 h-5 accent-yellow-400" checked />
                             <span class="text-sm font-bold">Full Tank</span>
                         </div>
                     </div>
@@ -238,14 +254,10 @@
                     </div>
                 </div>
 
-                <div class="card p-4 flex justify-between items-center bg-blue-50 border-2 border-blue-200">
-                    <div>
-                        <p class="text-xs font-bold text-blue-600 uppercase">
-                            Total Cost
-                        </p>
-                        <input type="number" name="refill_amount" id="t"
-                            class="!bg-transparent !border-none !p-0 text-3xl font-black text-blue-600" readonly />
-                    </div>
+                <div class="card p-4">
+                    <label>Total Cost</label>
+                    <input type="number" name="refill_amount" id="t"
+                        class="!bg-transparent !border-none !p-0 !text-3xl !font-black !shadow-none" readonly />
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -253,14 +265,14 @@
                     <div class="flex items-center">
                         <input type="text" name="pump_location" id="l" placeholder="Station Name" class="font-bold rounded-r-none" />
                         <button type="button" onclick="fetchGPS()"
-                            class="bg-blue-500 text-white h-12 w-12 rounded-l-none rounded-r-lg shadow-lg flex items-center justify-center text-2xl flex-shrink-0">
+                            class="btn h-12 w-12 rounded-l-none text-2xl flex-shrink-0 p-0">
                             📍
                         </button>
                     </div>
                 </div>
 
                 <button type="submit" id="s"
-                    class="w-full py-5 btn-primary text-xl">
+                    class="w-full py-5 btn text-xl">
                     Save Log
                 </button>
             </form>
@@ -268,7 +280,7 @@
 
         <div id="tab1" class="tab-panel">
             <div class="card overflow-hidden">
-                <table>
+                <table class="border-collapse">
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -292,27 +304,27 @@
 
         <div id="tab3" class="tab-panel space-y-4">
             <div class="text-center card p-4">
-                <p id="mCity" class="text-sm font-bold text-blue-600 uppercase tracking-widest">
+                <p id="mCity" class="text-sm font-bold uppercase tracking-widest">
                     Loading...
                 </p>
-                <div id="mInsight" class="text-lg font-bold mt-2 text-gray-800"></div>
+                <div id="mInsight" class="text-lg font-bold mt-2"></div>
             </div>
             <div id="mMarket" class="grid grid-cols-2 gap-3 text-center"></div>
             <div id="mSources" class="space-y-2"></div>
         </div>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 grid grid-cols-4 h-16 shadow-inner">
-        <button onclick="setTab(0)" class="nav-btn flex items-center justify-center nav-active font-bold text-sm">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t-4 border-black grid grid-cols-4 h-16">
+        <button onclick="setTab(0)" class="nav-btn flex items-center justify-center nav-active font-bold text-sm border-r-2 border-l-2 border-black">
             Add
         </button>
-        <button onclick="setTab(1)" class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm">
+        <button onclick="setTab(1)" class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm border-r-2 border-black">
             Logs
         </button>
-        <button onclick="setTab(2)" class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm">
+        <button onclick="setTab(2)" class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm border-r-2 border-black">
             Stats
         </button>
-        <button onclick="setTab(3)" class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm">
+        <button onclick="setTab(3)" class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm border-r-2 border-black">
             Market
         </button>
     </nav>
@@ -322,7 +334,7 @@
         let chart = null;
         let vehicleList = [];
         let lastUserPrice = 0;
-        const colors = ["#007bff", "#6f42c1", "#28a745", "#dc3545", "#fd7e14"];
+        const colors = ["#1a1a1a", "#fde047", "#28a745", "#dc3545", "#fd7e14"];
 
         function showLoading(t) {
             document.getElementById("loadText").textContent = t;
@@ -417,7 +429,7 @@
 
             document.getElementById("effVal").innerHTML = `-- <span class="text-xs">KM/L</span>`;
             document.getElementById("effTrend").textContent = "STABLE";
-            document.getElementById("effTrend").className = "text-2xl font-black text-blue-500";
+            document.getElementById("effTrend").className = "text-2xl font-black";
             document.getElementById("grade").textContent = "B";
 
             try {
@@ -446,7 +458,6 @@
                             if (prevEff > 0) {
                                 const diff = ((eff - prevEff) / prevEff * 100).toFixed(1);
                                 document.getElementById("effTrend").textContent = (diff > 0 ? "+" : "") + diff + "%";
-                                document.getElementById("effTrend").className = diff >= 0 ? "text-2xl font-black text-green-500" : "text-2xl font-black text-red-500";
                             }
                         }
                     }
@@ -467,7 +478,7 @@
             }
             b.innerHTML = "";
             logs.slice(0, 15).forEach((e) => {
-                b.innerHTML += `<tr><td>${e.refill_date.split("T")[0].slice(5)}</td><td class="font-bold uppercase text-sm">${e.vehicle_name}</td><td>${e.full_tank == true || e.full_tank == "true" ? "✓" : "—"}</td><td>${parseFloat(e.fuel_qty).toFixed(1)}</td><td class="text-blue-600 font-bold">₹${parseFloat(e.refill_amount).toFixed(0)}</td></tr>`;
+                b.innerHTML += `<tr><td>${e.refill_date.split("T")[0].slice(5)}</td><td class="font-bold uppercase text-sm">${e.vehicle_name}</td><td>${e.full_tank == true || e.full_tank == "true" ? "✓" : "—"}</td><td>${parseFloat(e.fuel_qty).toFixed(1)}</td><td class="font-bold">₹${parseFloat(e.refill_amount).toFixed(0)}</td></tr>`;
             });
         }
 
@@ -486,8 +497,8 @@
                 const color = colors[idx % colors.length];
 
                 container.innerHTML += `
-                    <div class="card p-4 flex justify-between items-center border-l-4" style="border-left-color: ${color}">
-                        <span class="text-sm font-black uppercase text-slate-600">${vName}</span>
+                    <div class="card p-4 flex justify-between items-center">
+                        <span class="text-sm font-black uppercase">${vName}</span>
                         <span class="text-2xl font-black" style="color: ${color}">${eff} <span class="text-xs">KM/L</span></span>
                     </div>`;
 
@@ -506,9 +517,10 @@
                     label: vName,
                     data: chartData,
                     borderColor: color,
-                    backgroundColor: color + "22",
-                    tension: 0.4,
+                    backgroundColor: "#00000011",
+                    tension: 0.1,
                     fill: true,
+                    borderWidth: 3,
                     pointRadius: 5,
                 });
             });
@@ -519,10 +531,10 @@
                 data: { datasets: datasets },
                 options: {
                     scales: {
-                        y: { grid: { color: "#e9ecef" }, ticks: { color: "#6c757d", font: { size: 10 } } },
-                        x: { type: "category", grid: { display: false }, ticks: { color: "#6c757d", font: { size: 10 } } },
+                        y: { grid: { color: "#00000022" }, ticks: { color: "black", font: { size: 10, weight: '800' } } },
+                        x: { type: "category", grid: { display: false }, ticks: { color: "black", font: { size: 10, weight: '800' } } },
                     },
-                    plugins: { legend: { labels: { color: "#343a40", font: { size: 12, weight: "bold" } } } },
+                    plugins: { legend: { labels: { color: "black", font: { size: 12, weight: "800" } } } },
                 },
             });
         }
@@ -538,10 +550,10 @@
                         document.getElementById("mCity").textContent = "Region: " + m.city.toUpperCase();
                         document.getElementById("mInsight").textContent = m.insight;
                         document.getElementById("mMarket").innerHTML = `
-                        <div class="card p-4"><p class="text-sm text-blue-600 font-bold uppercase">Petrol</p><p class="text-3xl font-black">₹${m.petrol}</p></div>
-                        <div class="card p-4"><p class="text-sm text-red-600 font-bold uppercase">Diesel</p><p class="text-3xl font-black">₹${m.diesel}</p></div>`;
+                        <div class="card p-4"><p class="text-sm font-bold uppercase">Petrol</p><p class="text-3xl font-black">₹${m.petrol}</p></div>
+                        <div class="card p-4"><p class="text-sm font-bold uppercase">Diesel</p><p class="text-3xl font-black">₹${m.diesel}</p></div>`;
                         document.getElementById("mSources").innerHTML = m.sources.map((s) =>
-                            `<a href="${s.url}" target="_blank" class="block p-3 card text-xs text-blue-600 font-bold border-dashed uppercase">Source: ${s.title} ↗</a>`
+                            `<a href="${s.url}" target="_blank" class="block p-3 card text-xs font-bold uppercase">Source: ${s.title} ↗</a>`
                         ).join("");
                     })
                     .withFailureHandler(handleError)
@@ -607,8 +619,8 @@
                                    const el = document.getElementById(elId);
                                    if(res.data[key] && el) {
                                         el.value = res.data[key];
-                                        el.classList.add('border-blue-500', 'ring-2', 'ring-blue-200');
-                                        setTimeout(() => el.classList.remove('border-blue-500', 'ring-2', 'ring-blue-200'), 3000);
+                                        el.classList.add('border-yellow-400', 'ring-2', 'ring-yellow-200');
+                                        setTimeout(() => el.classList.remove('border-yellow-400', 'ring-2', 'ring-yellow-200'), 3000);
                                    }
                                 });
                                 calc();
