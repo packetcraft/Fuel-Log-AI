@@ -88,23 +88,19 @@
 ---
 
 ## 6. User Interface (UI) Requirements
-*Since the `Index.html` is currently empty, these are requirements for the "To-Be" implementation:*
 
-1.  **Home/Dashboard Screen:**
-    -   "Add New Log" Floating Action Button (FAB).
-    -   Summary Card: Last Refill (Date, Amount).
-    -   List View: Recent logs.
-2.  **Entry Form (Modal or Page):**
-    -   **Top Section:** "Scan Receipt" button (prominent).
-    -   **Fields:**
-        -   Vehicle (Dropdown).
-        -   KM Reading (Number).
-        -   Fuel Type (Petrol/Diesel/CNG) - *Implicit in code, needs UI selector.*
-        -   Price/Litre, Total Cost, Volume (Auto-calc relation: Cost / Price = Volume).
-        -   Full Tank? (Checkbox).
-    -   **Action:** Save / Cancel.
-3.  **Loading States:**
-    -   Spinner overlay during AI processing ("Scanning Receipt...").
+The application's UI follows a "Neo-Brutalist" design philosophy, characterized by high-contrast elements, thick borders, hard shadows, and a heavy, uppercase font (`Inter`).
+
+1.  **Main Screen & Navigation:**
+    -   A tab-based interface provides access to four main sections: "Add," "Logs," "Stats," and "Market."
+    -   The header contains the application title ("Fuel Log AI") and quick-access buttons for receipt scanning ("Cam" and "File").
+
+2.  **"Add" Tab (Entry Form):**
+    -   **Vehicle Management:** A compact, split-header design with "VEHICLE" on the left and a `+ Add` link on the right.
+    -   **Iconography:** Labels are enhanced with icons for quick recognition: `🏎️ Odometer`, `⛽ Type`, `📍 Station`.
+    -   **Math Row Layout:** The "Quantity," "Price / L," and "Total Cost" fields are visually grouped in a single card to make the calculation intuitive.
+    -   **Floating Calculation Card:** The "Total Cost" is a non-editable, high-visibility display card with a distinct yellow background.
+    -   **Input Focus States:** Input fields have a "mechanical" feel, shifting position and shadow on focus.
 
 ## 7. Technical Constraints & Architecture
 -   **Platform:** Google Apps Script Web App (`doGet`).
@@ -141,9 +137,13 @@ The following core improvements were implemented to transform the initial protot
 
 ### 🎮 Gamification & Engagement (v1.1)
 - **Mission Report HUD:** Implemented a full-screen "Uplink Confirmed" HUD that calculates KM/L and assigns an Efficiency Grade (S, A, B, C) instantly after logging.
-- **Dynamic Theming:** Added logic to switch the entire application's neon color palette based on the fuel type selector (Petrol/Diesel/CNG).
 - **Skeleton States:** Replaced generic loaders with high-tech skeleton pulse animations for the Logs and Stats tabs.
 - **Dual-Trigger Scanner:** Updated UI to provide explicit "📸 Cam" and "📁 File" options, resolving browser-specific "image-only" capture issues.
+
+### ✨ UI Redesign (v1.2)
+- **Neo-Brutalism Theme:** Refactored the entire UI to a "Neo-Brutalist" aesthetic, featuring a high-contrast color palette, thick borders, hard shadows, and a heavy, uppercase font.
+- **Improved UX:** Implemented several UX enhancements, including a compact vehicle management header, a "floating" calculation card, a "Math Row" layout for intuitive calculations, and enhanced iconography.
+- **Mechanical Focus States:** Added dynamic focus states to input fields to create a "mechanical" feel when a user interacts with them.
 
 ---
 **End of Document**
