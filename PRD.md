@@ -154,5 +154,14 @@ The following core improvements were implemented to transform the initial protot
     - **Keypad Optimization:** Force-enables decimal/numeric keypads on mobile devices for Odometer, Quantity, and Price fields (`inputmode="decimal"`).
 - **Micro-interactions:** Added tactile "press" animations to buttons and smooth transitions for theme switching.
 
+### 💎 v2.1 Polish & Advanced Interaction (Current)
+- **Refined Neobrutalism:** Softened typography (Title Case labels, lighter weights) to reduce visual fatigue while maintaining the bold aesthetic.
+- **Card-Based Log View:** Replaced the mobile-unfriendly table with a stacked Card layout for log entries, improving readability and touch targets.
+- **Live Efficiency Gauge:** Added "Traffic Light" dots (Green/Yellow/Red) to log cards for instant visual feedback on fuel efficiency.
+- **Smart Vehicle Selector:** Automatically toggles between a Dropdown (for >3 vehicles) and large Radio Buttons (for <=3 vehicles) to reduce clicks.
+- **Fluid Navigation:** Implemented smooth "Lift & Fade" animations for tab switching and added iconography to the bottom navigation bar.
+- **Silent Auto-Location:** GPS coordinates are now fetched silently on app load to minimize friction during data entry.
+- **Interactive Charts:** Enabling "Touch-to-View" on the Stats chart allows users to inspect specific log details directly from the graph.
+
 ---
 **End of Document**

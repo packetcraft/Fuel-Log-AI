@@ -28,12 +28,12 @@
         [data-theme="dark"] {
             --primary-yellow: #fde047;
             --black: #000000;
-            --white: #121212;
-            --background: #0a0a0a;
+            --white: #1e1e1e;
+            --background: #121212;
             --accent-red: #ff5252;
             --card-bg: #1e1e1e;
             --text-color: #e0e0e0;
-            --border-color: #333333;
+            --border-color: #404040;
             --shadow-color: #000000;
             --input-bg: #2a2a2a;
         }
@@ -80,12 +80,12 @@
         }
 
         label {
-            font-size: 12px !important;
-            font-weight: 800;
+            font-size: 0.8rem !important;
+            font-weight: 700;
             color: var(--text-color);
             margin-bottom: 4px;
             display: block;
-            text-transform: uppercase;
+            opacity: 0.9;
         }
 
         .btn {
@@ -254,6 +254,108 @@
             background: var(--primary-yellow);
             opacity: 0.8;
         }
+
+        .log-card {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-bottom: 3px solid var(--border-color);
+            background: var(--card-bg);
+            transition: background-color 0.2s;
+        }
+
+        .log-card:last-child {
+            border-bottom: none;
+        }
+
+        .log-card:active {
+            background-color: var(--background);
+        }
+
+        .log-date {
+            font-size: 0.7rem;
+            font-weight: 800;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+        }
+
+        .log-vehicle {
+            font-size: 0.9rem;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .log-cost {
+            font-size: 1.25rem;
+            font-weight: 900;
+            text-align: right;
+        }
+
+        .log-details {
+            font-size: 0.75rem;
+            font-weight: 800;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+        }
+
+        /* Tab Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Smart Vehicle Selector */
+        .vehicle-radio-group {
+            display: none;
+            gap: 0.5rem;
+        }
+
+        .vehicle-radio {
+            flex: 1;
+            padding: 1rem;
+            background: var(--card-bg);
+            border: 3px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0.6;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .vehicle-radio.selected {
+            background: var(--primary-yellow);
+            color: var(--black);
+            opacity: 1;
+            box-shadow: 4px 4px 0px var(--shadow-color);
+            transform: translate(-2px, -2px);
+            border-color: var(--black);
+        }
     </style>
 </head>
 
@@ -320,6 +422,7 @@
                                 class="text-xs font-bold uppercase tracking-wider">+ Add</button>
                         </div>
                         <select name="vehicle_name" id="vehicleSelect" class="h-12 font-bold"></select>
+                        <div id="vehicleRadioGroup" class="vehicle-radio-group"></div>
                     </div>
                     <div>
                         <label>⛽ Type</label>
@@ -395,18 +498,9 @@
 
         <div id="tab1" class="tab-panel">
             <div class="card overflow-hidden">
-                <table class="border-collapse">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Vehicle</th>
-                            <th>Full</th>
-                            <th>Liters</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logTable"></tbody>
-                </table>
+                <div id="logList" class="card overflow-hidden flex flex-col">
+                    <!-- Logs will be rendered here as cards -->
+                </div>
             </div>
         </div>
 
@@ -431,19 +525,37 @@
 
     <nav class="fixed bottom-0 left-0 right-0 bg-card-bg border-t-4 border-border-color grid grid-cols-4 h-16 z-50">
         <button onclick="setTab(0)"
-            class="nav-btn flex items-center justify-center nav-active font-bold text-sm border-r-2 border-l-2 border-border-color">
+            class="nav-btn flex flex-col items-center justify-center nav-active font-bold text-[0.65rem] uppercase border-r-2 border-l-2 border-border-color">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor" class="nav-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
             Add
         </button>
         <button onclick="setTab(1)"
-            class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm border-r-2 border-border-color">
+            class="nav-btn flex flex-col items-center justify-center text-gray-500 font-bold text-[0.65rem] uppercase border-r-2 border-border-color">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor" class="nav-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
             Logs
         </button>
         <button onclick="setTab(2)"
-            class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm border-r-2 border-border-color">
+            class="nav-btn flex flex-col items-center justify-center text-gray-500 font-bold text-[0.65rem] uppercase border-r-2 border-border-color">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor" class="nav-icon">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+            </svg>
             Stats
         </button>
         <button onclick="setTab(3)"
-            class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm border-r-2 border-border-color">
+            class="nav-btn flex flex-col items-center justify-center text-gray-500 font-bold text-[0.65rem] uppercase border-r-2 border-border-color">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                stroke="currentColor" class="nav-icon">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
             Market
         </button>
     </nav>
@@ -490,6 +602,18 @@
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme) document.body.setAttribute('data-theme', savedTheme);
             document.getElementById("d").value = new Date().toISOString().split("T")[0];
+
+            // Auto-fetch GPS silently
+            if (navigator.geolocation && !document.getElementById("l").value) {
+                navigator.geolocation.getCurrentPosition((p) => {
+                    const lat = p.coords.latitude.toFixed(3);
+                    const lon = p.coords.longitude.toFixed(3);
+                    document.getElementById("l").value = `${lat},${lon}`;
+                }, (err) => {
+                    console.log("Auto-GPS failed", err);
+                }, { timeout: 5000 });
+            }
+
             ref();
         };
 
@@ -534,6 +658,33 @@
                             res.vehicles.forEach((v) => s.add(new Option(v, v)));
                         } else {
                             s.add(new Option("My Car", "My Car"));
+                        }
+
+                        // Smart Selector Logic
+                        const rg = document.getElementById("vehicleRadioGroup");
+                        if (vehicleList.length > 0 && vehicleList.length <= 3) {
+                            s.style.display = 'none';
+                            rg.style.display = 'flex';
+                            rg.innerHTML = '';
+                            vehicleList.forEach(v => {
+                                const div = document.createElement('div');
+                                div.className = 'vehicle-radio';
+                                div.textContent = v;
+                                div.onclick = () => {
+                                    s.value = v;
+                                    document.querySelectorAll('.vehicle-radio').forEach(d => d.classList.remove('selected'));
+                                    div.classList.add('selected');
+                                };
+                                rg.appendChild(div);
+                            });
+                            // Sync initial selection
+                            if (s.value) {
+                                const match = Array.from(rg.children).find(c => c.textContent === s.value);
+                                if (match) match.classList.add('selected');
+                            }
+                        } else {
+                            s.style.display = 'block';
+                            rg.style.display = 'none';
                         }
                     } else {
                         showToast("Database Sync Failed.");
@@ -616,14 +767,52 @@
         }
 
         function rend() {
-            const b = document.getElementById("logTable");
+            const b = document.getElementById("logList");
             if (logs.length === 0) {
-                b.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-gray-500">No logs yet. Add your first entry!</td></tr>`;
+                b.innerHTML = `<div class="text-center p-8 text-gray-500 font-bold">No logs yet. Add your first entry!</div>`;
                 return;
             }
             b.innerHTML = "";
-            logs.slice(0, 15).forEach((e) => {
-                b.innerHTML += `<tr><td>${e.refill_date.split("T")[0].slice(5)}</td><td class="font-bold uppercase text-sm">${e.vehicle_name}</td><td>${e.full_tank == true || e.full_tank == "true" ? "✓" : "—"}</td><td>${parseFloat(e.fuel_qty).toFixed(1)}</td><td class="font-bold">₹${parseFloat(e.refill_amount).toFixed(0)}</td></tr>`;
+            logs.slice(0, 50).forEach((e, i) => {
+                const date = e.refill_date.split("T")[0];
+                const isFull = e.full_tank == true || e.full_tank == "true";
+
+                // Efficiency Dot Logic
+                let effDot = '';
+                if (isFull) {
+                    const prev = logs.slice(i + 1).find(l => l.vehicle_name === e.vehicle_name);
+                    if (prev) {
+                        const dist = (parseFloat(e.km_reading) || 0) - (parseFloat(prev.km_reading) || 0);
+                        const qty = parseFloat(e.fuel_qty) || 1;
+                        if (dist > 0 && qty > 0) {
+                            const eff = dist / qty;
+                            let color = 'bg-red-500';
+                            if (eff >= 10) color = 'bg-yellow-500';
+                            if (eff >= 15) color = 'bg-green-500';
+                            effDot = `<div class="w-3 h-3 rounded-full ${color} shadow-sm border border-black/20" title="${eff.toFixed(1)} KM/L"></div>`;
+                        }
+                    }
+                }
+
+                b.innerHTML += `
+                <div class="log-card">
+                    <div>
+                        <div class="log-date">${date}</div>
+                        <div class="log-vehicle flex items-center gap-2">
+                            ${e.vehicle_name}
+                            ${effDot}
+                        </div>
+                        <div class="log-details">
+                            <span class="font-bold border-2 border-[var(--border-color)] px-1 rounded text-xs">${parseFloat(e.fuel_qty).toFixed(2)}L</span>
+                            <span>•</span>
+                            <span class="${isFull ? 'text-green-600' : 'text-orange-500'}">${isFull ? 'FULL' : 'PARTIAL'}</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-center items-end">
+                         <div class="log-cost">₹${parseFloat(e.refill_amount).toFixed(0)}</div>
+                         <div class="text-xs font-bold opacity-60">₹${parseFloat(e.fuel_price).toFixed(2)}/L</div>
+                    </div>
+                </div>`;
             });
         }
 
@@ -655,6 +844,8 @@
                         chartData.push({
                             x: vLogs[i].refill_date.split("T")[0].slice(5),
                             y: (d / f).toFixed(2),
+                            _cost: parseFloat(vLogs[i].refill_amount).toFixed(0),
+                            _full: vLogs[i].full_tank
                         });
                     }
                 }
@@ -680,6 +871,14 @@
                         x: { type: "category", grid: { display: false }, ticks: { color: "black", font: { size: 10, weight: '800' } } },
                     },
                     plugins: { legend: { labels: { color: "black", font: { size: 12, weight: "800" } } } },
+                    onClick: (e, activeEls, chart) => {
+                        if (activeEls.length > 0) {
+                            const idx = activeEls[0].index;
+                            const datasetIdx = activeEls[0].datasetIndex;
+                            const point = chart.data.datasets[datasetIdx].data[idx];
+                            showToast(`Log: ${point.x} - ₹${point._cost} (${point.y} KM/L)`);
+                        }
+                    }
                 },
             });
         }
