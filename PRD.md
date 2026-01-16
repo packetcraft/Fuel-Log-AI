@@ -145,5 +145,14 @@ The following core improvements were implemented to transform the initial protot
 - **Improved UX:** Implemented several UX enhancements, including a compact vehicle management header, a "floating" calculation card, a "Math Row" layout for intuitive calculations, and enhanced iconography.
 - **Mechanical Focus States:** Added dynamic focus states to input fields to create a "mechanical" feel when a user interacts with them.
 
+
+### 🚀 v2.0 UX Overhaul (Current)
+- **Dark Mode Protocol:** Implemented a system-aware Dark Mode with a manual toggle (`localStorage` persistence).
+- **Non-blocking Feedback:** Replaced native `alert()` blocking calls with a custom non-blocking "Toast" notification system for success/error states.
+- **Smart Logic:**
+    - **Price Memory:** Auto-fills "Price/L" with the last recorded value to speed up entry.
+    - **Keypad Optimization:** Force-enables decimal/numeric keypads on mobile devices for Odometer, Quantity, and Price fields (`inputmode="decimal"`).
+- **Micro-interactions:** Added tactile "press" animations to buttons and smooth transitions for theme switching.
+
 ---
 **End of Document**
