@@ -18,50 +18,71 @@
             --white: #ffffff;
             --background: #F4F4F4;
             --accent-red: #FF4646;
+            --card-bg: var(--white);
+            --text-color: var(--black);
+            --border-color: var(--black);
+            --shadow-color: var(--black);
+            --input-bg: var(--white);
+        }
+
+        [data-theme="dark"] {
+            --primary-yellow: #fde047;
+            --black: #000000;
+            --white: #121212;
+            --background: #0a0a0a;
+            --accent-red: #ff5252;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --shadow-color: #000000;
+            --input-bg: #2a2a2a;
         }
 
         body {
             font-family: "Inter", sans-serif;
             font-weight: 800;
             background: var(--background);
-            color: var(--black);
+            color: var(--text-color);
             overflow: hidden;
             height: 100svh;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .card {
-            background: var(--white);
-            border: 3px solid var(--black);
+            background: var(--card-bg);
+            border: 3px solid var(--border-color);
             border-radius: 8px;
-            box-shadow: 4px 4px 0px var(--black); /* Hard shadow */
+            box-shadow: 4px 4px 0px var(--shadow-color);
         }
 
         input,
         select {
-            background: var(--white) !important;
-            border: 3px solid var(--black) !important;
-            color: var(--black) !important;
+            background: var(--input-bg) !important;
+            border: 3px solid var(--border-color) !important;
+            color: var(--text-color) !important;
             padding: 12px !important;
             width: 100%;
             border-radius: 8px;
             font-size: 16px !important;
             font-weight: 800;
-            box-shadow: 2px 2px 0px var(--black);
+            box-shadow: 2px 2px 0px var(--shadow-color);
+            transition: all 0.2s ease;
         }
 
         input:focus {
             outline: none;
-            background-color: #fffef0 !important; /* Subtle yellow tint */
-            transform: translate(-2px, -2px); /* Moves the box up */
-            box-shadow: 6px 6px 0px var(--black); /* Makes the shadow "longer" */
+            background-color: var(--input-bg) !important;
+            border-color: var(--primary-yellow) !important;
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--shadow-color);
         }
 
         label {
             font-size: 12px !important;
             font-weight: 800;
-            color: var(--black);
+            color: var(--text-color);
             margin-bottom: 4px;
             display: block;
             text-transform: uppercase;
@@ -70,28 +91,79 @@
         .btn {
             background-color: var(--primary-yellow);
             color: var(--black);
-            border: 3px solid var(--black);
+            border: 3px solid var(--border-color);
             border-radius: 8px;
             font-weight: 800;
             text-transform: uppercase;
-            box-shadow: 4px 4px 0px var(--black);
-            transition: all 0.1s ease-in-out;
+            box-shadow: 4px 4px 0px var(--shadow-color);
+            transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-align: center;
+            cursor: pointer;
         }
 
         .btn:active {
-            transform: translate(4px, 4px);
-            box-shadow: 0px 0px 0px var(--black);
+            transform: scale(0.95) translate(2px, 2px);
+            box-shadow: 0px 0px 0px var(--shadow-color);
         }
 
         .btn-secondary {
-            background-color: var(--white);
+            background-color: var(--card-bg);
+            color: var(--text-color);
         }
 
         #total_cost_card {
-            background-color: #FFD600;
-            box-shadow: 6px 6px 0px var(--black);
+            background-color: var(--primary-yellow);
+            box-shadow: 6px 6px 0px var(--shadow-color);
             pointer-events: none;
+            color: var(--black);
+        }
+
+        /* Toast System */
+        #toastContainer {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            pointer-events: none;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .toast {
+            background: var(--primary-yellow);
+            color: var(--black);
+            border: 3px solid var(--black);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 800;
+            box-shadow: 4px 4px 0px var(--black);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.3s forwards 2.7s;
+            pointer-events: auto;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
         }
 
         #loadingOverlay {
@@ -107,7 +179,7 @@
         }
 
         #missionReport {
-             display: none;
+            display: none;
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.9);
@@ -160,8 +232,9 @@
         }
 
         th {
-            color: var(--black);
-            border-bottom: 3px solid var(--black);
+            color: var(--text-color);
+            background: var(--card-bg);
+            border-bottom: 3px solid var(--border-color);
             padding: 10px;
             text-align: left;
             font-weight: 800;
@@ -170,12 +243,23 @@
 
         td {
             padding: 12px 10px;
-            border-bottom: 3px solid var(--black);
+            border-bottom: 3px solid var(--border-color);
+        }
+
+        .nav-btn {
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-btn:active {
+            background: var(--primary-yellow);
+            opacity: 0.8;
         }
     </style>
 </head>
 
 <body class="max-w-md mx-auto p-4 flex flex-col bg-background">
+    <div id="toastContainer"></div>
+
     <div id="loadingOverlay">
         <div class="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mb-4"></div>
         <p id="loadText" class="text-xs text-white tracking-widest uppercase">
@@ -203,17 +287,23 @@
     </div>
 
     <header class="flex justify-between items-center mb-4 card p-2">
-        <h1 class="text-2xl font-black tracking-tighter">
-            Fuel Log AI
-        </h1>
-        <div class="flex gap-2">
-            <button onclick="openScanner(true)"
-                class="btn btn-secondary px-3 py-2 text-sm">
-                📷 Cam
+        <div class="flex items-center gap-2">
+            <button onclick="toggleTheme()" class="btn btn-secondary p-2 text-xl leading-none">
+                🌓
             </button>
-            <button onclick="openScanner(false)"
-                class="btn btn-secondary px-3 py-2 text-sm">
-                📁 File
+            <h1 class="text-xl font-black tracking-tighter">
+                Fuel Log AI
+            </h1>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="openScanner(true)" class="btn btn-secondary px-3 py-2 text-sm">
+                📷
+            </button>
+            <button onclick="openScanner(false)" class="btn btn-secondary px-3 py-2 text-sm">
+                📁
+            </button>
+            <button onclick="ref()" class="btn btn-secondary px-3 py-2 text-sm">
+                🔄
             </button>
         </div>
         <input type="file" id="cam" accept="image/*" class="hidden" onchange="processImage(event)" />
@@ -226,7 +316,8 @@
                     <div>
                         <div class="flex justify-between items-center mb-1">
                             <label class="!mb-0">Vehicle</label>
-                            <button type="button" onclick="addVehicle()" class="text-xs font-bold uppercase tracking-wider">+ Add</button>
+                            <button type="button" onclick="addVehicle()"
+                                class="text-xs font-bold uppercase tracking-wider">+ Add</button>
                         </div>
                         <select name="vehicle_name" id="vehicleSelect" class="h-12 font-bold"></select>
                     </div>
@@ -243,7 +334,8 @@
                 <div class="grid grid-cols-2 gap-3 items-center">
                     <div class="card p-3">
                         <label>🏎️ Odometer</label>
-                        <input type="number" name="km_reading" id="k" step="0.1" required class="mt-1" />
+                        <input type="number" name="km_reading" id="k" step="0.1" inputmode="decimal" required
+                            class="mt-1" />
                     </div>
                     <div class="card p-3 h-full flex flex-col justify-center items-center gap-1">
                         <label>Status</label>
@@ -258,22 +350,24 @@
                     <div class="grid grid-cols-[1fr_auto_1fr] items-end gap-x-3">
                         <div>
                             <label>Quantity (L)</label>
-                            <input type="number" name="fuel_qty" id="q" step="0.01" required oninput="calc()" />
+                            <input type="number" name="fuel_qty" id="q" step="0.01" inputmode="decimal" required
+                                oninput="calc()" />
                         </div>
                         <div class="text-3xl font-black pb-2">×</div>
                         <div>
                             <label>Price / L</label>
-                            <input type="number" name="fuel_price" id="p" step="0.01" required oninput="calc()" />
+                            <input type="number" name="fuel_price" id="p" step="0.01" inputmode="decimal" required
+                                oninput="calc()" />
                         </div>
                     </div>
                     <div id="total_cost_card" class="card p-3">
                         <div class="flex justify-between items-center">
-                             <label class="!mb-0">Total:</label>
-                             <div class="text-right text-3xl font-black">
-                                 <span>₹</span>
-                                 <span id="t_display">0.00</span>
-                                 <input type="hidden" name="refill_amount" id="t" />
-                             </div>
+                            <label class="!mb-0">Total:</label>
+                            <div class="text-right text-3xl font-black">
+                                <span>₹</span>
+                                <span id="t_display">0.00</span>
+                                <input type="hidden" name="refill_amount" id="t" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -283,7 +377,8 @@
                     <div>
                         <label>📍 Station</label>
                         <div class="flex items-center">
-                            <input type="text" name="pump_location" id="l" placeholder="Station Name" class="font-bold rounded-r-none" />
+                            <input type="text" name="pump_location" id="l" placeholder="Station Name"
+                                class="font-bold rounded-r-none" />
                             <button type="button" onclick="fetchGPS()"
                                 class="btn h-12 w-12 rounded-l-none text-2xl flex-shrink-0 p-0">
                                 📍
@@ -292,8 +387,7 @@
                     </div>
                 </div>
 
-                <button type="submit" id="s"
-                    class="w-full py-5 btn text-xl">
+                <button type="submit" id="s" class="w-full py-5 btn text-xl">
                     Save Log
                 </button>
             </form>
@@ -335,22 +429,26 @@
         </div>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t-4 border-black grid grid-cols-4 h-16">
-        <button onclick="setTab(0)" class="nav-btn flex items-center justify-center nav-active font-bold text-sm border-r-2 border-l-2 border-black">
+    <nav class="fixed bottom-0 left-0 right-0 bg-card-bg border-t-4 border-border-color grid grid-cols-4 h-16 z-50">
+        <button onclick="setTab(0)"
+            class="nav-btn flex items-center justify-center nav-active font-bold text-sm border-r-2 border-l-2 border-border-color">
             Add
         </button>
-        <button onclick="setTab(1)" class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm border-r-2 border-black">
+        <button onclick="setTab(1)"
+            class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm border-r-2 border-border-color">
             Logs
         </button>
-        <button onclick="setTab(2)" class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm border-r-2 border-black">
+        <button onclick="setTab(2)"
+            class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm border-r-2 border-border-color">
             Stats
         </button>
-        <button onclick="setTab(3)" class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm border-r-2 border-black">
+        <button onclick="setTab(3)"
+            class="nav-btn flex items-center justify-center text-gray-500 font-bold text-sm border-r-2 border-border-color">
             Market
         </button>
     </nav>
 
-     <script>
+    <script>
         let logs = [];
         let chart = null;
         let vehicleList = [];
@@ -365,14 +463,32 @@
             document.getElementById("loadingOverlay").style.display = "none";
         }
 
+        function showToast(text) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = text;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function toggleTheme() {
+            const current = document.body.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', target);
+            localStorage.setItem('theme', target);
+        }
+
         function handleError(err) {
             hideLoading();
             const msg = err.message || "An error occurred. Please try again.";
-            alert("Error: " + msg);
+            showToast("ERROR: " + msg);
             console.error(err);
         }
 
         window.onload = () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) document.body.setAttribute('data-theme', savedTheme);
             document.getElementById("d").value = new Date().toISOString().split("T")[0];
             ref();
         };
@@ -406,15 +522,21 @@
                         logs = res.data;
                         vehicleList = res.vehicles;
                         lastUserPrice = res.lastPrice;
+
+                        // Smart pre-fill price
+                        if (lastUserPrice > 0 && !document.getElementById('p').value) {
+                            document.getElementById('p').value = lastUserPrice;
+                        }
+
                         const s = document.getElementById("vehicleSelect");
                         s.innerHTML = '';
                         if (res.vehicles.length > 0) {
-                             res.vehicles.forEach((v) => s.add(new Option(v, v)));
+                            res.vehicles.forEach((v) => s.add(new Option(v, v)));
                         } else {
                             s.add(new Option("My Car", "My Car"));
                         }
                     } else {
-                        alert("Database Sync Failed.");
+                        showToast("Database Sync Failed.");
                     }
                 })
                 .withFailureHandler(handleError)
@@ -495,7 +617,7 @@
 
         function rend() {
             const b = document.getElementById("logTable");
-             if (logs.length === 0) {
+            if (logs.length === 0) {
                 b.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-gray-500">No logs yet. Add your first entry!</td></tr>`;
                 return;
             }
@@ -583,7 +705,7 @@
                     .getMarketData(p.coords.latitude, p.coords.longitude, lastUserPrice);
             }, (err) => {
                 hideLoading();
-                alert("Location Access Denied. Live Market unavailable.");
+                showToast("Location Access Denied.");
             }, { enableHighAccuracy: true, timeout: 5000 });
         }
 
@@ -591,7 +713,7 @@
             navigator.geolocation.getCurrentPosition((p) => {
                 document.getElementById("l").value = `${p.coords.latitude.toFixed(3)},${p.coords.longitude.toFixed(3)}`;
             }, (err) => {
-                alert("GPS Signal Blocked.");
+                showToast("GPS Signal Blocked.");
             }, { enableHighAccuracy: true, timeout: 5000 });
         }
 
@@ -638,17 +760,18 @@
                                     'pump_location': 'l'
                                 };
                                 Object.keys(fieldMap).forEach(key => {
-                                   const elId = fieldMap[key];
-                                   const el = document.getElementById(elId);
-                                   if(res.data[key] && el) {
+                                    const elId = fieldMap[key];
+                                    const el = document.getElementById(elId);
+                                    if (res.data[key] && el) {
                                         el.value = res.data[key];
                                         el.classList.add('border-yellow-400', 'ring-2', 'ring-yellow-200');
                                         setTimeout(() => el.classList.remove('border-yellow-400', 'ring-2', 'ring-yellow-200'), 3000);
-                                   }
+                                    }
                                 });
                                 calc();
+                                showToast("RECEIPT SCAN SUCCESSFUL");
                             } else {
-                                alert("AI could not read the receipt. Please enter manually.")
+                                showToast("AI SCANNED FAILED. ENTER MANUALLY.");
                             }
                         })
                         .withFailureHandler(handleError)
@@ -660,4 +783,5 @@
         }
     </script>
 </body>
+
 </html>
