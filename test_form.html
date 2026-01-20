@@ -1,0 +1,9 @@
+<form id="f">
+    <input type="text" name="notes" value="hello">
+    <input type="checkbox" name="full_tank" checked>
+</form>
+<script>
+    const form = document.getElementById('f');
+    const data = Object.fromEntries(new FormData(form));
+    console.log(JSON.stringify(data));
+</script>

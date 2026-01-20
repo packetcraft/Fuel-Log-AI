@@ -58,7 +58,8 @@
         }
 
         input,
-        select {
+        select,
+        textarea {
             background: var(--input-bg) !important;
             border: 3px solid var(--border-color) !important;
             color: var(--text-color) !important;
@@ -71,7 +72,8 @@
             transition: all 0.2s ease;
         }
 
-        input:focus {
+        input:focus,
+        textarea:focus {
             outline: none;
             background-color: var(--input-bg) !important;
             border-color: var(--primary-yellow) !important;
@@ -490,6 +492,11 @@
                     </div>
                 </div>
 
+                <div class="card p-3">
+                    <label>Notes</label>
+                    <textarea name="notes" id="n" placeholder="Additional details..." rows="2" class="resize-none"></textarea>
+                </div>
+
                 <button type="submit" id="s" class="w-full py-5 btn text-xl">
                     Save Log
                 </button>
@@ -807,6 +814,7 @@
                             <span>•</span>
                             <span class="${isFull ? 'text-green-600' : 'text-orange-500'}">${isFull ? 'FULL' : 'PARTIAL'}</span>
                         </div>
+                        ${e.notes ? `<div class="text-[0.65rem] opacity-70 italic mt-1 font-medium truncate max-w-[200px]">${e.notes}</div>` : ''}
                     </div>
                     <div class="flex flex-col justify-center items-end">
                          <div class="log-cost">₹${parseFloat(e.refill_amount).toFixed(0)}</div>
