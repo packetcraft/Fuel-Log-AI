@@ -1,5 +1,12 @@
 const GEMINI_API_KEY = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
 
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('Fuel Log AI')
+    .addItem('Initialize Database', 'initializeDatabase')
+    .addToUi();
+}
+
 function doGet() {
   return HtmlService.createTemplateFromFile('Index')
     .evaluate()
@@ -8,18 +15,43 @@ function doGet() {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
-function getDataProtocol() {
+/**
+ * Initializes the Google Sheet with necessary headers and formatting.
+ * Can be called manually from the menu or automatically on first run.
+ */
+function initializeDatabase() {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName('Log') || ss.insertSheet('Log');
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['vehicle_name', 'km_reading', 'fuel_qty', 'refill_amount', 'fuel_price', 'refill_date', 'pump_location', 'full_tank', 'notes']);
-    } else {
-      const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-      if (!headers.map(h => h.toString().trim()).includes('notes')) {
-        sheet.getRange(1, sheet.getLastColumn() + 1).setValue('notes');
-      }
+    let sheet = ss.getSheetByName('Log');
+    if (!sheet) {
+      sheet = ss.insertSheet('Log');
     }
+
+    const requiredHeaders = ['vehicle_name', 'km_reading', 'fuel_qty', 'refill_amount', 'fuel_price', 'refill_date', 'pump_location', 'full_tank', 'notes'];
+
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(requiredHeaders);
+      sheet.getRange(1, 1, 1, requiredHeaders.length).setFontWeight('bold');
+      sheet.setFrozenRows(1);
+    } else {
+      const existingHeaders = sheet.getRange(1, 1, 1, Math.max(1, sheet.getLastColumn())).getValues()[0].map(h => h.toString().trim());
+      requiredHeaders.forEach(h => {
+        if (!existingHeaders.includes(h)) {
+          sheet.getRange(1, sheet.getLastColumn() + 1).setValue(h);
+        }
+      });
+    }
+    return { success: true, message: "Database initialized successfully." };
+  } catch (e) {
+    return { success: false, message: e.toString() };
+  }
+}
+
+function getDataProtocol() {
+  try {
+    initializeDatabase();
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName('Log');
     const data = sheet.getDataRange().getValues();
     const headers = data[0];
     const rows = data.slice(1);
@@ -44,6 +76,7 @@ function getDataProtocol() {
  */
 function saveEntryDirect(entry) {
   try {
+    initializeDatabase();
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheet = ss.getSheetByName('Log');
     const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
