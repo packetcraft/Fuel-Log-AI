@@ -13,35 +13,40 @@
 
         :root {
             font-size: 16px;
-            --primary-yellow: #FFDE03;
-            --black: #1A1A1A;
+            --primary-indigo: #6366f1;
+            --primary-violet: #8b5cf6;
+            --black: #0f172a;
             --white: #ffffff;
-            --background: #F4F4F4;
-            --accent-red: #FF4646;
-            --card-bg: var(--white);
-            --text-color: var(--black);
-            --border-color: var(--black);
-            --shadow-color: var(--black);
-            --input-bg: var(--white);
+            --background: #f8fafc;
+            --accent-rose: #f43f5e;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --text-color: #1e293b;
+            --border-color: rgba(255, 255, 255, 0.4);
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --input-bg: rgba(255, 255, 255, 0.5);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         [data-theme="dark"] {
-            --primary-yellow: #fde047;
+            --primary-indigo: #818cf8;
+            --primary-violet: #a78bfa;
             --black: #000000;
-            --white: #1e1e1e;
-            --background: #121212;
-            --accent-red: #ff5252;
-            --card-bg: #1e1e1e;
-            --text-color: #e0e0e0;
-            --border-color: #404040;
-            --shadow-color: #000000;
-            --input-bg: #2a2a2a;
+            --white: #1e293b;
+            --background: #0f172a;
+            --accent-rose: #fb7185;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-color: #f1f5f9;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --input-bg: rgba(15, 23, 42, 0.5);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         body {
             font-family: "Inter", sans-serif;
-            font-weight: 800;
-            background: var(--background);
+            font-weight: 600;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background-attachment: fixed;
             color: var(--text-color);
             overflow: hidden;
             height: 100svh;
@@ -50,35 +55,46 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
+        [data-theme="dark"] body {
+            background: radial-gradient(circle at top left, #1e1b4b 0%, #0f172a 100%);
+        }
+
         .card {
             background: var(--card-bg);
-            border: 3px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: 4px 4px 0px var(--shadow-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 var(--shadow-color);
         }
 
         input,
         select,
         textarea {
             background: var(--input-bg) !important;
-            border: 3px solid var(--border-color) !important;
+            border: 1px solid rgba(0,0,0,0.1) !important;
             color: var(--text-color) !important;
-            padding: 12px !important;
+            padding: 12px 16px !important;
             width: 100%;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 16px !important;
-            font-weight: 800;
-            box-shadow: 2px 2px 0px var(--shadow-color);
-            transition: all 0.2s ease;
+            font-weight: 600;
+            box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] input,
+        [data-theme="dark"] select,
+        [data-theme="dark"] textarea {
+            border: 1px solid rgba(255,255,255,0.1) !important;
         }
 
         input:focus,
         textarea:focus {
             outline: none;
-            background-color: var(--input-bg) !important;
-            border-color: var(--primary-yellow) !important;
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px var(--shadow-color);
+            background-color: var(--white) !important;
+            border-color: var(--primary-indigo) !important;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
         }
 
         label {
@@ -91,33 +107,36 @@
         }
 
         .btn {
-            background-color: var(--primary-yellow);
-            color: var(--black);
-            border: 3px solid var(--border-color);
-            border-radius: 8px;
-            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-indigo) 0%, var(--primary-violet) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
             text-transform: uppercase;
-            box-shadow: 4px 4px 0px var(--shadow-color);
-            transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s ease;
             text-align: center;
             cursor: pointer;
         }
 
         .btn:active {
-            transform: scale(0.95) translate(2px, 2px);
-            box-shadow: 0px 0px 0px var(--shadow-color);
+            transform: scale(0.98);
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.2);
         }
 
         .btn-secondary {
-            background-color: var(--card-bg);
+            background: var(--card-bg);
             color: var(--text-color);
+            backdrop-filter: blur(8px);
+            border: var(--glass-border);
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
 
         #total_cost_card {
-            background-color: var(--primary-yellow);
-            box-shadow: 6px 6px 0px var(--shadow-color);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             pointer-events: none;
-            color: var(--black);
         }
 
         /* Toast System */
@@ -136,17 +155,23 @@
         }
 
         .toast {
-            background: var(--primary-yellow);
-            color: var(--black);
-            border: 3px solid var(--black);
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 800;
-            box-shadow: 4px 4px 0px var(--black);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            color: var(--text-color);
+            border: var(--glass-border);
+            padding: 12px 24px;
+            border-radius: 9999px;
+            font-weight: 700;
+            box-shadow: 0 8px 32px var(--shadow-color);
             text-transform: uppercase;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
             animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.3s forwards 2.7s;
             pointer-events: auto;
+        }
+
+        [data-theme="dark"] .toast {
+            background: rgba(30, 41, 59, 0.8);
         }
 
         @keyframes slideIn {
@@ -193,14 +218,15 @@
         }
 
         .mission-card {
-            background: var(--primary-yellow);
-            color: var(--black);
-            border: 3px solid var(--black);
-            border-radius: 12px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            color: var(--text-color);
+            border: var(--glass-border);
+            border-radius: 24px;
             max-width: 340px;
-            padding: 2rem;
+            padding: 2.5rem;
             text-align: center;
-            box-shadow: 8px 8px 0px var(--black);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
         }
 
 
@@ -224,8 +250,8 @@
         }
 
         .nav-active {
-            background: var(--primary-yellow);
-            box-shadow: inset 4px 4px 0px #00000033;
+            color: var(--primary-indigo) !important;
+            background: rgba(99, 102, 241, 0.1);
         }
 
         table {
@@ -236,35 +262,34 @@
         th {
             color: var(--text-color);
             background: var(--card-bg);
-            border-bottom: 3px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             padding: 10px;
             text-align: left;
-            font-weight: 800;
+            font-weight: 700;
             text-transform: uppercase;
         }
 
         td {
             padding: 12px 10px;
-            border-bottom: 3px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .nav-btn {
-            transition: background-color 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .nav-btn:active {
-            background: var(--primary-yellow);
-            opacity: 0.8;
+            transform: translateY(-2px);
         }
 
         .log-card {
             display: grid;
             grid-template-columns: 1fr auto;
             gap: 0.5rem;
-            padding: 1rem;
-            border-bottom: 3px solid var(--border-color);
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
             background: var(--card-bg);
-            transition: background-color 0.2s;
+            transition: all 0.2s ease;
         }
 
         .log-card:last-child {
@@ -339,24 +364,23 @@
             flex: 1;
             padding: 1rem;
             background: var(--card-bg);
-            border: 3px solid var(--border-color);
-            border-radius: 8px;
+            border: var(--glass-border);
+            border-radius: 12px;
             text-align: center;
-            font-weight: 900;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             opacity: 0.6;
             font-size: 0.8rem;
             text-transform: uppercase;
         }
 
         .vehicle-radio.selected {
-            background: var(--primary-yellow);
-            color: var(--black);
+            background: var(--primary-indigo);
+            color: white;
             opacity: 1;
-            box-shadow: 4px 4px 0px var(--shadow-color);
-            transform: translate(-2px, -2px);
-            border-color: var(--black);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -810,9 +834,9 @@
                             ${effDot}
                         </div>
                         <div class="log-details">
-                            <span class="font-bold border-2 border-[var(--border-color)] px-1 rounded text-xs">${parseFloat(e.fuel_qty).toFixed(2)}L</span>
-                            <span>•</span>
-                            <span class="${isFull ? 'text-green-600' : 'text-orange-500'}">${isFull ? 'FULL' : 'PARTIAL'}</span>
+                            <span class="font-bold border border-[var(--border-color)] px-2 py-0.5 rounded-full text-[0.65rem] bg-white/30">${parseFloat(e.fuel_qty).toFixed(2)}L</span>
+                            <span class="opacity-30">•</span>
+                            <span class="text-[0.65rem] font-bold ${isFull ? 'text-emerald-500' : 'text-rose-500'}">${isFull ? 'FULL TANK' : 'PARTIAL'}</span>
                         </div>
                         ${e.notes ? `<div class="text-[0.65rem] opacity-70 italic mt-1 font-medium truncate max-w-[200px]">${e.notes}</div>` : ''}
                     </div>
