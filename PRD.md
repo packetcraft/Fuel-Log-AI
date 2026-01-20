@@ -35,7 +35,8 @@
     -   Optional fields: `Notes` (pure text).
 -   **Data Persistence:**  
     -   Save all records to a Google Sheet ('Log' tab).
-    -   Auto-initialization of sheet headers if missing.
+    -   **Auto-Initialization Engine:** Automated setup of headers and sheet structure if missing.
+    -   **Manual Control Menu:** Custom Spreadsheet UI menu for manual database initialization.
 -   **Vehicle Management:**  
     -   Support multiple vehicles.
     -   Dropdown selection based on historical usage.
@@ -75,7 +76,7 @@
 ### 5.2 Data Management
 | ID | Requirement Description | Technical Implementation Reference |
 | :--- | :--- | :--- |
-| **FR-04** | System shall start with a blank 'Log' sheet and append headers automatically on first run. | `getDataProtocol()` lines 15-17 |
+| **FR-04** | System shall ensure the 'Log' sheet exists and contains required headers/formatting on first run or manual trigger. | `initializeDatabase()` |
 | **FR-05** | Entries must handle specific data types: String (Vehicle), Float (Price/Qty), Date (Refill Date), String (Notes). | `saveEntryDirect(entry)` |
 | **FR-06** | System must retrieve historical data in reverse chronological order for the dashboard. | `getDataProtocol()` line 32 |
 
@@ -163,6 +164,11 @@ The following core improvements were implemented to transform the initial protot
 - **Fluid Navigation:** Implemented smooth "Lift & Fade" animations for tab switching and added iconography to the bottom navigation bar.
 - **Silent Auto-Location:** GPS coordinates are now fetched silently on app load to minimize friction during data entry.
 - **Interactive Charts:** Enabling "Touch-to-View" on the Stats chart allows users to inspect specific log details directly from the graph.
+
+### 🛠️ v2.2 Initialization Overhaul (Current)
+- **Centralized Initialization:** Consolidated all database setup logic into a single `initializeDatabase()` function.
+- **Improved Spreadsheet UI:** Added a "Fuel Log AI" custom menu to the Google Sheet for easier manual database management.
+- **Robust Persistence:** `getDataProtocol` and `saveEntryDirect` now both call the initialization routine to ensure database integrity before any read/write operation.
 
 ---
 **End of Document**

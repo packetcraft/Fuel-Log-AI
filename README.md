@@ -25,6 +25,7 @@ Since this project runs on Google's serverless infrastructure, you don't need to
 
 1. **Initialize Database:**
    - Create a new empty [Google Sheet](https://sheet.new). This will act as your database.
+   - Once the script is installed (Step 2), you can use the **Fuel Log AI > Initialize Database** menu to set up headers and formatting automatically.
 
 2. **Install Engine:**
    - In the Sheet, go to **Extensions > Apps Script**.
@@ -54,7 +55,7 @@ Since this project runs on Google's serverless infrastructure, you don't need to
 The interface is engineered with **svh (Small Viewport Height)** resilience and **16px anti-zoom** triggers to ensure a native-app experience on iOS and Android devices without the overhead of an app store.
 
 ## 💾 Database Logic
-All telemetry is stored in a structured [Google Sheet](https://docs.google.com/spreadsheets/). The application automatically initializes the required headers in the **Log** tab on first uplink, and dynamically manages vehicle protocols based on your history.
+All telemetry is stored in a structured [Google Sheet](https://docs.google.com/spreadsheets/). The application features an **Auto-Initialization Protocol** that ensures the "Log" sheet exists with correct headers and formatting (Bold, Frozen Row) on first uplink. Users can also manually trigger a database reset/initialization from the custom **Fuel Log AI** menu within the spreadsheet.
 
 ## 👥 Multi-User Protocol (Family Sharing)
 To log data to the same central database across multiple devices:
