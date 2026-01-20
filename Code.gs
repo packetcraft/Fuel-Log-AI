@@ -13,7 +13,12 @@ function getDataProtocol() {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     let sheet = ss.getSheetByName('Log') || ss.insertSheet('Log');
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['vehicle_name', 'km_reading', 'fuel_qty', 'refill_amount', 'fuel_price', 'refill_date', 'pump_location', 'full_tank']);
+      sheet.appendRow(['vehicle_name', 'km_reading', 'fuel_qty', 'refill_amount', 'fuel_price', 'refill_date', 'pump_location', 'full_tank', 'notes']);
+    } else {
+      const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+      if (!headers.map(h => h.toString().trim()).includes('notes')) {
+        sheet.getRange(1, sheet.getLastColumn() + 1).setValue('notes');
+      }
     }
     const data = sheet.getDataRange().getValues();
     const headers = data[0];
@@ -33,6 +38,10 @@ function getDataProtocol() {
   } catch (e) { return { success: false, message: e.toString() }; }
 }
 
+/**
+ * Generic function to save entry data based on existing sheet headers.
+ * This automatically handles new columns like 'notes' if they exist in headers.
+ */
 function saveEntryDirect(entry) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();

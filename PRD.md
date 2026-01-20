@@ -32,6 +32,7 @@
 -   **Manual Entry & Validation:**  
     -   User can edit AI-extracted values or enter data manually if no receipt is available.
     -   Mandatory fields: `Vehicle Name`, `KM Reading`, `Amount`, `Price`.
+    -   Optional fields: `Notes` (pure text).
 -   **Data Persistence:**  
     -   Save all records to a Google Sheet ('Log' tab).
     -   Auto-initialization of sheet headers if missing.
@@ -75,7 +76,7 @@
 | ID | Requirement Description | Technical Implementation Reference |
 | :--- | :--- | :--- |
 | **FR-04** | System shall start with a blank 'Log' sheet and append headers automatically on first run. | `getDataProtocol()` lines 15-17 |
-| **FR-05** | Entries must handle specific data types: String (Vehicle), Float (Price/Qty), Date (Refill Date). | `saveEntryDirect(entry)` |
+| **FR-05** | Entries must handle specific data types: String (Vehicle), Float (Price/Qty), Date (Refill Date), String (Notes). | `saveEntryDirect(entry)` |
 | **FR-06** | System must retrieve historical data in reverse chronological order for the dashboard. | `getDataProtocol()` line 32 |
 
 ### 5.3 Location & Market Data
