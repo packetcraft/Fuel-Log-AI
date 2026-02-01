@@ -112,3 +112,17 @@ function getMarketData(lat, lon, lastPrice) {
     return { success: true, market: JSON.parse(json) };
   } catch (e) { return { success: false }; }
 }
+
+
+
+// New wrapper function for AppSheet
+function processAppSheetReceipt(rowId) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Logs");
+  const data = sheet.getDataRange().getValues();
+  
+  // 1. Find the row by ID
+  // 2. Get the Image URL from the "Receipt Image" column
+  // 3. Fetch the image bytes
+  // 4. Call your existing 'uploadImageToGemini' logic
+  // 5. sheet.getRange(rowIndex, colIndex).setValue(results)
+}
