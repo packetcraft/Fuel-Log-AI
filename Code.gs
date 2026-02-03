@@ -90,14 +90,59 @@ function saveEntryDirect(entry) {
 }
 
 function processReceiptWithAI(base64Image) {
-  const url = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-lite:generateContent?key=' + GEMINI_API_KEY;
-  const payload = { "contents": [{ "parts": [{ "text": "Extract fuel receipt data: {fuel_qty, fuel_price, refill_amount, refill_date, pump_location}. Return raw JSON." }, { "inline_data": { "mime_type": "image/jpeg", "data": base64Image } }] }] };
+  // Using v1beta to ensure access to latest generationConfig features if v1 lags
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_API_KEY;
+  
+  const promptText = `
+    Analyze this fuel receipt image and extract the following data into a strict JSON object.
+    
+    Rules:
+    1. vendor: The brand name (e.g., Shell, HP, Nayara, Indian Oil).
+    2. fuel_qty: The volume in Liters as a Number. Ignore leading zeros (e.g., convert "00039.07" to 39.07).
+    3. fuel_price: The rate per Liter as a Number.
+    4. refill_amount: The total cost/sale amount as a Number.
+    5. refill_date: Format as "YYYY-MM-DD". Use the receipt date.
+    6. pump_location: The city and specific area (e.g., "Whitefield, Bangalore").
+    
+    If a value is not visible, use null. Do not include units (L, Rs, INR) in the numbers.
+  `;
+
+  const payload = {
+    "contents": [{
+      "parts": [
+        { "text": promptText },
+        { "inline_data": { "mime_type": "image/jpeg", "data": base64Image } }
+      ]
+    }],
+    "generationConfig": {
+      "response_mime_type": "application/json"
+    }
+  };
+
   try {
-    const response = UrlFetchApp.fetch(url, { "method": "post", "contentType": "application/json", "payload": JSON.stringify(payload) });
+    const response = UrlFetchApp.fetch(url, {
+      "method": "post",
+      "contentType": "application/json",
+      "payload": JSON.stringify(payload),
+      "muteHttpExceptions": true
+    });
+
+    const responseCode = response.getResponseCode();
     const result = JSON.parse(response.getContentText());
-    const json = result.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
-    return { success: true, data: JSON.parse(json) };
-  } catch (e) { return { success: false }; }
+
+    if (responseCode !== 200) {
+      console.error("API Error:", result);
+      return { success: false, error: result.error?.message || "API call failed" };
+    }
+
+    // With response_mime_type, we don't need regex cleanup usually, but parsing ensures it's an object
+    const extractedData = JSON.parse(result.candidates[0].content.parts[0].text);
+    return { success: true, data: extractedData };
+
+  } catch (e) {
+    console.error("Exception:", e);
+    return { success: false, error: e.toString() };
+  }
 }
 
 function getMarketData(lat, lon, lastPrice) {
