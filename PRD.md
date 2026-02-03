@@ -1,6 +1,6 @@
 # Product Requirement Document (PRD): Fuel Log AI
 
-**Version:** 1.0  
+**Version:** 2.3
 **Status:** Draft  
 **Date:** 2026-01-10  
 **Author:** Product Management Team (AI)
@@ -27,8 +27,8 @@
 -   **AI Receipt Scanning:**  
     -   User captures/uploads a receipt image.
     -   **Dual-Trigger Input:** Specific buttons for direct Camera access vs. File explorer.
-    -   System extracts: `Fuel Quantity`, `Fuel Price`, `Total Amount`, `Date`, `Pump Location`.
-    -   Backend Model: Gemini 2.0 Flash-Lite (for speed and cost-efficiency).
+    -   System extracts: `Fuel Quantity`, `Fuel Price`, `Total Amount`, `Date`, and granular location data (`Vendor`, `City`, `Area`).
+    -   Backend Model: Gemini 2.0 Flash.
 -   **Manual Entry & Validation:**  
     -   User can edit AI-extracted values or enter data manually if no receipt is available.
     -   Mandatory fields: `Vehicle Name`, `KM Reading`, `Amount`, `Price`.
@@ -70,8 +70,8 @@
 | ID | Requirement Description | Technical Implementation Reference |
 | :--- | :--- | :--- |
 | **FR-01** | System must accept image uploads (JPEG/PNG) and convert to Base64. | Frontend `FileReader` |
-| **FR-02** | System must send Base64 image to Gemini 2.0 Flash-Lite for entity extraction. | `processReceiptWithAI(base64Image)` |
-| **FR-03** | Extracted JSON must be pre-filled into the entry form. | Frontend Form Population |
+| **FR-02** | System must send Base64 image to Gemini 2.0 Flash for granular entity extraction (Vendor, City, Area, Qty, Price). | `processReceiptWithAI(base64Image)` |
+| **FR-03** | System must consolidate extracted location data (Vendor, Area, City) into the `Notes` field and pre-fill the form. | `processReceiptWithAI` logic & Frontend population |
 
 ### 5.2 Data Management
 | ID | Requirement Description | Technical Implementation Reference |
@@ -106,10 +106,11 @@ The application's UI follows a "Neo-Brutalist" design philosophy, characterized 
 
 ## 7. Technical Constraints & Architecture
 -   **Platform:** Google Apps Script Web App (`doGet`).
+-   **AI Engine:** Google Gemini 2.0 Flash.
 -   **Zero-Cost Hosting:** The application is entirely self-hosted within the user's Google Workspace/Drive account, requiring no external VPC or server instances.
 -   **Templating:** Server-side HTML template (`HtmlService`).
 -   **Quotas:** Subject to Consumer/Workspace Gmail quotas for `UrlFetchApp` and Script runtimes.
--   **Security:** API Keys (Gemini) must be handled securely (currently hardcoded in `Code.gs` line 1 - **Recommendation: Move to Script Properties**).
+-   **Security:** API Keys (Gemini) are managed via `PropertiesService` (Script Properties) for secure environment handling.
 
 ## 8. Success Metrics
 -   **Task Completion Time:** < 30 seconds to log a fuel stop.
@@ -131,7 +132,7 @@ The following core improvements were implemented to transform the initial protot
 - **Improved UX:** Increased label readability and touch targets for mobile users.
 
 ### ✨ Visual Logic & Feedback
-- **AI Pulse Animation:** Inputs now "pulse" with a cyan glow when successfully populated by the Gemini receipt extraction logic.
+- **AI Pulse Animation:** Inputs now "pulse" with a yellow glow when successfully populated by the Gemini receipt extraction logic.
 - **GPS Precision:** Geolocation requests now use high-accuracy mode with improved timeout handling.
 
 ### 🔒 Security & Backend
@@ -169,6 +170,11 @@ The following core improvements were implemented to transform the initial protot
 - **Centralized Initialization:** Consolidated all database setup logic into a single `initializeDatabase()` function.
 - **Improved Spreadsheet UI:** Added a "Fuel Log AI" custom menu to the Google Sheet for easier manual database management.
 - **Robust Persistence:** `getDataProtocol` and `saveEntryDirect` now both call the initialization routine to ensure database integrity before any read/write operation.
+
+### 🧠 v2.3 Enhanced Receipt Intelligence (Current)
+- **Granular Data Extraction:** Upgraded the AI prompt to extract separate fields for `vendor`, `city`, and `area` from receipts, significantly improving data accuracy.
+- **Contextual Note Synthesis:** Implemented backend logic to automatically synthesize a descriptive "Notes" entry (e.g., "Shell - Whitefield, Bangalore") by combining extracted vendor and location data.
+- **Visual Feedback Refinement:** Standardized the AI-success indicator to a high-contrast yellow glow (`border-yellow-400`), improving visibility in both light and dark modes.
 
 ---
 **End of Document**
