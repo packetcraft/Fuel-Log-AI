@@ -506,8 +506,7 @@
         <div id="tab1" class="tab-panel">
             <div class="card overflow-hidden">
                 <div id="logList" class="card overflow-hidden flex flex-col">
-                    <!-- Logs will be rendered here as cards -->
-                </div>
+                    </div>
             </div>
         </div>
 
@@ -964,7 +963,8 @@
                                 const fieldMap = {
                                     'fuel_qty': 'q',
                                     'fuel_price': 'p',
-                                    'pump_location': 'l'
+                                    'refill_date': 'd',
+                                    'notes': 'n'
                                 };
                                 Object.keys(fieldMap).forEach(key => {
                                     const elId = fieldMap[key];
