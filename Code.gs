@@ -27,7 +27,7 @@ function initializeDatabase() {
       sheet = ss.insertSheet('Log');
     }
 
-    const requiredHeaders = ['vehicle_name', 'km_reading', 'fuel_qty', 'refill_amount', 'fuel_price', 'refill_date', 'pump_location', 'full_tank', 'notes'];
+    const requiredHeaders = ['vehicle_name', 'fuel_type', 'km_reading', 'fuel_qty', 'refill_amount', 'fuel_price', 'refill_date', 'pump_location', 'full_tank', 'notes'];
 
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(requiredHeaders);

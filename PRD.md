@@ -77,7 +77,7 @@
 | ID | Requirement Description | Technical Implementation Reference |
 | :--- | :--- | :--- |
 | **FR-04** | System shall ensure the 'Log' sheet exists and contains required headers/formatting on first run or manual trigger. | `initializeDatabase()` |
-| **FR-05** | Entries must handle specific data types: String (Vehicle), Float (Price/Qty), Date (Refill Date), String (Notes). | `saveEntryDirect(entry)` |
+| **FR-05** | Entries must handle specific data types: String (Vehicle), String (Fuel Type), Float (Price/Qty), Date (Refill Date), String (Notes). | `saveEntryDirect(entry)` |
 | **FR-06** | System must retrieve historical data in reverse chronological order for the dashboard. | `getDataProtocol()` line 32 |
 
 ### 5.3 Location & Market Data
@@ -169,6 +169,12 @@ The following core improvements were implemented to transform the initial protot
 - **Centralized Initialization:** Consolidated all database setup logic into a single `initializeDatabase()` function.
 - **Improved Spreadsheet UI:** Added a "Fuel Log AI" custom menu to the Google Sheet for easier manual database management.
 - **Robust Persistence:** `getDataProtocol` and `saveEntryDirect` now both call the initialization routine to ensure database integrity before any read/write operation.
+
+### 🛡️ v2.3 Enhanced AI Resiliency (Current)
+- **Granular Data Extraction:** Refined the Gemini 2.0 prompt to pull atomic data points (Vendor, City, Area) separately, leading to higher reliability and fewer formatting errors.
+- **Intelligent Note Assembly:** Introduced server-side logic to programmatically construct the `notes` field from extracted location and vendor data, reducing AI hallucinations in complex fields.
+- **Field-Level Success Indicators:** Added UI feedback that highlights fields populated by AI with a temporary "success glow" (yellow border), improving user confidence in the automated scan.
+- **Seamless Integration:** AI extraction now triggers the frontend calculation engine automatically, ensuring the "Total Cost" display is always in sync with scanned data without manual intervention.
 
 ---
 **End of Document**
