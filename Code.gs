@@ -90,21 +90,22 @@ function saveEntryDirect(entry) {
 }
 
 function processReceiptWithAI(base64Image) {
-  // Using v1beta to ensure access to latest generationConfig features if v1 lags
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_API_KEY;
   
+  // We ask for raw fields separately. This is much more reliable for the AI.
   const promptText = `
     Analyze this fuel receipt image and extract the following data into a strict JSON object.
     
-    Rules:
-    1. vendor: The brand name (e.g., Shell, HP, Nayara, Indian Oil).
-    2. fuel_qty: The volume in Liters as a Number. Ignore leading zeros (e.g., convert "00039.07" to 39.07).
-    3. fuel_price: The rate per Liter as a Number.
-    4. refill_amount: The total cost/sale amount as a Number.
-    5. refill_date: Format as "YYYY-MM-DD". Use the receipt date.
-    6. pump_location: The city and specific area (e.g., "Whitefield, Bangalore").
+    Fields required:
+    1. vendor: The fuel brand name (e.g., Shell, HP, Indian Oil, Nayara, BPCL). Look at logos and headers.
+    2. fuel_qty: Volume in Liters (Number). Ignore leading zeros.
+    3. fuel_price: Rate per Liter (Number).
+    4. refill_amount: Total sale amount (Number).
+    5. refill_date: Date as "YYYY-MM-DD".
+    6. city: The city name (e.g., Bangalore).
+    7. area: The specific area, road, or station location (e.g., Whitefield, Old Madras Road).
     
-    If a value is not visible, use null. Do not include units (L, Rs, INR) in the numbers.
+    If a numeric value is not visible, use null.
   `;
 
   const payload = {
@@ -135,8 +136,22 @@ function processReceiptWithAI(base64Image) {
       return { success: false, error: result.error?.message || "API call failed" };
     }
 
-    // With response_mime_type, we don't need regex cleanup usually, but parsing ensures it's an object
-    const extractedData = JSON.parse(result.candidates[0].content.parts[0].text);
+    let extractedData = JSON.parse(result.candidates[0].content.parts[0].text);
+
+    // --- LOGIC FIX: Combine fields in JavaScript manually ---
+    
+    // 1. Clean up Vendor (fallback to "Fuel Station" if null)
+    const vendor = extractedData.vendor || "Fuel Station";
+
+    // 2. Clean up Location (Join Area and City, filtering out empty ones)
+    const locationParts = [extractedData.area, extractedData.city].filter(part => part && part.trim() !== "");
+    const locationStr = locationParts.length > 0 ? locationParts.join(", ") : "Unknown Location";
+
+    // 3. Create the 'notes' field programmatically
+    extractedData.notes = `${vendor} - ${locationStr}`;
+
+    // ---------------------------------------------------------
+
     return { success: true, data: extractedData };
 
   } catch (e) {
