@@ -14,7 +14,7 @@
 
 ## 🚀 Core Protocols
 - **Dual-Trigger Scanning:** Dedicated 📸 Cam (direct rear-camera access) and 📁 File (gallery explorer) triggers for maximum flexibility.
-- **AI Receipt Decoding:** Pulse-scanning of fuel receipts to auto-extract Price, Quantity, and Location with 90%+ accuracy.
+- **AI Receipt Decoding:** Granular pulse-scanning of fuel receipts to auto-extract Price, Quantity, and Location (with automatic Note assembly) for maximum reliability.
 - **Mission Report HUD:** Real-time post-log dashboard calculating KM/L efficiency and ranking your performance (S to C Grade).
 - **Dynamic Theming:** Visual protocols shift accent colors based on fuel type (Petrol-Cyan, Diesel-Red, CNG-Green).
 - **Live Market Scan:** High-precision GPS uplink to fetch local fuel price insights and compare them with your pump cost.
