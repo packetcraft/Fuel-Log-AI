@@ -81,6 +81,28 @@
             box-shadow: 6px 6px 0px var(--shadow-color);
         }
 
+        /* FORCE DROPDOWN ARROW VISIBILITY */
+        input::-webkit-calendar-picker-indicator {
+            opacity: 1 !important;
+            display: block !important;
+            background-color: transparent;
+            cursor: pointer;
+            margin-left: 5px;
+            filter: invert(var(--invert-icon));
+            transition: transform 0.2s;
+        }
+        
+        input:focus::-webkit-calendar-picker-indicator {
+            transform: rotate(180deg);
+        }
+
+        [data-theme="dark"] {
+            --invert-icon: 1;
+        }
+        [data-theme="light"] {
+            --invert-icon: 0;
+        }
+
         label {
             font-size: 0.8rem !important;
             font-weight: 700;
@@ -118,6 +140,19 @@
             box-shadow: 6px 6px 0px var(--shadow-color);
             pointer-events: none;
             color: var(--black);
+        }
+
+        /* Specific Vehicle Colors */
+        .btn-kylaq {
+            background-color: #22c55e !important; /* Green */
+            color: white !important;
+            border-color: #14532d !important;
+        }
+        
+        .btn-octavia {
+            background-color: #ef4444 !important; /* Red */
+            color: white !important;
+            border-color: #7f1d1d !important;
         }
 
         /* Toast System */
@@ -481,9 +516,13 @@
                     <input type="date" name="refill_date" id="d" required class="font-bold" />
                     <div>
                         <label>📍 Station</label>
-                        <div class="flex items-center">
-                            <input type="text" name="pump_location" id="l" placeholder="Station Name"
+                        <div class="flex items-center relative">
+                            <input type="text" name="pump_location" id="l" list="stationOptions" 
+                                placeholder="Select or type..."
+                                autocomplete="off"
                                 class="font-bold rounded-r-none" />
+                            <datalist id="stationOptions">
+                                </datalist>
                             <button type="button" onclick="fetchGPS()"
                                 class="btn h-12 w-12 rounded-l-none text-2xl flex-shrink-0 p-0">
                                 📍
@@ -608,13 +647,11 @@
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme) document.body.setAttribute('data-theme', savedTheme);
             document.getElementById("d").value = new Date().toISOString().split("T")[0];
-
+            
             // Auto-fetch GPS silently
             if (navigator.geolocation && !document.getElementById("l").value) {
                 navigator.geolocation.getCurrentPosition((p) => {
-                    const lat = p.coords.latitude.toFixed(3);
-                    const lon = p.coords.longitude.toFixed(3);
-                    document.getElementById("l").value = `${lat},${lon}`;
+                    // Do nothing, just ensure permissions are ready
                 }, (err) => {
                     console.log("Auto-GPS failed", err);
                 }, { timeout: 5000 });
@@ -653,6 +690,20 @@
                         vehicleList = res.vehicles;
                         lastUserPrice = res.lastPrice;
 
+                        // ----------------------------------------------------
+                        // POPULATE STATION DROPDOWN
+                        // ----------------------------------------------------
+                        const stationSet = new Set(logs.map(l => l.pump_location).filter(s => s && s.trim() !== ""));
+                        // Add NEW to the set so it appears in list
+                        stationSet.add("NEW");
+                        const stationArr = Array.from(stationSet).sort();
+                        
+                        const dl = document.getElementById('stationOptions');
+                        dl.innerHTML = stationArr.map(s => `<option value="${s}">`).join('');
+
+                        // DO NOT PRE-FILL "NEW". 
+                        // Leaving it empty ensures valid dropdown behavior.
+
                         // Smart pre-fill price
                         if (lastUserPrice > 0 && !document.getElementById('p').value) {
                             document.getElementById('p').value = lastUserPrice;
@@ -666,15 +717,21 @@
                             s.add(new Option("My Car", "My Car"));
                         }
 
-                        // Smart Selector Logic
+                        // Smart Selector Logic with Custom Colors
                         const rg = document.getElementById("vehicleRadioGroup");
-                        if (vehicleList.length > 0 && vehicleList.length <= 3) {
+                        if (vehicleList.length > 0 && vehicleList.length <= 4) {
                             s.style.display = 'none';
                             rg.style.display = 'flex';
                             rg.innerHTML = '';
                             vehicleList.forEach(v => {
                                 const div = document.createElement('div');
                                 div.className = 'vehicle-radio';
+                                
+                                // Apply color classes based on name
+                                const vName = v.toLowerCase();
+                                if (vName.includes('kylaq')) div.classList.add('btn-kylaq');
+                                else if (vName.includes('octavia')) div.classList.add('btn-octavia');
+                                
                                 div.textContent = v;
                                 div.onclick = () => {
                                     s.value = v;
@@ -712,6 +769,12 @@
             e.preventDefault();
             const data = Object.fromEntries(new FormData(e.target));
             data.full_tank = document.getElementById("ft").checked;
+            
+            // Default Station to NEW if empty
+            if (!data.pump_location || data.pump_location.trim() === "") {
+                data.pump_location = "NEW";
+            }
+
             showLoading("Saving entry...");
             google.script.run
                 .withSuccessHandler(() => {
@@ -719,6 +782,8 @@
                     showMissionReport(data);
                     e.target.reset();
                     document.getElementById("d").value = new Date().toISOString().split("T")[0];
+                    // Clean reset
+                    document.getElementById("l").value = ""; 
                     setTimeout(ref, 3000);
                 })
                 .withFailureHandler(handleError)
@@ -966,6 +1031,8 @@
                                     'refill_date': 'd',
                                     'notes': 'n'
                                 };
+                                
+                                // Auto-fill fields
                                 Object.keys(fieldMap).forEach(key => {
                                     const elId = fieldMap[key];
                                     const el = document.getElementById(elId);
@@ -975,8 +1042,29 @@
                                         setTimeout(() => el.classList.remove('border-yellow-400', 'ring-2', 'ring-yellow-200'), 3000);
                                     }
                                 });
+
+                                // APPEND GPS TO NOTES (Requested Feature)
+                                const notesField = document.getElementById('n');
+                                const aiNotes = res.data.notes || "";
+                                
+                                navigator.geolocation.getCurrentPosition(
+                                    (pos) => {
+                                        const gpsString = `GPS: ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+                                        // Combine AI notes + GPS
+                                        notesField.value = aiNotes ? `${aiNotes} | ${gpsString}` : gpsString;
+                                        showToast("SCANNED + GPS ADDED");
+                                    },
+                                    (err) => {
+                                        // Fallback if GPS fails: just show AI notes
+                                        console.warn("GPS failed during scan", err);
+                                        // Ensure notes are set even if GPS fails
+                                        if (aiNotes) notesField.value = aiNotes;
+                                        showToast("SCANNED (NO GPS)");
+                                    },
+                                    { timeout: 4000, enableHighAccuracy: true }
+                                );
+
                                 calc();
-                                showToast("RECEIPT SCAN SUCCESSFUL");
                             } else {
                                 showToast("AI SCANNED FAILED. ENTER MANUALLY.");
                             }
