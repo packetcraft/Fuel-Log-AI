@@ -431,20 +431,18 @@
                 🌓
             </button>
             <h1 class="text-xl font-black tracking-tighter">
-                Fuel Log AI
+                🚗💨Fuel Log AI
             </h1>
         </div>
         <div class="flex gap-2">
-            <button onclick="openScanner(true)" class="btn btn-secondary px-3 py-2 text-sm">
+            <button onclick="openScanner(true)" class="btn p-3 text-2xl leading-none" title="Take Photo">
                 📷
             </button>
-            <button onclick="openScanner(false)" class="btn btn-secondary px-3 py-2 text-sm">
+            <button onclick="openScanner(false)" class="btn p-3 text-2xl leading-none" title="Browse Photo">
                 📁
             </button>
-            <button onclick="ref()" class="btn btn-secondary px-3 py-2 text-sm">
-                🔄
-            </button>
         </div>
+        
         <input type="file" id="cam" accept="image/*" class="hidden" onchange="processImage(event)" />
     </header>
 
