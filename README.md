@@ -66,6 +66,6 @@ To log data to the same central database across multiple devices:
 3. **The Link:** Send them the Web App URL. They can now log refills from their own devices, and the "Vehicle Protocol" dropdown will allow them to select their specific car.
 
 ---
-**Developed by:** [Your Name/Agency]  
+**Developed by:** [Packercraft]  
 **License:** MIT Protocol  
 *"Drive optimized. Log AI."*
