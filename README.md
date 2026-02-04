@@ -1,7 +1,7 @@
-# ⚡ Fuel Log AI // Protocol v2.1
+# ⚡ Fuel Log AI // Protocol v2.4
 
 > **Status:** UPLINK_ACTIVE
-> **Theme:** Cyber-Obsidian // Neon Cyan
+> **Theme:** Neo-Brutalist // Cyber-Yellow
 > **Engine:** Google Apps Script + Gemini 2.0 Flash
 
 ## 🌌 Overview
@@ -14,10 +14,12 @@
 
 ## 🚀 Core Protocols
 - **Dual-Trigger Scanning:** Dedicated 📸 Cam (direct rear-camera access) and 📁 File (gallery explorer) triggers for maximum flexibility.
-- **AI Receipt Decoding:** Pulse-scanning of fuel receipts to auto-extract Price, Quantity, and Location with 90%+ accuracy.
-- **Mission Report HUD:** Real-time post-log dashboard calculating KM/L efficiency and ranking your performance (S to C Grade).
-- **Dynamic Theming:** Visual protocols shift accent colors based on fuel type (Petrol-Cyan, Diesel-Red, CNG-Green).
-- **Live Market Scan:** High-precision GPS uplink to fetch local fuel price insights and compare them with your pump cost.
+- **AI Receipt Decoding:** Granular extraction of Price, Quantity, Vendor, and Location with 90%+ accuracy.
+- **Mission Report HUD:** Real-time post-log dashboard calculating KM/L efficiency and ranking performance (S to C Grade).
+- **Vehicle Branding:** Visual protocols with vehicle-specific accent colors (e.g., Skoda Kylaq, Octavia).
+- **State-Managed Architecture:** High-performance frontend telemetry suite powered by a centralized state engine.
+- **AppSheet Readiness:** Pre-configured backend hooks for external automation and AppSheet integration.
+- **Live Market Scan:** High-precision GPS uplink to fetch local fuel price insights and compare them with pump costs.
 - **Protocol Logs:** Historical data visualization with Chart.js and high-tech skeleton pulse loaders.
 
 ## 🛠️ Deployment (How to Use)

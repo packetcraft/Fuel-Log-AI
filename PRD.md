@@ -1,8 +1,8 @@
 # Product Requirement Document (PRD): Fuel Log AI
 
-**Version:** 2.3
+**Version:** 2.4
 **Status:** Draft  
-**Date:** 2026-01-10  
+**Date:** 2026-02-04  
 **Author:** Product Management Team (AI)
 
 ---
@@ -57,6 +57,8 @@
     -   Real-time trend analysis (+/- %) vs. previous refill.
 -   **Dynamic Theme Switching:**
     -   UI color shift based on selected Fuel Type (Cyan, Red, Green).
+-   **AppSheet Integration:**
+    -   Backend hooks (`processAppSheetReceipt`) to allow automation via AppSheet or other external triggers.
 
 ### Could Have (P2)
 -   **Mileage Calculation:** Auto-calculate MPG/KMPL between full tanks.
@@ -155,26 +157,37 @@ The following core improvements were implemented to transform the initial protot
 - **Smart Logic:**
     - **Price Memory:** Auto-fills "Price/L" with the last recorded value to speed up entry.
     - **Keypad Optimization:** Force-enables decimal/numeric keypads on mobile devices for Odometer, Quantity, and Price fields (`inputmode="decimal"`).
-- **Micro-interactions:** Added tactile "press" animations to buttons and smooth transitions for theme switching.
+-   **Dark Mode Protocol:** Implemented a system-aware Dark Mode with a manual toggle (`localStorage` persistence).
+-   **Non-blocking Feedback:** Replaced native `alert()` blocking calls with a custom non-blocking "Toast" notification system for success/error states.
+-   **Smart Logic:**
+    -   **Price Memory:** Auto-fills "Price/L" with the last recorded value to speed up entry.
+    -   **Keypad Optimization:** Force-enables decimal/numeric keypads on mobile devices for Odometer, Quantity, and Price fields (`inputmode="decimal"`).
+-   **Micro-interactions:** Added tactile "press" animations to buttons and smooth transitions for theme switching.
 
 ### 💎 v2.1 Polish & Advanced Interaction (Current)
-- **Refined Neobrutalism:** Softened typography (Title Case labels, lighter weights) to reduce visual fatigue while maintaining the bold aesthetic.
-- **Card-Based Log View:** Replaced the mobile-unfriendly table with a stacked Card layout for log entries, improving readability and touch targets.
-- **Live Efficiency Gauge:** Added "Traffic Light" dots (Green/Yellow/Red) to log cards for instant visual feedback on fuel efficiency.
-- **Smart Vehicle Selector:** Automatically toggles between a Dropdown (for >3 vehicles) and large Radio Buttons (for <=3 vehicles) to reduce clicks.
-- **Fluid Navigation:** Implemented smooth "Lift & Fade" animations for tab switching and added iconography to the bottom navigation bar.
-- **Silent Auto-Location:** GPS coordinates are now fetched silently on app load to minimize friction during data entry.
-- **Interactive Charts:** Enabling "Touch-to-View" on the Stats chart allows users to inspect specific log details directly from the graph.
+-   **Refined Neobrutalism:** Softened typography (Title Case labels, lighter weights) to reduce visual fatigue while maintaining the bold aesthetic.
+-   **Card-Based Log View:** Replaced the mobile-unfriendly table with a stacked Card layout for log entries, improving readability and touch targets.
+-   **Live Efficiency Gauge:** Added "Traffic Light" dots (Green/Yellow/Red) to log cards for instant visual feedback on fuel efficiency.
+-   **Smart Vehicle Selector:** Automatically toggles between a Dropdown (for >4 vehicles) and large Radio Buttons (for <=4 vehicles) to reduce clicks.
+-   **Fluid Navigation:** Implemented smooth "Lift & Fade" animations for tab switching and added iconography to the bottom navigation bar.
+-   **Silent Auto-Location:** GPS coordinates are now fetched silently on app load to minimize friction during data entry.
+-   **Interactive Charts:** Enabling "Touch-to-View" on the Stats chart allows users to inspect specific log details directly from the graph.
 
 ### 🛠️ v2.2 Initialization Overhaul (Current)
-- **Centralized Initialization:** Consolidated all database setup logic into a single `initializeDatabase()` function.
 - **Improved Spreadsheet UI:** Added a "Fuel Log AI" custom menu to the Google Sheet for easier manual database management.
 - **Robust Persistence:** `getDataProtocol` and `saveEntryDirect` now both call the initialization routine to ensure database integrity before any read/write operation.
 
-### 🧠 v2.3 Enhanced Receipt Intelligence (Current)
+### 🧠 v2.3 Enhanced Receipt Intelligence
 - **Granular Data Extraction:** Upgraded the AI prompt to extract separate fields for `vendor`, `city`, and `area` from receipts, significantly improving data accuracy.
 - **Contextual Note Synthesis:** Implemented backend logic to automatically synthesize a descriptive "Notes" entry (e.g., "Shell - Whitefield, Bangalore") by combining extracted vendor and location data.
 - **Visual Feedback Refinement:** Standardized the AI-success indicator to a high-contrast yellow glow (`border-yellow-400`), improving visibility in both light and dark modes.
+
+### 🍱 v2.4 UI & Logic Standardization (Current)
+- **Neo-Brutalist 2.0:** Standardized the entire UI with a robust class-based design system (`neo-card`, `neo-btn`, `neo-input`), ensuring consistent aesthetics and simplified maintenance.
+- **Consolidated Entry UX:** Streamlined the "Add Log" form with a compact grid layout, grouping vehicle info and calculation logic into distinct visual blocks.
+- **State-Managed Frontend:** Refactored the JavaScript core into a centralized `state` object, improving predictability and easing future enhancements.
+- **AppSheet Automation Uplink:** Introduced `processAppSheetReceipt` in `Code.gs` as a protocol hook for external receipt processing workflows.
+- **Mission Report Resilience:** Optimized the Mission Report HUD with high-priority z-index layering to prevent overlapping with loading overlays.
 
 ---
 **End of Document**
