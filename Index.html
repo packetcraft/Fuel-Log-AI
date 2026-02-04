@@ -40,7 +40,7 @@
 
         body {
             font-family: "Inter", sans-serif;
-            font-weight: 800;
+            font-weight: 600;
             background: var(--bg);
             color: var(--text);
             overflow: hidden;
@@ -50,20 +50,20 @@
 
         .neo-card {
             background: var(--card-bg);
-            border: 3px solid var(--border);
+            border: 2px solid var(--border);
             border-radius: 8px;
-            box-shadow: 4px 4px 0px var(--shadow);
+            box-shadow: 3px 3px 0px var(--shadow);
         }
 
         .neo-input {
             background: var(--input-bg) !important;
-            border: 3px solid var(--border) !important;
+            border: 2px solid var(--border) !important;
             color: var(--text) !important;
             padding: 10px 12px !important;
             width: 100%;
             border-radius: 8px;
             font-size: 16px !important;
-            font-weight: 800;
+            font-weight: 600;
             box-shadow: 2px 2px 0px var(--shadow);
             transition: all 0.2s ease;
         }
@@ -72,7 +72,7 @@
             outline: none;
             border-color: var(--primary) !important;
             transform: translate(-1px, -1px);
-            box-shadow: 4px 4px 0px var(--shadow);
+            box-shadow: 3px 3px 0px var(--shadow);
         }
 
         input::-webkit-calendar-picker-indicator {
@@ -83,11 +83,11 @@
         .neo-btn {
             background-color: var(--primary);
             color: var(--black);
-            border: 3px solid var(--border);
+            border: 2px solid var(--border);
             border-radius: 8px;
             font-weight: 900;
             text-transform: uppercase;
-            box-shadow: 4px 4px 0px var(--shadow);
+            box-shadow: 3px 3px 0px var(--shadow);
             transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-align: center;
             cursor: pointer;
@@ -143,11 +143,11 @@
         .toast {
             background: var(--primary);
             color: var(--black);
-            border: 3px solid var(--black);
+            border: 2px solid var(--black);
             padding: 12px 20px;
             border-radius: 8px;
             font-weight: 800;
-            box-shadow: 4px 4px 0px var(--black);
+            box-shadow: 3px 3px 0px var(--black);
             text-transform: uppercase;
             font-size: 0.8rem;
             animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.3s forwards 2.7s;
@@ -177,35 +177,45 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.4);
             z-index: 200;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(2px);
         }
 
         #missionReport {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.4);
             z-index: 300;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: center;
             flex-direction: column;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(4px);
         }
 
         .mission-card {
             background: var(--primary);
             color: var(--black);
-            border: 3px solid var(--black);
-            border-radius: 12px;
-            max-width: 340px;
-            padding: 2rem;
+            border: 2px solid var(--black);
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            width: 100%;
+            max-width: 448px;
+            padding: 2rem 2rem 4rem 2rem;
             text-align: center;
-            box-shadow: 8px 8px 0px var(--black);
+            box-shadow: 0px -4px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(100%);
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+            }
         }
 
 
@@ -241,7 +251,7 @@
         th {
             color: var(--text);
             background: var(--card-bg);
-            border-bottom: 3px solid var(--border);
+            border-bottom: 2px solid var(--border);
             padding: 10px;
             text-align: left;
             font-weight: 800;
@@ -250,7 +260,7 @@
 
         td {
             padding: 12px 10px;
-            border-bottom: 3px solid var(--border);
+            border-bottom: 2px solid var(--border);
         }
 
         .nav-btn {
@@ -267,7 +277,7 @@
             grid-template-columns: 1fr auto;
             gap: 0.5rem;
             padding: 1rem;
-            border-bottom: 3px solid var(--border);
+            border-bottom: 2px solid var(--border);
             background: var(--card-bg);
             transition: background-color 0.2s;
         }
@@ -344,7 +354,7 @@
             flex: 1;
             padding: 1rem;
             background: var(--card-bg);
-            border: 3px solid var(--border);
+            border: 2px solid var(--border);
             border-radius: 8px;
             text-align: center;
             font-weight: 900;
@@ -359,7 +369,7 @@
             background: var(--primary);
             color: var(--black);
             opacity: 1;
-            box-shadow: 4px 4px 0px var(--shadow);
+            box-shadow: 3px 3px 0px var(--shadow);
             transform: translate(-2px, -2px);
             border-color: var(--black);
         }
@@ -419,75 +429,79 @@
     <main class="flex-1 overflow-hidden">
         <div id="tab0" class="tab-panel active">
             <form id="f" onsubmit="sub(event)" class="space-y-4">
-                <div class="neo-card p-4 space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <label class="!mb-0 text-[0.7rem] uppercase">Vehicle</label>
-                                <button type="button" onclick="addVehicle()"
-                                    class="text-[0.6rem] font-black uppercase tracking-widest text-[#FF4646]">+
-                                    New</button>
+                <div class="neo-card overflow-hidden">
+                    <div class="p-4 space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="!mb-0 text-[0.7rem] uppercase">Vehicle</label>
+                                    <button type="button" onclick="addVehicle()"
+                                        class="text-[0.6rem] font-black uppercase tracking-widest text-[#FF4646]">+
+                                        New</button>
+                                </div>
+                                <select name="vehicle_name" id="vehicleSelect" class="neo-input font-black h-11"></select>
+                                <div id="vehicleRadioGroup" class="vehicle-radio-group"></div>
                             </div>
-                            <select name="vehicle_name" id="vehicleSelect" class="neo-input font-black h-11"></select>
-                            <div id="vehicleRadioGroup" class="vehicle-radio-group"></div>
+                            <div>
+                                <label class="text-[0.7rem] uppercase">⛽ Fuel Type</label>
+                                <select name="fuel_type" id="fuelType" class="neo-input font-black h-11">
+                                    <option value="petrol">Petrol</option>
+                                    <option value="diesel">Diesel</option>
+                                    <option value="cng">CNG</option>
+                                </select>
+                            </div>
                         </div>
-                        <div>
-                            <label class="text-[0.7rem] uppercase">⛽ Fuel Type</label>
-                            <select name="fuel_type" id="fuelType" class="neo-input font-black h-11">
-                                <option value="petrol">Petrol</option>
-                                <option value="diesel">Diesel</option>
-                                <option value="cng">CNG</option>
-                            </select>
+
+                        <div class="grid grid-cols-2 gap-4 items-end">
+                            <div>
+                                <label class="text-[0.7rem] uppercase">🏎️ Odometer (KM)</label>
+                                <input type="number" name="km_reading" id="k" step="0.1" inputmode="decimal" required
+                                    class="neo-input h-11" />
+                            </div>
+                            <div
+                                class="flex items-center gap-3 h-11 px-3 border-2 border-[var(--border)] rounded-lg bg-[var(--input-bg)]">
+                                <input type="checkbox" name="full_tank" id="ft" class="w-5 h-5 accent-yellow-400" checked />
+                                <span class="text-xs font-black uppercase whitespace-nowrap">Full Tank</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 items-end">
-                        <div>
-                            <label class="text-[0.7rem] uppercase">🏎️ Odometer (KM)</label>
-                            <input type="number" name="km_reading" id="k" step="0.1" inputmode="decimal" required
-                                class="neo-input h-11" />
+                    <div class="p-4 bg-[var(--primary)]/10 border-t-2 border-[var(--border)]">
+                        <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 mb-3">
+                            <div>
+                                <label class="text-[0.7rem] uppercase">Quantity (L)</label>
+                                <input type="number" name="fuel_qty" id="q" step="0.01" inputmode="decimal" required
+                                    oninput="calc()" class="neo-input !bg-white !text-black h-11" />
+                            </div>
+                            <div class="text-2xl font-black mt-4">×</div>
+                            <div>
+                                <label class="text-[0.7rem] uppercase">Price / L</label>
+                                <input type="number" name="fuel_price" id="p" step="0.01" inputmode="decimal" required
+                                    oninput="calc()" class="neo-input !bg-white !text-black h-11" />
+                            </div>
                         </div>
-                        <div
-                            class="flex items-center gap-3 h-11 px-3 border-3 border-[var(--border)] rounded-lg bg-[var(--input-bg)]">
-                            <input type="checkbox" name="full_tank" id="ft" class="w-5 h-5 accent-yellow-400" checked />
-                            <span class="text-xs font-black uppercase whitespace-nowrap">Full Tank</span>
+                        <div id="total_cost_card"
+                            class="p-3 border-dashed border-2 border-[var(--border)] rounded-lg flex justify-between items-center bg-[var(--primary)] text-[var(--black)]">
+                            <span class="text-xs font-black uppercase">Total Amount</span>
+                            <div class="text-2xl font-black">
+                                <span>₹</span><span id="t_display">0.00</span>
+                                <input type="hidden" name="refill_amount" id="t" />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="neo-card p-4 bg-[var(--primary)]/10">
-                    <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 mb-3">
-                        <div>
-                            <label class="text-[0.7rem] uppercase">Quantity (L)</label>
-                            <input type="number" name="fuel_qty" id="q" step="0.01" inputmode="decimal" required
-                                oninput="calc()" class="neo-input !bg-white !text-black h-11" />
+                    <div class="p-4 border-t-2 border-[var(--border)] bg-[var(--bg)]/30">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="date" name="refill_date" id="d" required class="neo-input h-11" />
+                            <div class="flex relative">
+                                <input type="text" name="pump_location" id="l" list="stationOptions"
+                                    placeholder="📍 Station Location" autocomplete="off"
+                                    class="neo-input h-11 rounded-r-none pr-10" />
+                                <datalist id="stationOptions"></datalist>
+                                <button type="button" onclick="fetchGPS()"
+                                    class="neo-btn h-11 w-11 p-0 absolute right-0 rounded-l-none border-l-0 text-xl leading-none shadow-none translate-y-0 active:translate-y-0">📍</button>
+                            </div>
                         </div>
-                        <div class="text-2xl font-black mt-4">×</div>
-                        <div>
-                            <label class="text-[0.7rem] uppercase">Price / L</label>
-                            <input type="number" name="fuel_price" id="p" step="0.01" inputmode="decimal" required
-                                oninput="calc()" class="neo-input !bg-white !text-black h-11" />
-                        </div>
-                    </div>
-                    <div id="total_cost_card"
-                        class="neo-card p-3 border-dashed border-2 flex justify-between items-center">
-                        <span class="text-xs font-black uppercase">Total Amount</span>
-                        <div class="text-2xl font-black">
-                            <span>₹</span><span id="t_display">0.00</span>
-                            <input type="hidden" name="refill_amount" id="t" />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="date" name="refill_date" id="d" required class="neo-input h-11" />
-                    <div class="flex relative">
-                        <input type="text" name="pump_location" id="l" list="stationOptions"
-                            placeholder="📍 Station Location" autocomplete="off"
-                            class="neo-input h-11 rounded-r-none pr-10" />
-                        <datalist id="stationOptions"></datalist>
-                        <button type="button" onclick="fetchGPS()"
-                            class="neo-btn h-11 w-11 p-0 absolute right-0 rounded-l-none border-l-0 text-xl leading-none">📍</button>
                     </div>
                 </div>
 
