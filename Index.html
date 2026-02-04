@@ -13,144 +13,114 @@
 
         :root {
             font-size: 16px;
-            --primary-yellow: #FFDE03;
-            --black: #1A1A1A;
+            --primary: #FFDE03;
+            --black: #1a1a1a;
             --white: #ffffff;
-            --background: #F4F4F4;
-            --accent-red: #FF4646;
+            --bg: #F4F4F4;
             --card-bg: var(--white);
-            --text-color: var(--black);
-            --border-color: var(--black);
-            --shadow-color: var(--black);
+            --text: var(--black);
+            --border: var(--black);
+            --shadow: var(--black);
             --input-bg: var(--white);
+            --invert-icon: 0;
         }
 
         [data-theme="dark"] {
-            --primary-yellow: #fde047;
+            --primary: #fde047;
             --black: #000000;
             --white: #1e1e1e;
-            --background: #121212;
-            --accent-red: #ff5252;
+            --bg: #121212;
             --card-bg: #1e1e1e;
-            --text-color: #e0e0e0;
-            --border-color: #404040;
-            --shadow-color: #000000;
+            --text: #e0e0e0;
+            --border: #404040;
+            --shadow: #000000;
             --input-bg: #2a2a2a;
+            --invert-icon: 1;
         }
 
         body {
             font-family: "Inter", sans-serif;
             font-weight: 800;
-            background: var(--background);
-            color: var(--text-color);
+            background: var(--bg);
+            color: var(--text);
             overflow: hidden;
             height: 100svh;
-            display: flex;
-            flex-direction: column;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
-        .card {
+        .neo-card {
             background: var(--card-bg);
-            border: 3px solid var(--border-color);
+            border: 3px solid var(--border);
             border-radius: 8px;
-            box-shadow: 4px 4px 0px var(--shadow-color);
+            box-shadow: 4px 4px 0px var(--shadow);
         }
 
-        input,
-        select,
-        textarea {
+        .neo-input {
             background: var(--input-bg) !important;
-            border: 3px solid var(--border-color) !important;
-            color: var(--text-color) !important;
-            padding: 12px !important;
+            border: 3px solid var(--border) !important;
+            color: var(--text) !important;
+            padding: 10px 12px !important;
             width: 100%;
             border-radius: 8px;
             font-size: 16px !important;
             font-weight: 800;
-            box-shadow: 2px 2px 0px var(--shadow-color);
+            box-shadow: 2px 2px 0px var(--shadow);
             transition: all 0.2s ease;
         }
 
-        input:focus,
-        textarea:focus {
+        .neo-input:focus {
             outline: none;
-            background-color: var(--input-bg) !important;
-            border-color: var(--primary-yellow) !important;
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px var(--shadow-color);
+            border-color: var(--primary) !important;
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px var(--shadow);
         }
 
-        /* FORCE DROPDOWN ARROW VISIBILITY */
         input::-webkit-calendar-picker-indicator {
             opacity: 1 !important;
-            display: block !important;
-            background-color: transparent;
-            cursor: pointer;
-            margin-left: 5px;
             filter: invert(var(--invert-icon));
-            transition: transform 0.2s;
-        }
-        
-        input:focus::-webkit-calendar-picker-indicator {
-            transform: rotate(180deg);
         }
 
-        [data-theme="dark"] {
-            --invert-icon: 1;
-        }
-        [data-theme="light"] {
-            --invert-icon: 0;
-        }
-
-        label {
-            font-size: 0.8rem !important;
-            font-weight: 700;
-            color: var(--text-color);
-            margin-bottom: 4px;
-            display: block;
-            opacity: 0.9;
-        }
-
-        .btn {
-            background-color: var(--primary-yellow);
+        .neo-btn {
+            background-color: var(--primary);
             color: var(--black);
-            border: 3px solid var(--border-color);
+            border: 3px solid var(--border);
             border-radius: 8px;
-            font-weight: 800;
+            font-weight: 900;
             text-transform: uppercase;
-            box-shadow: 4px 4px 0px var(--shadow-color);
+            box-shadow: 4px 4px 0px var(--shadow);
             transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-align: center;
             cursor: pointer;
+            padding: 12px;
         }
 
-        .btn:active {
+        .neo-btn:active {
             transform: scale(0.95) translate(2px, 2px);
-            box-shadow: 0px 0px 0px var(--shadow-color);
+            box-shadow: 0px 0px 0px var(--shadow);
         }
 
-        .btn-secondary {
+        .neo-btn-secondary {
             background-color: var(--card-bg);
-            color: var(--text-color);
+            color: var(--text);
         }
 
         #total_cost_card {
-            background-color: var(--primary-yellow);
-            box-shadow: 6px 6px 0px var(--shadow-color);
-            pointer-events: none;
+            background-color: var(--primary);
             color: var(--black);
+            box-shadow: 2px 2px 0px var(--shadow);
         }
 
         /* Specific Vehicle Colors */
         .btn-kylaq {
-            background-color: #22c55e !important; /* Green */
+            background-color: #22c55e !important;
+            /* Green */
             color: white !important;
             border-color: #14532d !important;
         }
-        
+
         .btn-octavia {
-            background-color: #ef4444 !important; /* Red */
+            background-color: #ef4444 !important;
+            /* Red */
             color: white !important;
             border-color: #7f1d1d !important;
         }
@@ -171,7 +141,7 @@
         }
 
         .toast {
-            background: var(--primary-yellow);
+            background: var(--primary);
             color: var(--black);
             border: 3px solid var(--black);
             padding: 12px 20px;
@@ -208,7 +178,7 @@
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.8);
-            z-index: 100;
+            z-index: 200;
             justify-content: center;
             align-items: center;
             flex-direction: column;
@@ -220,7 +190,7 @@
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.9);
-            z-index: 100;
+            z-index: 300;
             justify-content: center;
             align-items: center;
             flex-direction: column;
@@ -228,7 +198,7 @@
         }
 
         .mission-card {
-            background: var(--primary-yellow);
+            background: var(--primary);
             color: var(--black);
             border: 3px solid var(--black);
             border-radius: 12px;
@@ -259,8 +229,8 @@
         }
 
         .nav-active {
-            background: var(--primary-yellow);
-            box-shadow: inset 4px 4px 0px #00000033;
+            background: var(--primary);
+            box-shadow: inset 2px 2px 0px #00000033;
         }
 
         table {
@@ -269,9 +239,9 @@
         }
 
         th {
-            color: var(--text-color);
+            color: var(--text);
             background: var(--card-bg);
-            border-bottom: 3px solid var(--border-color);
+            border-bottom: 3px solid var(--border);
             padding: 10px;
             text-align: left;
             font-weight: 800;
@@ -280,7 +250,7 @@
 
         td {
             padding: 12px 10px;
-            border-bottom: 3px solid var(--border-color);
+            border-bottom: 3px solid var(--border);
         }
 
         .nav-btn {
@@ -288,7 +258,7 @@
         }
 
         .nav-btn:active {
-            background: var(--primary-yellow);
+            background: var(--primary);
             opacity: 0.8;
         }
 
@@ -297,7 +267,7 @@
             grid-template-columns: 1fr auto;
             gap: 0.5rem;
             padding: 1rem;
-            border-bottom: 3px solid var(--border-color);
+            border-bottom: 3px solid var(--border);
             background: var(--card-bg);
             transition: background-color 0.2s;
         }
@@ -307,7 +277,7 @@
         }
 
         .log-card:active {
-            background-color: var(--background);
+            background-color: var(--bg);
         }
 
         .log-date {
@@ -374,7 +344,7 @@
             flex: 1;
             padding: 1rem;
             background: var(--card-bg);
-            border: 3px solid var(--border-color);
+            border: 3px solid var(--border);
             border-radius: 8px;
             text-align: center;
             font-weight: 900;
@@ -386,17 +356,17 @@
         }
 
         .vehicle-radio.selected {
-            background: var(--primary-yellow);
+            background: var(--primary);
             color: var(--black);
             opacity: 1;
-            box-shadow: 4px 4px 0px var(--shadow-color);
+            box-shadow: 4px 4px 0px var(--shadow);
             transform: translate(-2px, -2px);
             border-color: var(--black);
         }
     </style>
 </head>
 
-<body class="max-w-md mx-auto p-4 flex flex-col bg-background">
+<body class="max-w-md mx-auto p-4 flex flex-col bg-[var(--bg)]">
     <div id="toastContainer"></div>
 
     <div id="loadingOverlay">
@@ -425,167 +395,157 @@
         </div>
     </div>
 
-    <header class="flex justify-between items-center mb-4 card p-2">
+    <header class="flex justify-between items-center mb-4 neo-card p-2">
         <div class="flex items-center gap-2">
-            <button onclick="toggleTheme()" class="btn btn-secondary p-2 text-xl leading-none">
+            <button onclick="toggleTheme()" class="neo-btn neo-btn-secondary p-2 text-xl leading-none">
                 🌓
             </button>
             <h1 class="text-xl font-black tracking-tighter">
-                🚗💨Fuel Log AI
+                Fuel Log AI
             </h1>
         </div>
         <div class="flex gap-2">
-            <button onclick="openScanner(true)" class="btn p-3 text-2xl leading-none" title="Take Photo">
+            <button onclick="openScanner(true)" class="neo-btn p-3 text-2xl leading-none" title="Take Photo">
                 📷
             </button>
-            <button onclick="openScanner(false)" class="btn p-3 text-2xl leading-none" title="Browse Photo">
+            <button onclick="openScanner(false)" class="neo-btn p-3 text-2xl leading-none" title="Browse Photo">
                 📁
             </button>
         </div>
-        
+
         <input type="file" id="cam" accept="image/*" class="hidden" onchange="processImage(event)" />
     </header>
 
     <main class="flex-1 overflow-hidden">
         <div id="tab0" class="tab-panel active">
             <form id="f" onsubmit="sub(event)" class="space-y-4">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <label class="!mb-0">Vehicle</label>
-                            <button type="button" onclick="addVehicle()"
-                                class="text-xs font-bold uppercase tracking-wider">+ Add</button>
-                        </div>
-                        <select name="vehicle_name" id="vehicleSelect" class="h-12 font-bold"></select>
-                        <div id="vehicleRadioGroup" class="vehicle-radio-group"></div>
-                    </div>
-                    <div>
-                        <label>⛽ Type</label>
-                        <select name="fuel_type" id="fuelType" class="h-12 font-bold">
-                            <option value="petrol">Petrol</option>
-                            <option value="diesel">Diesel</option>
-                            <option value="cng">CNG</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 items-center">
-                    <div class="card p-3">
-                        <label>🏎️ Odometer</label>
-                        <input type="number" name="km_reading" id="k" step="0.1" inputmode="decimal" required
-                            class="mt-1" />
-                    </div>
-                    <div class="card p-3 h-full flex flex-col justify-center items-center gap-1">
-                        <label>Status</label>
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" name="full_tank" id="ft" class="w-5 h-5 accent-yellow-400" checked />
-                            <span class="text-sm font-bold">Full Tank</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card p-4 space-y-2">
-                    <div class="grid grid-cols-[1fr_auto_1fr] items-end gap-x-3">
+                <div class="neo-card p-4 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label>Quantity (L)</label>
-                            <input type="number" name="fuel_qty" id="q" step="0.01" inputmode="decimal" required
-                                oninput="calc()" />
-                        </div>
-                        <div class="text-3xl font-black pb-2">×</div>
-                        <div>
-                            <label>Price / L</label>
-                            <input type="number" name="fuel_price" id="p" step="0.01" inputmode="decimal" required
-                                oninput="calc()" />
-                        </div>
-                    </div>
-                    <div id="total_cost_card" class="card p-3">
-                        <div class="flex justify-between items-center">
-                            <label class="!mb-0">Total:</label>
-                            <div class="text-right text-3xl font-black">
-                                <span>₹</span>
-                                <span id="t_display">0.00</span>
-                                <input type="hidden" name="refill_amount" id="t" />
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="!mb-0 text-[0.7rem] uppercase">Vehicle</label>
+                                <button type="button" onclick="addVehicle()"
+                                    class="text-[0.6rem] font-black uppercase tracking-widest text-[#FF4646]">+
+                                    New</button>
                             </div>
+                            <select name="vehicle_name" id="vehicleSelect" class="neo-input font-black h-11"></select>
+                            <div id="vehicleRadioGroup" class="vehicle-radio-group"></div>
+                        </div>
+                        <div>
+                            <label class="text-[0.7rem] uppercase">⛽ Fuel Type</label>
+                            <select name="fuel_type" id="fuelType" class="neo-input font-black h-11">
+                                <option value="petrol">Petrol</option>
+                                <option value="diesel">Diesel</option>
+                                <option value="cng">CNG</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 items-end">
+                        <div>
+                            <label class="text-[0.7rem] uppercase">🏎️ Odometer (KM)</label>
+                            <input type="number" name="km_reading" id="k" step="0.1" inputmode="decimal" required
+                                class="neo-input h-11" />
+                        </div>
+                        <div
+                            class="flex items-center gap-3 h-11 px-3 border-3 border-[var(--border)] rounded-lg bg-[var(--input-bg)]">
+                            <input type="checkbox" name="full_tank" id="ft" class="w-5 h-5 accent-yellow-400" checked />
+                            <span class="text-xs font-black uppercase whitespace-nowrap">Full Tank</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="date" name="refill_date" id="d" required class="font-bold" />
-                    <div>
-                        <label>📍 Station</label>
-                        <div class="flex items-center relative">
-                            <input type="text" name="pump_location" id="l" list="stationOptions" 
-                                placeholder="Select or type..."
-                                autocomplete="off"
-                                class="font-bold rounded-r-none" />
-                            <datalist id="stationOptions">
-                                </datalist>
-                            <button type="button" onclick="fetchGPS()"
-                                class="btn h-12 w-12 rounded-l-none text-2xl flex-shrink-0 p-0">
-                                📍
-                            </button>
+                <div class="neo-card p-4 bg-[var(--primary)]/10">
+                    <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 mb-3">
+                        <div>
+                            <label class="text-[0.7rem] uppercase">Quantity (L)</label>
+                            <input type="number" name="fuel_qty" id="q" step="0.01" inputmode="decimal" required
+                                oninput="calc()" class="neo-input !bg-white !text-black h-11" />
+                        </div>
+                        <div class="text-2xl font-black mt-4">×</div>
+                        <div>
+                            <label class="text-[0.7rem] uppercase">Price / L</label>
+                            <input type="number" name="fuel_price" id="p" step="0.01" inputmode="decimal" required
+                                oninput="calc()" class="neo-input !bg-white !text-black h-11" />
+                        </div>
+                    </div>
+                    <div id="total_cost_card"
+                        class="neo-card p-3 border-dashed border-2 flex justify-between items-center">
+                        <span class="text-xs font-black uppercase">Total Amount</span>
+                        <div class="text-2xl font-black">
+                            <span>₹</span><span id="t_display">0.00</span>
+                            <input type="hidden" name="refill_amount" id="t" />
                         </div>
                     </div>
                 </div>
 
-                <div class="card p-3">
-                    <label>Notes</label>
-                    <textarea name="notes" id="n" placeholder="Additional details..." rows="2" class="resize-none"></textarea>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="date" name="refill_date" id="d" required class="neo-input h-11" />
+                    <div class="flex relative">
+                        <input type="text" name="pump_location" id="l" list="stationOptions"
+                            placeholder="📍 Station Location" autocomplete="off"
+                            class="neo-input h-11 rounded-r-none pr-10" />
+                        <datalist id="stationOptions"></datalist>
+                        <button type="button" onclick="fetchGPS()"
+                            class="neo-btn h-11 w-11 p-0 absolute right-0 rounded-l-none border-l-0 text-xl leading-none">📍</button>
+                    </div>
                 </div>
 
-                <button type="submit" id="s" class="w-full py-5 btn text-xl">
-                    Save Log
-                </button>
+                <textarea name="notes" id="n" placeholder="📝 Additional Notes (AI results appear here)..." rows="2"
+                    class="neo-input text-sm"></textarea>
+
+                <button type="submit" id="s" class="neo-btn w-full py-4 text-xl tracking-tighter">Save Log
+                    Entry</button>
             </form>
         </div>
 
         <div id="tab1" class="tab-panel">
-            <div class="card overflow-hidden">
-                <div id="logList" class="card overflow-hidden flex flex-col">
-                    </div>
+            <div class="neo-card overflow-hidden">
+                <div id="logList" class="flex flex-col">
+                </div>
             </div>
         </div>
 
         <div id="tab2" class="tab-panel space-y-4">
-            <div id="statsGrid" class="grid gap-3"></div>
-            <div class="p-3 card">
+            <div id="statsGrid" class="grid gap-4"></div>
+            <div class="p-3 neo-card">
                 <canvas id="effChart"></canvas>
             </div>
         </div>
 
         <div id="tab3" class="tab-panel space-y-4">
-            <div class="text-center card p-4">
-                <p id="mCity" class="text-sm font-bold uppercase tracking-widest">
-                    Loading...
+            <div class="text-center neo-card p-4">
+                <p id="mCity" class="text-[0.7rem] font-black uppercase tracking-widest opacity-70">
+                    Locating...
                 </p>
-                <div id="mInsight" class="text-lg font-bold mt-2"></div>
+                <div id="mInsight" class="text-lg font-black mt-1 leading-tight"></div>
             </div>
-            <div id="mMarket" class="grid grid-cols-2 gap-3 text-center"></div>
-            <div id="mSources" class="space-y-2"></div>
+            <div id="mMarket" class="grid grid-cols-2 gap-4 text-center"></div>
+            <div id="mSources" class="space-y-3"></div>
         </div>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-card-bg border-t-4 border-border-color grid grid-cols-4 h-16 z-50">
+    <nav
+        class="fixed bottom-0 left-0 right-0 bg-[var(--card-bg)] border-t-4 border-[var(--border)] grid grid-cols-4 h-16 z-50">
         <button onclick="setTab(0)"
-            class="nav-btn flex flex-col items-center justify-center nav-active font-bold text-[0.65rem] uppercase border-r-2 border-l-2 border-border-color">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+            class="nav-btn flex flex-col items-center justify-center nav-active font-black text-[0.6rem] uppercase border-r-2 border-[var(--border)]">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                 stroke="currentColor" class="nav-icon">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
             Add
         </button>
         <button onclick="setTab(1)"
-            class="nav-btn flex flex-col items-center justify-center text-gray-500 font-bold text-[0.65rem] uppercase border-r-2 border-border-color">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+            class="nav-btn flex flex-col items-center justify-center text-gray-400 font-black text-[0.6rem] uppercase border-r-2 border-[var(--border)]">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                 stroke="currentColor" class="nav-icon">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
             Logs
         </button>
         <button onclick="setTab(2)"
-            class="nav-btn flex flex-col items-center justify-center text-gray-500 font-bold text-[0.65rem] uppercase border-r-2 border-border-color">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+            class="nav-btn flex flex-col items-center justify-center text-gray-400 font-black text-[0.6rem] uppercase border-r-2 border-[var(--border)]">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                 stroke="currentColor" class="nav-icon">
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
@@ -593,8 +553,8 @@
             Stats
         </button>
         <button onclick="setTab(3)"
-            class="nav-btn flex flex-col items-center justify-center text-gray-500 font-bold text-[0.65rem] uppercase border-r-2 border-border-color">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+            class="nav-btn flex flex-col items-center justify-center text-gray-400 font-black text-[0.6rem] uppercase border-r-2 border-[var(--border)]">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                 stroke="currentColor" class="nav-icon">
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -604,28 +564,29 @@
     </nav>
 
     <script>
-        let logs = [];
-        let chart = null;
-        let vehicleList = [];
-        let lastUserPrice = 0;
-        const colors = ["#1a1a1a", "#fde047", "#28a745", "#dc3545", "#fd7e14"];
+        const state = {
+            logs: [],
+            vehicles: [],
+            lastPrice: 0,
+            chart: null,
+            colors: ["#1a1a1a", "#fde047", "#28a745", "#dc3545", "#fd7e14"]
+        };
 
-        function showLoading(t) {
-            document.getElementById("loadText").textContent = t;
-            document.getElementById("loadingOverlay").style.display = "flex";
-        }
-        function hideLoading() {
-            document.getElementById("loadingOverlay").style.display = "none";
-        }
-
-        function showToast(text) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = text;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
+        const ui = {
+            loading: (t) => {
+                document.getElementById("loadText").textContent = t;
+                document.getElementById("loadingOverlay").style.display = "flex";
+            },
+            hideLoading: () => document.getElementById("loadingOverlay").style.display = "none",
+            toast: (text) => {
+                const container = document.getElementById('toastContainer');
+                const t = document.createElement('div');
+                t.className = 'toast';
+                t.textContent = text;
+                container.appendChild(t);
+                setTimeout(() => t.remove(), 3000);
+            }
+        };
 
         function toggleTheme() {
             const current = document.body.getAttribute('data-theme');
@@ -634,18 +595,10 @@
             localStorage.setItem('theme', target);
         }
 
-        function handleError(err) {
-            hideLoading();
-            const msg = err.message || "An error occurred. Please try again.";
-            showToast("ERROR: " + msg);
-            console.error(err);
-        }
-
         window.onload = () => {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme) document.body.setAttribute('data-theme', savedTheme);
             document.getElementById("d").value = new Date().toISOString().split("T")[0];
-            
             // Auto-fetch GPS silently
             if (navigator.geolocation && !document.getElementById("l").value) {
                 navigator.geolocation.getCurrentPosition((p) => {
@@ -654,13 +607,12 @@
                     console.log("Auto-GPS failed", err);
                 }, { timeout: 5000 });
             }
-
             ref();
         };
 
         function addVehicle() {
-            const n = prompt("Enter a name for the new vehicle:");
-            if (n && n.trim()) {
+            const n = prompt("Enter vehicle name:");
+            if (n?.trim()) {
                 const s = document.getElementById("vehicleSelect");
                 s.add(new Option(n.trim(), n.trim()));
                 s.value = n.trim();
@@ -671,7 +623,7 @@
             document.querySelectorAll(".tab-panel").forEach((p, i) => p.classList.toggle("active", i === idx));
             document.querySelectorAll(".nav-btn").forEach((b, i) => {
                 b.classList.toggle("nav-active", i === idx);
-                b.classList.toggle("text-gray-500", i !== idx);
+                b.classList.toggle("text-gray-400", i !== idx);
             });
             if (idx === 1) rend();
             if (idx === 2) stats();
@@ -679,80 +631,55 @@
         }
 
         function ref() {
-            showLoading("Syncing data...");
+            ui.loading("Syncing...");
             google.script.run
                 .withSuccessHandler((res) => {
-                    hideLoading();
-                    if (res.success) {
-                        logs = res.data;
-                        vehicleList = res.vehicles;
-                        lastUserPrice = res.lastPrice;
+                    ui.hideLoading();
+                    if (!res.success) return ui.toast("Sync Failed");
 
-                        // ----------------------------------------------------
-                        // POPULATE STATION DROPDOWN
-                        // ----------------------------------------------------
-                        const stationSet = new Set(logs.map(l => l.pump_location).filter(s => s && s.trim() !== ""));
-                        // Add NEW to the set so it appears in list
-                        stationSet.add("NEW");
-                        const stationArr = Array.from(stationSet).sort();
-                        
-                        const dl = document.getElementById('stationOptions');
-                        dl.innerHTML = stationArr.map(s => `<option value="${s}">`).join('');
+                    state.logs = res.data;
+                    state.vehicles = res.vehicles;
+                    state.lastPrice = res.lastPrice;
 
-                        // DO NOT PRE-FILL "NEW". 
-                        // Leaving it empty ensures valid dropdown behavior.
+                    // Update Station Options
+                    const stations = [...new Set(state.logs.map(l => l.pump_location).filter(s => s?.trim()))].sort();
+                    document.getElementById('stationOptions').innerHTML = stations.map(s => `<option value="${s}">`).join('');
 
-                        // Smart pre-fill price
-                        if (lastUserPrice > 0 && !document.getElementById('p').value) {
-                            document.getElementById('p').value = lastUserPrice;
-                        }
+                    // Prefill Price
+                    if (state.lastPrice > 0 && !document.getElementById('p').value) {
+                        document.getElementById('p').value = state.lastPrice;
+                    }
 
-                        const s = document.getElementById("vehicleSelect");
-                        s.innerHTML = '';
-                        if (res.vehicles.length > 0) {
-                            res.vehicles.forEach((v) => s.add(new Option(v, v)));
-                        } else {
-                            s.add(new Option("My Car", "My Car"));
-                        }
+                    // Populate Vehicles
+                    const s = document.getElementById("vehicleSelect");
+                    s.innerHTML = state.vehicles.length ? '' : '<option value="My Car">My Car</option>';
+                    state.vehicles.forEach(v => s.add(new Option(v, v)));
 
-                        // Smart Selector Logic with Custom Colors
-                        const rg = document.getElementById("vehicleRadioGroup");
-                        if (vehicleList.length > 0 && vehicleList.length <= 4) {
-                            s.style.display = 'none';
-                            rg.style.display = 'flex';
-                            rg.innerHTML = '';
-                            vehicleList.forEach(v => {
-                                const div = document.createElement('div');
-                                div.className = 'vehicle-radio';
-                                
-                                // Apply color classes based on name
-                                const vName = v.toLowerCase();
-                                if (vName.includes('kylaq')) div.classList.add('btn-kylaq');
-                                else if (vName.includes('octavia')) div.classList.add('btn-octavia');
-                                
-                                div.textContent = v;
-                                div.onclick = () => {
-                                    s.value = v;
-                                    document.querySelectorAll('.vehicle-radio').forEach(d => d.classList.remove('selected'));
-                                    div.classList.add('selected');
-                                };
-                                rg.appendChild(div);
-                            });
-                            // Sync initial selection
-                            if (s.value) {
-                                const match = Array.from(rg.children).find(c => c.textContent === s.value);
-                                if (match) match.classList.add('selected');
-                            }
-                        } else {
-                            s.style.display = 'block';
-                            rg.style.display = 'none';
-                        }
+                    // Vehicle Radios (Smart Selector)
+                    const rg = document.getElementById("vehicleRadioGroup");
+                    if (state.vehicles.length > 0 && state.vehicles.length <= 4) {
+                        s.style.display = 'none';
+                        rg.style.display = 'flex';
+                        rg.innerHTML = state.vehicles.map(v => {
+                            const cls = v.toLowerCase().includes('kylaq') ? 'btn-kylaq' : (v.toLowerCase().includes('octavia') ? 'btn-octavia' : '');
+                            return `<div class="vehicle-radio ${cls}" onclick="selectVehicle('${v}', this)">${v}</div>`;
+                        }).join('');
+
+                        const active = Array.from(rg.children).find(c => c.textContent === s.value);
+                        if (active) active.classList.add('selected');
                     } else {
-                        showToast("Database Sync Failed.");
+                        s.style.display = 'block';
+                        rg.style.display = 'none';
                     }
                 })
-                .withFailureHandler(handleError)
+                .withFailureHandler(err => { ui.hideLoading(); ui.toast("Error: " + err.message); })
                 .getDataProtocol();
+        }
+
+        function selectVehicle(v, el) {
+            document.getElementById("vehicleSelect").value = v;
+            document.querySelectorAll('.vehicle-radio').forEach(d => d.classList.remove('selected'));
+            el.classList.add('selected');
         }
 
         function calc() {
@@ -767,314 +694,262 @@
             e.preventDefault();
             const data = Object.fromEntries(new FormData(e.target));
             data.full_tank = document.getElementById("ft").checked;
-            
-            // Default Station to NEW if empty
-            if (!data.pump_location || data.pump_location.trim() === "") {
-                data.pump_location = "NEW";
-            }
+            if (!data.pump_location?.trim()) data.pump_location = "NEW";
 
-            showLoading("Saving entry...");
+            ui.loading("Saving...");
             google.script.run
                 .withSuccessHandler(() => {
-                    hideLoading();
+                    ui.hideLoading();
                     showMissionReport(data);
                     e.target.reset();
                     document.getElementById("d").value = new Date().toISOString().split("T")[0];
                     // Clean reset
-                    document.getElementById("l").value = ""; 
+                    document.getElementById("l").value = "";
                     setTimeout(ref, 3000);
                 })
-                .withFailureHandler(handleError)
+                .withFailureHandler(err => { ui.hideLoading(); ui.toast("Error: " + err.message); })
                 .saveEntryDirect(data);
         }
 
-        function showMissionReport(currentEntry) {
+        function showMissionReport(entry) {
             const el = document.getElementById("missionReport");
-            if (!el) return;
+            const vLogs = state.logs.filter(l => l.vehicle_name === entry.vehicle_name);
 
-            document.getElementById("effVal").innerHTML = `-- <span class="text-xs">KM/L</span>`;
-            document.getElementById("effTrend").textContent = "STABLE";
-            document.getElementById("effTrend").className = "text-2xl font-black";
-            document.getElementById("grade").textContent = "B";
+            let eff = "--", grade = "B", trend = "STABLE", trendClass = "text-2xl font-black";
 
-            try {
-                const vName = currentEntry.vehicle_name;
-                const vLogs = logs.filter(l => l.vehicle_name === vName);
+            if (vLogs.length > 0) {
+                const dist = parseFloat(entry.km_reading) - parseFloat(vLogs[0].km_reading);
+                const fuel = parseFloat(entry.fuel_qty);
+                if (dist > 0 && fuel > 0) {
+                    const eVal = dist / fuel;
+                    eff = eVal.toFixed(1);
+                    grade = eVal > 22 ? "S" : (eVal > 18 ? "A" : (eVal > 15 ? "B" : "C"));
 
-                if (vLogs.length > 0) {
-                    const last = vLogs[0];
-                    const dist = parseFloat(currentEntry.km_reading) - parseFloat(last.km_reading);
-                    const fuel = parseFloat(currentEntry.fuel_qty);
-
-                    if (dist > 0 && fuel > 0) {
-                        const eff = (dist / fuel).toFixed(1);
-                        document.getElementById("effVal").innerHTML = `${eff} <span class="text-xs">KM/L</span>`;
-
-                        let grade = "C";
-                        if (eff > 15) grade = "B";
-                        if (eff > 18) grade = "A";
-                        if (eff > 22) grade = "S";
-                        document.getElementById("grade").textContent = grade;
-
-                        if (logs.length > 1) {
-                            const prevDist = logs[0].km_reading - logs[1].km_reading;
-                            const prevFuel = logs[0].fuel_qty;
-                            const prevEff = prevDist / prevFuel;
-                            if (prevEff > 0) {
-                                const diff = ((eff - prevEff) / prevEff * 100).toFixed(1);
-                                document.getElementById("effTrend").textContent = (diff > 0 ? "+" : "") + diff + "%";
-                            }
+                    if (state.logs.length > 1) {
+                        const prevDist = state.logs[0].km_reading - state.logs[1].km_reading;
+                        const prevEff = prevDist / state.logs[0].fuel_qty;
+                        if (prevEff > 0) {
+                            const diff = ((eVal - prevEff) / prevEff * 100).toFixed(1);
+                            trend = (diff > 0 ? "+" : "") + diff + "%";
                         }
                     }
                 }
-            } catch (err) {
-                console.warn("HUD Calculation Error:", err);
             }
 
+            document.getElementById("effVal").innerHTML = `${eff} <span class="text-xs">KM/L</span>`;
+            document.getElementById("effTrend").textContent = trend;
+            document.getElementById("grade").textContent = grade;
             el.style.display = 'flex';
-            setTimeout(() => { el.style.display = "none"; }, 6000);
+            setTimeout(() => el.style.display = "none", 6000);
         }
 
         function rend() {
-            const b = document.getElementById("logList");
-            if (logs.length === 0) {
-                b.innerHTML = `<div class="text-center p-8 text-gray-500 font-bold">No logs yet. Add your first entry!</div>`;
+            const container = document.getElementById("logList");
+            if (!state.logs.length) {
+                container.innerHTML = `<div class="text-center p-8 text-gray-400 font-black uppercase text-xs">No records found</div>`;
                 return;
             }
-            b.innerHTML = "";
-            logs.slice(0, 50).forEach((e, i) => {
-                const date = e.refill_date.split("T")[0];
-                const isFull = e.full_tank == true || e.full_tank == "true";
 
-                // Efficiency Dot Logic
+            container.innerHTML = state.logs.slice(0, 50).map((e, i) => {
+                const isFull = e.full_tank == true || e.full_tank == "true";
                 let effDot = '';
+
                 if (isFull) {
-                    const prev = logs.slice(i + 1).find(l => l.vehicle_name === e.vehicle_name);
+                    const prev = state.logs.slice(i + 1).find(l => l.vehicle_name === e.vehicle_name);
                     if (prev) {
                         const dist = (parseFloat(e.km_reading) || 0) - (parseFloat(prev.km_reading) || 0);
-                        const qty = parseFloat(e.fuel_qty) || 1;
-                        if (dist > 0 && qty > 0) {
-                            const eff = dist / qty;
-                            let color = 'bg-red-500';
-                            if (eff >= 10) color = 'bg-yellow-500';
-                            if (eff >= 15) color = 'bg-green-500';
-                            effDot = `<div class="w-3 h-3 rounded-full ${color} shadow-sm border border-black/20" title="${eff.toFixed(1)} KM/L"></div>`;
+                        const eff = dist / (parseFloat(e.fuel_qty) || 1);
+                        if (dist > 0) {
+                            const color = eff >= 15 ? 'bg-green-500' : (eff >= 10 ? 'bg-yellow-500' : 'bg-red-500');
+                            effDot = `<div class="w-2.5 h-2.5 rounded-full ${color} border border-black/10" title="${eff.toFixed(1)} KM/L"></div>`;
                         }
                     }
                 }
 
-                b.innerHTML += `
-                <div class="log-card">
+                return `
+                <div class="log-card p-4 border-b-2 border-[var(--border)] last:border-0 grid grid-cols-[1fr_auto] gap-2 active:bg-black/5 transition-colors">
                     <div>
-                        <div class="log-date">${date}</div>
-                        <div class="log-vehicle flex items-center gap-2">
-                            ${e.vehicle_name}
-                            ${effDot}
+                        <div class="text-[0.6rem] font-black opacity-50 uppercase tracking-tighter">${e.refill_date.split("T")[0]}</div>
+                        <div class="flex items-center gap-2 font-black text-sm uppercase">
+                            ${e.vehicle_name} ${effDot}
                         </div>
-                        <div class="log-details">
-                            <span class="font-bold border-2 border-[var(--border-color)] px-1 rounded text-xs">${parseFloat(e.fuel_qty).toFixed(2)}L</span>
-                            <span>•</span>
-                            <span class="${isFull ? 'text-green-600' : 'text-orange-500'}">${isFull ? 'FULL' : 'PARTIAL'}</span>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[0.6rem] font-black border-2 border-[var(--border)] px-1.5 py-0.5 rounded bg-white text-black">${parseFloat(e.fuel_qty).toFixed(2)}L</span>
+                            <span class="text-[0.65rem] font-black ${isFull ? 'text-green-600' : 'text-orange-500'} uppercase">${isFull ? 'Full' : 'Partial'}</span>
                         </div>
-                        ${e.notes ? `<div class="text-[0.65rem] opacity-70 italic mt-1 font-medium truncate max-w-[200px]">${e.notes}</div>` : ''}
+                        ${e.notes ? `<div class="text-[0.6rem] opacity-60 mt-1 truncate max-w-[180px] font-medium italic">${e.notes}</div>` : ''}
                     </div>
-                    <div class="flex flex-col justify-center items-end">
-                         <div class="log-cost">₹${parseFloat(e.refill_amount).toFixed(0)}</div>
-                         <div class="text-xs font-bold opacity-60">₹${parseFloat(e.fuel_price).toFixed(2)}/L</div>
+                    <div class="text-right flex flex-col justify-center">
+                         <div class="text-xl font-black leading-none">₹${parseFloat(e.refill_amount).toFixed(0)}</div>
+                         <div class="text-[0.6rem] font-black opacity-40 mt-1">₹${parseFloat(e.fuel_price).toFixed(2)}/L</div>
                     </div>
                 </div>`;
-            });
+            }).join('');
         }
 
         function stats() {
-            const container = document.getElementById("statsGrid");
-            container.innerHTML = "";
+            const grid = document.getElementById("statsGrid");
+            grid.innerHTML = "";
             const datasets = [];
-            vehicleList.forEach((vName, idx) => {
-                const vLogs = logs.filter((e) => e.vehicle_name === vName).reverse();
-                if (vLogs.length < 2) return;
 
-                const fuel = vLogs.reduce((s, e) => s + (parseFloat(e.fuel_qty) || 0), 0);
-                const odos = vLogs.map((e) => parseFloat(e.km_reading) || 0);
+            state.vehicles.forEach((v, idx) => {
+                const logs = state.logs.filter(e => e.vehicle_name === v).reverse();
+                if (logs.length < 2) return;
+
+                const fuel = logs.reduce((s, e) => s + (parseFloat(e.fuel_qty) || 0), 0);
+                const odos = logs.map(e => parseFloat(e.km_reading) || 0);
                 const dist = Math.max(...odos) - Math.min(...odos);
                 const eff = dist > 0 ? (dist / fuel).toFixed(2) : "0.0";
-                const color = colors[idx % colors.length];
+                const color = state.colors[idx % state.colors.length];
 
-                container.innerHTML += `
-                    <div class="card p-4 flex justify-between items-center">
-                        <span class="text-sm font-black uppercase">${vName}</span>
+                grid.innerHTML += `
+                    <div class="neo-card p-4 flex justify-between items-center">
+                        <span class="text-xs font-black uppercase opacity-70">${v}</span>
                         <span class="text-2xl font-black" style="color: ${color}">${eff} <span class="text-xs">KM/L</span></span>
                     </div>`;
 
-                const chartData = [];
-                for (let i = 1; i < vLogs.length; i++) {
-                    const d = vLogs[i].km_reading - vLogs[i - 1].km_reading;
-                    const f = vLogs[i].fuel_qty;
-                    if (d > 0 && f > 0 && (vLogs[i].full_tank == true || vLogs[i].full_tank == "true")) {
-                        chartData.push({
-                            x: vLogs[i].refill_date.split("T")[0].slice(5),
-                            y: (d / f).toFixed(2),
-                            _cost: parseFloat(vLogs[i].refill_amount).toFixed(0),
-                            _full: vLogs[i].full_tank
+                const points = [];
+                for (let i = 1; i < logs.length; i++) {
+                    const d = logs[i].km_reading - logs[i - 1].km_reading;
+                    if (d > 0 && (logs[i].full_tank == true || logs[i].full_tank == "true")) {
+                        points.push({
+                            x: logs[i].refill_date.split("T")[0].slice(5),
+                            y: (d / logs[i].fuel_qty).toFixed(2),
+                            _cost: parseFloat(logs[i].refill_amount).toFixed(0)
                         });
                     }
                 }
                 datasets.push({
-                    label: vName,
-                    data: chartData,
+                    label: v,
+                    data: points,
                     borderColor: color,
-                    backgroundColor: "#00000011",
-                    tension: 0.1,
+                    backgroundColor: color + '11',
+                    tension: 0.3,
                     fill: true,
                     borderWidth: 3,
-                    pointRadius: 5,
+                    pointRadius: 4
                 });
             });
 
-            if (chart) chart.destroy();
-            chart = new Chart(document.getElementById("effChart"), {
+            if (state.chart) state.chart.destroy();
+            state.chart = new Chart(document.getElementById("effChart"), {
                 type: "line",
-                data: { datasets: datasets },
+                data: { datasets },
                 options: {
+                    responsive: true,
                     scales: {
-                        y: { grid: { color: "#00000022" }, ticks: { color: "black", font: { size: 10, weight: '800' } } },
-                        x: { type: "category", grid: { display: false }, ticks: { color: "black", font: { size: 10, weight: '800' } } },
+                        y: { grid: { color: "#00000022" }, ticks: { font: { weight: '800', size: 10, color: "black" } } },
+                        x: { type: "category", grid: { display: false }, ticks: { font: { weight: '800', size: 10, color: "black" } } }
                     },
-                    plugins: { legend: { labels: { color: "black", font: { size: 12, weight: "800" } } } },
-                    onClick: (e, activeEls, chart) => {
-                        if (activeEls.length > 0) {
-                            const idx = activeEls[0].index;
-                            const datasetIdx = activeEls[0].datasetIndex;
-                            const point = chart.data.datasets[datasetIdx].data[idx];
-                            showToast(`Log: ${point.x} - ₹${point._cost} (${point.y} KM/L)`);
-                        }
-                    }
-                },
+                    plugins: { legend: { labels: { font: { weight: '800', color: "black" } } } }
+                }
             });
         }
 
-        function loadMarket() {
-            showLoading("Checking market...");
+        async function loadMarket() {
+            ui.loading("Updating...");
             navigator.geolocation.getCurrentPosition((p) => {
                 google.script.run
                     .withSuccessHandler((res) => {
-                        hideLoading();
-                        if (!res || !res.success) return;
+                        ui.hideLoading();
+                        if (!res?.success) return;
                         const m = res.market;
-                        document.getElementById("mCity").textContent = "Region: " + m.city.toUpperCase();
+                        document.getElementById("mCity").textContent = `REGION: ${m.city.toUpperCase()}`;
                         document.getElementById("mInsight").textContent = m.insight;
                         document.getElementById("mMarket").innerHTML = `
-                        <div class="card p-4"><p class="text-sm font-bold uppercase">Petrol</p><p class="text-3xl font-black">₹${m.petrol}</p></div>
-                        <div class="card p-4"><p class="text-sm font-bold uppercase">Diesel</p><p class="text-3xl font-black">₹${m.diesel}</p></div>`;
-                        document.getElementById("mSources").innerHTML = m.sources.map((s) =>
-                            `<a href="${s.url}" target="_blank" class="block p-3 card text-xs font-bold uppercase">Source: ${s.title} ↗</a>`
+                            <div class="neo-card p-4 bg-[var(--primary)]/5">
+                                <p class="text-[0.6rem] font-black uppercase opacity-60">Petrol</p>
+                                <p class="text-2xl font-black">₹${m.petrol}</p>
+                            </div>
+                            <div class="neo-card p-4 bg-[var(--primary)]/5">
+                                <p class="text-[0.6rem] font-black uppercase opacity-60">Diesel</p>
+                                <p class="text-2xl font-black">₹${m.diesel}</p>
+                            </div>`;
+                        document.getElementById("mSources").innerHTML = m.sources.map(s =>
+                            `<a href="${s.url}" target="_blank" class="block p-3 neo-card text-[0.65rem] font-black uppercase hover:bg-black/5 transition-colors">Source: ${s.title} ↗</a>`
                         ).join("");
                     })
-                    .withFailureHandler(handleError)
-                    .getMarketData(p.coords.latitude, p.coords.longitude, lastUserPrice);
-            }, (err) => {
-                hideLoading();
-                showToast("Location Access Denied.");
-            }, { enableHighAccuracy: true, timeout: 5000 });
+                    .withFailureHandler(err => { ui.hideLoading(); ui.toast("Market Data Unavailable"); })
+                    .getMarketData(p.coords.latitude, p.coords.longitude, state.lastPrice);
+            }, () => { ui.hideLoading(); ui.toast("Location Denied"); });
         }
 
         function fetchGPS() {
             navigator.geolocation.getCurrentPosition((p) => {
                 document.getElementById("l").value = `${p.coords.latitude.toFixed(3)},${p.coords.longitude.toFixed(3)}`;
-            }, (err) => {
-                showToast("GPS Signal Blocked.");
-            }, { enableHighAccuracy: true, timeout: 5000 });
+            }, () => ui.toast("GPS Signal Lost"), { enableHighAccuracy: true, timeout: 5000 });
         }
 
-        function openScanner(forceCam) {
+        function openScanner(force) {
             const input = document.getElementById('cam');
-            if (forceCam) {
-                input.setAttribute('capture', 'environment');
-            } else {
-                input.removeAttribute('capture');
-            }
+            force ? input.setAttribute('capture', 'environment') : input.removeAttribute('capture');
             input.click();
         }
 
         function processImage(e) {
-            const f = e.target.files[0];
-            if (!f) return;
-            const r = new FileReader();
-            r.onload = (ev) => {
-                const i = new Image();
-                i.onload = () => {
-                    const c = document.createElement("canvas");
-                    let w = i.width, h = i.height;
-                    const max_size = 800;
-                    if (w > max_size || h > max_size) {
-                        if (w > h) {
-                            h *= max_size / w;
-                            w = max_size;
-                        } else {
-                            w *= max_size / h;
-                            h = max_size;
-                        }
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const max = 800;
+                    let w = img.width, h = img.height;
+                    if (w > max || h > max) {
+                        if (w > h) { h *= max / w; w = max; }
+                        else { w *= max / h; h = max; }
                     }
-                    c.width = w;
-                    c.height = h;
-                    c.getContext("2d").drawImage(i, 0, 0, w, h);
-                    showLoading("Processing receipt...");
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+                    ui.loading("Scanning Receipt...");
                     google.script.run
                         .withSuccessHandler((res) => {
-                            hideLoading();
-                            if (res && res.success) {
-                                const fieldMap = {
-                                    'fuel_qty': 'q',
-                                    'fuel_price': 'p',
-                                    'refill_date': 'd',
-                                    'notes': 'n'
-                                };
-                                
-                                // Auto-fill fields
-                                Object.keys(fieldMap).forEach(key => {
-                                    const elId = fieldMap[key];
-                                    const el = document.getElementById(elId);
-                                    if (res.data[key] && el) {
-                                        el.value = res.data[key];
-                                        el.classList.add('border-yellow-400', 'ring-2', 'ring-yellow-200');
-                                        setTimeout(() => el.classList.remove('border-yellow-400', 'ring-2', 'ring-yellow-200'), 3000);
-                                    }
-                                });
+                            ui.hideLoading();
+                            if (!res?.success) return ui.toast("AI Scan Failed");
 
-                                // APPEND GPS TO NOTES (Requested Feature)
-                                const notesField = document.getElementById('n');
-                                const aiNotes = res.data.notes || "";
-                                
-                                navigator.geolocation.getCurrentPosition(
-                                    (pos) => {
-                                        const gpsString = `GPS: ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
-                                        // Combine AI notes + GPS
-                                        notesField.value = aiNotes ? `${aiNotes} | ${gpsString}` : gpsString;
-                                        showToast("SCANNED + GPS ADDED");
-                                    },
-                                    (err) => {
-                                        // Fallback if GPS fails: just show AI notes
-                                        console.warn("GPS failed during scan", err);
-                                        // Ensure notes are set even if GPS fails
-                                        if (aiNotes) notesField.value = aiNotes;
-                                        showToast("SCANNED (NO GPS)");
-                                    },
-                                    { timeout: 4000, enableHighAccuracy: true }
-                                );
+                            const mapping = { 'fuel_qty': 'q', 'fuel_price': 'p', 'refill_date': 'd', 'notes': 'n' };
+                            Object.entries(mapping).forEach(([key, id]) => {
+                                const el = document.getElementById(id);
+                                if (res.data[key] && el) {
+                                    el.value = res.data[key];
+                                    el.classList.add('ring-2', 'ring-yellow-400');
+                                    setTimeout(() => el.classList.remove('ring-2', 'ring-yellow-400'), 3000);
+                                }
+                            });
+                            calc();
 
-                                calc();
-                            } else {
-                                showToast("AI SCANNED FAILED. ENTER MANUALLY.");
-                            }
+                            // APPEND GPS TO NOTES (Requested Feature)
+                            const notesField = document.getElementById('n');
+                            const aiNotes = res.data.notes || "";
+
+                            navigator.geolocation.getCurrentPosition(
+                                (pos) => {
+                                    const gpsString = `GPS: ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+                                    // Combine AI notes + GPS
+                                    notesField.value = aiNotes ? `${aiNotes} | ${gpsString}` : gpsString;
+                                    ui.toast("SCANNED + GPS ADDED");
+                                },
+                                (err) => {
+                                    // Fallback if GPS fails: just show AI notes
+                                    console.warn("GPS failed during scan", err);
+                                    // Ensure notes are set even if GPS fails
+                                    if (aiNotes) notesField.value = aiNotes;
+                                    ui.toast("SCANNED (NO GPS)");
+                                },
+                                { timeout: 4000, enableHighAccuracy: true }
+                            );
                         })
-                        .withFailureHandler(handleError)
-                        .processReceiptWithAI(c.toDataURL("image/jpeg", 0.7).split(",")[1]);
+                        .withFailureHandler(err => { ui.hideLoading(); ui.toast("AI Error"); })
+                        .processReceiptWithAI(canvas.toDataURL("image/jpeg", 0.7).split(",")[1]);
                 };
-                i.src = ev.target.result;
+                img.src = ev.target.result;
             };
-            r.readAsDataURL(f);
+            reader.readAsDataURL(file);
         }
     </script>
 </body>
+
+</html>
 
 </html>
