@@ -150,7 +150,7 @@
             box-shadow: 3px 3px 0px var(--black);
             text-transform: uppercase;
             font-size: 0.8rem;
-            animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.3s forwards 2.7s;
+            animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.3s forwards 3s;
             pointer-events: auto;
         }
 
@@ -232,10 +232,6 @@
             height: calc(100svh - 160px);
             overflow-y: auto;
             padding-bottom: 20px;
-        }
-
-        .tab-panel.active {
-            display: block;
         }
 
         .nav-active {
@@ -423,7 +419,8 @@
             </button>
         </div>
 
-        <input type="file" id="cam" accept="image/*" class="hidden" onchange="processImage(event)" />
+        <input type="file" id="cam" accept="image/jpeg,image/png,image/heic" class="hidden"
+            onchange="processImage(event)" />
     </header>
 
     <main class="flex-1 overflow-hidden">
@@ -439,8 +436,16 @@
                                         class="text-[0.6rem] font-black uppercase tracking-widest text-[#FF4646]">+
                                         New</button>
                                 </div>
-                                <select name="vehicle_name" id="vehicleSelect" class="neo-input font-black h-11"></select>
+                                <select name="vehicle_name" id="vehicleSelect"
+                                    class="neo-input font-black h-11"></select>
                                 <div id="vehicleRadioGroup" class="vehicle-radio-group"></div>
+                                <div id="newVehicleRow" class="hidden flex gap-1 mt-1">
+                                    <input type="text" id="newVehicleInput" placeholder="Vehicle name..."
+                                        class="neo-input text-[0.7rem] py-1 px-2 flex-1 h-8"
+                                        onkeydown="if(event.key==='Enter'){event.preventDefault();confirmVehicle()}" />
+                                    <button type="button" onclick="confirmVehicle()"
+                                        class="neo-btn h-8 px-3 text-xs">✓</button>
+                                </div>
                             </div>
                             <div>
                                 <label class="text-[0.7rem] uppercase">⛽ Fuel Type</label>
@@ -460,7 +465,8 @@
                             </div>
                             <div
                                 class="flex items-center gap-3 h-11 px-3 border-2 border-[var(--border)] rounded-lg bg-[var(--input-bg)]">
-                                <input type="checkbox" name="full_tank" id="ft" class="w-5 h-5 accent-yellow-400" checked />
+                                <input type="checkbox" name="full_tank" id="ft" class="w-5 h-5 accent-yellow-400"
+                                    checked />
                                 <span class="text-xs font-black uppercase whitespace-nowrap">Full Tank</span>
                             </div>
                         </div>
@@ -530,7 +536,7 @@
         <div id="tab3" class="tab-panel space-y-4">
             <div class="text-center neo-card p-4">
                 <p id="mCity" class="text-[0.7rem] font-black uppercase tracking-widest opacity-70">
-                    Locating...
+                    —
                 </p>
                 <div id="mInsight" class="text-lg font-black mt-1 leading-tight"></div>
             </div>
@@ -567,7 +573,7 @@
             Stats
         </button>
         <button onclick="setTab(3)"
-            class="nav-btn flex flex-col items-center justify-center text-gray-400 font-black text-[0.6rem] uppercase border-r-2 border-[var(--border)]">
+            class="nav-btn flex flex-col items-center justify-center text-gray-400 font-black text-[0.6rem] uppercase">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                 stroke="currentColor" class="nav-icon">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -598,7 +604,7 @@
                 t.className = 'toast';
                 t.textContent = text;
                 container.appendChild(t);
-                setTimeout(() => t.remove(), 3000);
+                setTimeout(() => t.remove(), 3300);
             }
         };
 
@@ -610,8 +616,8 @@
         }
 
         window.onload = () => {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) document.body.setAttribute('data-theme', savedTheme);
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
             document.getElementById("d").value = new Date().toISOString().split("T")[0];
             // Auto-fetch GPS silently
             if (navigator.geolocation && !document.getElementById("l").value) {
@@ -625,12 +631,22 @@
         };
 
         function addVehicle() {
-            const n = prompt("Enter vehicle name:");
-            if (n?.trim()) {
+            const row = document.getElementById('newVehicleRow');
+            row.classList.remove('hidden');
+            document.getElementById('newVehicleInput').focus();
+        }
+
+        function confirmVehicle() {
+            const input = document.getElementById('newVehicleInput');
+            const n = input.value.trim();
+            if (n) {
                 const s = document.getElementById("vehicleSelect");
-                s.add(new Option(n.trim(), n.trim()));
-                s.value = n.trim();
+                s.add(new Option(n, n));
+                s.value = n;
+                document.querySelectorAll('.vehicle-radio').forEach(d => d.classList.remove('selected'));
             }
+            input.value = '';
+            document.getElementById('newVehicleRow').classList.add('hidden');
         }
 
         function setTab(idx) {
@@ -708,7 +724,7 @@
             e.preventDefault();
             const data = Object.fromEntries(new FormData(e.target));
             data.full_tank = document.getElementById("ft").checked;
-            if (!data.pump_location?.trim()) data.pump_location = "NEW";
+            if (!data.pump_location?.trim()) data.pump_location = "";
 
             ui.loading("Saving...");
             google.script.run
@@ -719,6 +735,13 @@
                     document.getElementById("d").value = new Date().toISOString().split("T")[0];
                     // Clean reset
                     document.getElementById("l").value = "";
+                    // Reset vehicle radio visual state
+                    const firstRadio = document.querySelector('.vehicle-radio');
+                    if (firstRadio) {
+                        document.querySelectorAll('.vehicle-radio').forEach(d => d.classList.remove('selected'));
+                        firstRadio.classList.add('selected');
+                        document.getElementById('vehicleSelect').value = firstRadio.textContent.trim();
+                    }
                     setTimeout(ref, 3000);
                 })
                 .withFailureHandler(err => { ui.hideLoading(); ui.toast("Error: " + err.message); })
@@ -739,9 +762,9 @@
                     eff = eVal.toFixed(1);
                     grade = eVal > 22 ? "S" : (eVal > 18 ? "A" : (eVal > 15 ? "B" : "C"));
 
-                    if (state.logs.length > 1) {
-                        const prevDist = state.logs[0].km_reading - state.logs[1].km_reading;
-                        const prevEff = prevDist / state.logs[0].fuel_qty;
+                    if (vLogs.length > 1) {
+                        const prevDist = parseFloat(vLogs[0].km_reading) - parseFloat(vLogs[1].km_reading);
+                        const prevEff = prevDist / parseFloat(vLogs[0].fuel_qty);
                         if (prevEff > 0) {
                             const diff = ((eVal - prevEff) / prevEff * 100).toFixed(1);
                             trend = (diff > 0 ? "+" : "") + diff + "%";
@@ -799,6 +822,9 @@
                     </div>
                 </div>`;
             }).join('');
+            if (state.logs.length > 50) {
+                container.innerHTML += `<div class="py-3 text-center text-[0.6rem] font-black uppercase opacity-40 tracking-widest">Showing last 50 entries</div>`;
+            }
         }
 
         function stats() {
@@ -845,6 +871,16 @@
                 });
             });
 
+            if (datasets.length === 0) {
+                grid.innerHTML += `<div class="neo-card p-6 text-center text-xs font-black uppercase opacity-50 col-span-full">Not enough data yet — log at least 2 full-tank refills per vehicle</div>`;
+                if (state.chart) { state.chart.destroy(); state.chart = null; }
+                return;
+            }
+
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            const tickColor = isDark ? '#e0e0e0' : '#1a1a1a';
+            const gridColor = isDark ? '#ffffff22' : '#00000022';
+
             if (state.chart) state.chart.destroy();
             state.chart = new Chart(document.getElementById("effChart"), {
                 type: "line",
@@ -852,15 +888,15 @@
                 options: {
                     responsive: true,
                     scales: {
-                        y: { grid: { color: "#00000022" }, ticks: { font: { weight: '800', size: 10, color: "black" } } },
-                        x: { type: "category", grid: { display: false }, ticks: { font: { weight: '800', size: 10, color: "black" } } }
+                        y: { grid: { color: gridColor }, ticks: { font: { weight: '800', size: 10 }, color: tickColor } },
+                        x: { type: "category", grid: { display: false }, ticks: { font: { weight: '800', size: 10 }, color: tickColor } }
                     },
-                    plugins: { legend: { labels: { font: { weight: '800', color: "black" } } } }
+                    plugins: { legend: { labels: { font: { weight: '800' }, color: tickColor } } }
                 }
             });
         }
 
-        async function loadMarket() {
+        function loadMarket() {
             ui.loading("Updating...");
             navigator.geolocation.getCurrentPosition((p) => {
                 google.script.run
@@ -963,7 +999,5 @@
         }
     </script>
 </body>
-
-</html>
 
 </html>
