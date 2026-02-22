@@ -94,8 +94,8 @@ All data is stored in the `Log` sheet tab. Headers are auto-created on first run
 
 ---
 
-## 👥 Multi-User (Family Sharing)
-1. **Share the Sheet:** Click **Share** on the Google Sheet and add family members as **Editors**.
+## 👥 Multi-User (Bro Sharing)
+1. **Share the Sheet:** Click **Share** on the Google Sheet and add collegues/family members as **Editors**.
 2. **Web App Access:** Set **"Who has access"** to **"Anyone"** during deployment.
 3. **The Link:** Send them the Web App URL. Each user selects their vehicle from the Smart Vehicle Selector.
 
