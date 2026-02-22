@@ -1,4 +1,4 @@
-# ⚡ Fuel Log AI // Protocol v2.4
+# ⚡ Fuel Log AI // Protocol v2.5
 
 > **Status:** UPLINK_ACTIVE  
 > **Theme:** Neo-Brutalist // Cyber-Yellow  
@@ -22,7 +22,7 @@
 | 🤖 **AI Receipt Decoding** | Gemini 2.0 Flash extracts Qty, Price, Vendor, City & Area from receipt images |
 | 📍 **GPS-Appended Notes** | After AI scan, GPS coordinates are fetched and appended to Notes automatically |
 | 🗜️ **Image Compression** | Client-side resize to max 800px + 0.7 JPEG quality before API call |
-| 🎖️ **Mission Report HUD** | Post-log overlay showing KM/L efficiency and S–C Grade with trend % |
+| 🎖️ **Mission Report HUD** | **[NEW]** Animated bottom-sheet overlay showing KM/L efficiency and S–C Grade |
 | 🚗 **Smart Vehicle Selector** | Radio buttons (≤4 vehicles) or dropdown (5+), with per-vehicle accent colors |
 | 💰 **Live Market Scan** | GPS-based city lookup → Gemini fetches today's Petrol/Diesel prices with sources |
 | 📊 **Stats & Charts** | Per-vehicle KM/L summary + Chart.js efficiency trend line with tap-to-inspect tooltips |
@@ -45,8 +45,8 @@ Since this project runs on Google's serverless infrastructure, you don't need to
 
 ### 2. Install Engine
 - In your Sheet, go to **Extensions > Apps Script**.
-- **Code.gs:** Paste the contents of `Code.gs` into the editor (replacing the default `myFunction` stub).
-- **Index.html:** Click the `+` button > **HTML**, name the file `Index`, and paste the contents of `Index.html`.
+- **Code.gs:** Paste the contents of `src/Code.gs` into the editor (replacing the default `myFunction` stub).
+- **Index.html:** Click the `+` button > **HTML**, name the file `Index`, and paste the contents of `src/Index.html`.
 
 ### 3. Inject Intelligence (API Key)
 - Get your free API Key from [Google AI Studio](https://aistudio.google.com/).

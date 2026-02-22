@@ -1,8 +1,8 @@
 # Product Requirement Document (PRD): Fuel Log AI
 
-**Version:** 2.4  
+**Version:** 2.5  
 **Status:** Active  
-**Date:** 2026-02-21  
+**Date:** 2026-02-22  
 **Author:** Product Management Team (AI)
 
 ---
@@ -126,10 +126,10 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 ### Design System Classes
 | Class | Purpose |
 | :--- | :--- |
-| `.neo-card` | White/dark card with 2px border and 3px hard shadow |
-| `.neo-btn` | Yellow primary button with uppercase bold text and press animation |
+| `.neo-card` | White/dark card with 2px border and 3px hard shadow (Primary: `#FFDE03`) |
+| `.neo-btn` | Cyber Yellow primary button with uppercase bold text and press animation |
 | `.neo-btn-secondary` | Card-background colored secondary variant |
-| `.neo-input` | Styled input with focus "mechanical shift" animation (translate -1px, -1px) |
+| `.neo-input` | Styled input with 2px borders, 8px radius, and mechanical focus shift |
 
 ### Layout Structure
 1.  **Header:** App title + theme toggle + dual scanner buttons (📷 Cam, 📁 File).
@@ -146,7 +146,8 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 
 ## 7. Technical Constraints & Architecture
 -   **Platform:** Google Apps Script Web App (`doGet`).
--   **Frontend:** Single-file `Index.html` using Tailwind CSS (CDN) + Chart.js (CDN) + Inter font (Google Fonts).
+-   **Structure:** Core logic and UI moved to `/src` directory for better project organization.
+-   **Frontend:** Single-file `src/Index.html` using Tailwind CSS (CDN) + Chart.js (CDN) + Inter font (Google Fonts).
 -   **AI Engine:** Google Gemini 2.0 Flash (`gemini-2.0-flash`).
 -   **Zero-Cost Hosting:** Self-hosted within the user's Google Workspace/Drive account.
 -   **Templating:** Server-side HTML template (`HtmlService.createTemplateFromFile`).
@@ -201,13 +202,20 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 - Backend combines them into a descriptive `notes` string.
 - Yellow-ring AI-success highlight on populated fields.
 
-### 🍱 v2.4 – GPS Notes, Standardization & Stability (Current)
+### 🍱 v2.4 – GPS Notes, Standardization & Stability
 - **GPS-Appended Notes:** After AI scan, GPS coordinates are fetched and appended to the Notes field.
 - **Image Compression:** Client-side image resize (max 800px) and JPEG compression (0.7) before Gemini API call.
 - **CNG Support:** Added CNG as a third fuel type option alongside Petrol and Diesel.
 - **Neo-Brutalist 2.0:** Standardized class-based design system (`neo-card`, `neo-btn`, `neo-input`).
 - **AppSheet Automation Hook:** `processAppSheetReceipt(rowId)` stub in `Code.gs`.
 - **Mission Report Resilience:** High-priority z-index layering for the HUD overlay.
+
+### 🛡️ v2.5 – Project Hardening & UI Refinement (Current)
+- **Structural Organization:** Moved core App Script files (`Code.gs`, `Index.html`, `appsscript.json`) to the `src/` directory.
+- **Neo-Brutalist 2.0 Refinement:** Standardized border widths to 2px, shadow depths to 3px, and refined the "Cyber Yellow" palette.
+- **Mission Report Animation:** Redesigned the post-log report as a non-blocking bottom-sheet with a smooth `slideUp` animation.
+- **Smart Vehicle Selector Logic:** Refined the logic for switching between radio buttons and dropdowns based on vehicle count.
+- **Visual Feedback:** Reduced opacity and blur on the loading overlay for a less intrusive UX.
 
 ---
 **End of Document**
