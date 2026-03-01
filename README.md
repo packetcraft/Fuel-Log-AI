@@ -48,6 +48,39 @@ Since this project runs on Google's serverless infrastructure, you don't need to
 - **Code.gs:** Paste the contents of `src/Code.gs` into the editor (replacing the default `myFunction` stub).
 - **Index.html:** Click the `+` button > **HTML**, name the file `Index`, and paste the contents of `src/Index.html`.
 
+### 🛠️ Local Development (Advanced)
+For power users, it is recommended to use **[clasp](https://github.com/google/clasp)** (Command Line Apps Script Projects). This allows you to develop locally using VS Code, use Git for version control, and push code without copy-pasting.
+
+> [!TIP]
+> This project is configured to use the `src/` directory as the source root. All `.gs` and `.html` files **must** reside in `src/` to be correctly synced.
+
+**1st Time Setup:**
+```bash
+# 1. Install clasp globally
+npm install -g @google/clasp
+
+# 2. Enable Apps Script API
+# Visit: https://script.google.com/home/usersettings and toggle to "ON"
+
+# 3. Login to your Google account
+clasp login
+
+# 4. Clone the existing project (uses /src as root)
+clasp clone "your_script_id_here" --rootDir src
+```
+
+**Regular Maintenance:**
+```bash
+# Pull remote changes from Google Drive to local /src
+clasp pull
+
+# Push local changes from /src to the cloud
+clasp push
+
+# Open the script editor in your browser
+clasp open
+```
+
 ### 3. Inject Intelligence (API Key)
 - Get your free API Key from [Google AI Studio](https://aistudio.google.com/).
 - In Apps Script, go to **Project Settings** (⚙️) > **Script Properties**.

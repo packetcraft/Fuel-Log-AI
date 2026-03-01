@@ -175,9 +175,8 @@ function getMarketData(lat, lon, lastPrice) {
 
 
 
-// New wrapper function for AppSheet
 function processAppSheetReceipt(rowId) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Logs");
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Log");
   const data = sheet.getDataRange().getValues();
   
   // 1. Find the row by ID
