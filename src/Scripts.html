@@ -293,10 +293,10 @@
     function stats() {
         const grid = document.getElementById("statsGrid");
         grid.innerHTML = "";
-        const datasets = [];
+        const allPointsMap = {}; // { vehicleName: { YYYY-MM-DD: mileage } }
+        const allDatesSet = new Set();
 
         state.vehicles.forEach((v, idx) => {
-            // Sort logs oldest to newest for chronological calculation
             const logs = state.logs
                 .filter(e => e.vehicle_name === v)
                 .sort((a, b) => new Date(a.refill_date) - new Date(b.refill_date));
@@ -317,7 +317,7 @@
                 </div>`;
 
             // Interval Calculation (Handling Partial Refills correctly)
-            const points = [];
+            allPointsMap[v] = {};
             let accumulatedFuel = 0;
             let lastFullKM = -1;
 
@@ -331,35 +331,40 @@
                         const distSinceFull = currentKM - lastFullKM;
                         const totalFuelSpent = accumulatedFuel + currentFuel;
                         if (distSinceFull > 0 && totalFuelSpent > 0) {
-                            points.push({
-                                x: log.refill_date.split("T")[0].slice(5), // MM-DD
-                                y: (distSinceFull / totalFuelSpent).toFixed(2)
-                            });
+                            const dateKey = log.refill_date.split("T")[0];
+                            allPointsMap[v][dateKey] = (distSinceFull / totalFuelSpent).toFixed(2);
+                            allDatesSet.add(dateKey);
                         }
                     }
-                    // Reset baseline to THIS full tank
                     lastFullKM = currentKM;
                     accumulatedFuel = 0;
                 } else {
-                    // It's a partial refill, just track the fuel
                     accumulatedFuel += currentFuel;
                 }
             });
-
-            if (points.length > 0) {
-                datasets.push({
-                    label: v,
-                    data: points,
-                    borderColor: color,
-                    backgroundColor: color + '11',
-                    tension: 0.3,
-                    fill: true,
-                    borderWidth: 3,
-                    pointRadius: 4,
-                    pointHoverRadius: 6
-                });
-            }
         });
+
+        // Generate and sort labels (X-axis slots)
+        const sortedDates = Array.from(allDatesSet).sort();
+        const displayLabels = sortedDates.map(d => d.slice(2)); // YY-MM-DD
+
+        // Build datasets mapped to these labels
+        const datasets = state.vehicles.map((v, idx) => {
+            if (!allPointsMap[v]) return null;
+            const color = state.colors[idx % state.colors.length];
+            return {
+                label: v,
+                data: sortedDates.map(date => allPointsMap[v][date] || null),
+                borderColor: color,
+                backgroundColor: color + '11',
+                tension: 0.3,
+                fill: true,
+                borderWidth: 3,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                spanGaps: true // Connects lines across missing dates (overlapping timelines)
+            };
+        }).filter(d => d !== null);
 
         if (datasets.length === 0) {
             grid.innerHTML += `<div class="neo-card p-6 text-center text-xs font-black uppercase opacity-50 col-span-full">Not enough data yet — log at least 2 full-tank refills per vehicle</div>`;
@@ -374,12 +379,12 @@
         if (state.chart) state.chart.destroy();
         state.chart = new Chart(document.getElementById("effChart"), {
             type: "line",
-            data: { datasets },
+            data: { labels: displayLabels, datasets },
             options: {
                 responsive: true,
                 scales: {
                     y: { grid: { color: gridColor }, ticks: { font: { weight: '800', size: 10 }, color: tickColor } },
-                    x: { type: "category", grid: { display: false }, ticks: { font: { weight: '800', size: 10 }, color: tickColor } }
+                    x: { grid: { display: false }, ticks: { font: { weight: '800', size: 10 }, color: tickColor } }
                 },
                 plugins: {
                     legend: { labels: { font: { weight: '800' }, color: tickColor } },
