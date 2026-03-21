@@ -1,0 +1,27 @@
+{
+  "name": "fuel-log-ai",
+  "version": "1.0.0",
+  "description": "> **Status:** UPLINK_ACTIVE  \r > **Theme:** Neo-Brutalist // Cyber-Yellow  \r > **Engine:** Google Apps Script + Gemini 2.0 Flash",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/packetcraft/Fuel-Log-AI.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/packetcraft/Fuel-Log-AI/issues"
+  },
+  "homepage": "https://github.com/packetcraft/Fuel-Log-AI#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.1.0",
+    "eslint-plugin-googleappsscript": "^1.0.5",
+    "globals": "^17.4.0"
+  }
+}
