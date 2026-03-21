@@ -5,10 +5,20 @@
 > **Engine:** Google Apps Script + Gemini 2.0 Flash
 
 ## 🌌 Overview
-**Fuel Log AI** is a high-performance, mobile-optimized telemetry suite designed to track vehicle fuel costs and efficiency using AI-powered receipt scanning and live market data.
+**# Fuel Log AI — Mobile Receipt Scanning & Analytics
 
-> [!IMPORTANT]
-> **Serverless & Free:** This application is hosted entirely on your own Google Infrastructure using **Google Apps Script** as the engine and **Google Sheets** as the database. No external hosting, servers, or subscriptions are required.
+**Version:** 2.5.1 (Modular Edition)  
+**Engine:** Gemini 2.0 Flash (Structured Outputs)
+
+An AI-powered vehicle expense tracker built on **Google Apps Script** + **Gemini**.
+This application uses AI to scan fuel receipts and provide location-aware market insights.
+
+### 🌟 New in v2.5
+- **Modular Codebase**: Cleaner structure with separate `Styles.html` and `Scripts.html`.
+- **Structured Intelligence**: Deterministic AI parsing for near-zero errors.
+- **Smart Odometer**: Automatic prediction of your next odometer reading.
+- **Accurate Analytics**: Refined mathematical models for mileage tracking.
+- **PWA Ready**: Installable manifest for a native app feel.
 
 ![UI Screenshot](https://raw.githubusercontent.com/packetcraft/Fuel-Log-AI/refs/heads/main/ScreenShots2.jpg)
 

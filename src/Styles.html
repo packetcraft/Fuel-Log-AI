@@ -1,0 +1,295 @@
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@800&display=swap");
+
+    :root {
+        font-size: 16px;
+        --primary: #FFDE03;
+        --black: #1a1a1a;
+        --white: #ffffff;
+        --bg: #F4F4F4;
+        --card-bg: var(--white);
+        --text: var(--black);
+        --border: var(--black);
+        --shadow: var(--black);
+        --input-bg: var(--white);
+        --invert-icon: 0;
+    }
+
+    [data-theme="dark"] {
+        --primary: #fde047;
+        --black: #000000;
+        --white: #1e1e1e;
+        --bg: #121212;
+        --card-bg: #1e1e1e;
+        --text: #e0e0e0;
+        --border: #404040;
+        --shadow: #000000;
+        --input-bg: #2a2a2a;
+        --invert-icon: 1;
+    }
+
+    body {
+        font-family: "Inter", sans-serif;
+        font-weight: 600;
+        background: var(--bg);
+        color: var(--text);
+        overflow: hidden;
+        height: 100svh;
+        transition: all 0.3s ease;
+    }
+
+    .neo-card {
+        background: var(--card-bg);
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        box-shadow: 3px 3px 0px var(--shadow);
+    }
+
+    .neo-input {
+        background: var(--input-bg) !important;
+        border: 2px solid var(--border) !important;
+        color: var(--text) !important;
+        padding: 10px 12px !important;
+        width: 100%;
+        border-radius: 8px;
+        font-size: 16px !important;
+        font-weight: 600;
+        box-shadow: 2px 2px 0px var(--shadow);
+        transition: all 0.2s ease;
+    }
+
+    .neo-input:focus {
+        outline: none;
+        border-color: var(--primary) !important;
+        transform: translate(-1px, -1px);
+        box-shadow: 3px 3px 0px var(--shadow);
+    }
+
+    input::-webkit-calendar-picker-indicator {
+        opacity: 1 !important;
+        filter: invert(var(--invert-icon));
+    }
+
+    .neo-btn {
+        background-color: var(--primary);
+        color: var(--black);
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        font-weight: 900;
+        text-transform: uppercase;
+        box-shadow: 3px 3px 0px var(--shadow);
+        transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        text-align: center;
+        cursor: pointer;
+        padding: 12px;
+    }
+
+    .neo-btn:active {
+        transform: scale(0.95) translate(2px, 2px);
+        box-shadow: 0px 0px 0px var(--shadow);
+    }
+
+    .neo-btn-secondary {
+        background-color: var(--card-bg);
+        color: var(--text);
+    }
+
+    #total_cost_card {
+        background-color: var(--primary);
+        color: var(--black);
+        box-shadow: 2px 2px 0px var(--shadow);
+    }
+
+    /* Specific Vehicle Colors */
+    .btn-kylaq {
+        background-color: #22c55e !important;
+        color: white !important;
+        border-color: #14532d !important;
+    }
+
+    .btn-octavia {
+        background-color: #ef4444 !important;
+        color: white !important;
+        border-color: #7f1d1d !important;
+    }
+
+    /* Toast System */
+    #toastContainer {
+        position: fixed;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        pointer-events: none;
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .toast {
+        background: var(--primary);
+        color: var(--black);
+        border: 2px solid var(--black);
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 800;
+        box-shadow: 3px 3px 0px var(--black);
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.3s forwards 3s;
+        pointer-events: auto;
+    }
+
+    @keyframes slideIn {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+        to { transform: translateY(-20px); opacity: 0; }
+    }
+
+    #loadingOverlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 200;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        backdrop-filter: blur(2px);
+    }
+
+    /* AI Loading Shimmer */
+    .shimmer {
+        background: linear-gradient(90deg, transparent, rgba(255, 222, 3, 0.2), transparent);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+        from { background-position: -200% 0; }
+        to { background-position: 200% 0; }
+    }
+
+    #missionReport {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 300;
+        justify-content: flex-end;
+        align-items: center;
+        flex-direction: column;
+        backdrop-filter: blur(4px);
+    }
+
+    .mission-card {
+        background: var(--primary);
+        color: var(--black);
+        border: 2px solid var(--black);
+        border-top-left-radius: 24px;
+        border-top-right-radius: 24px;
+        width: 100%;
+        max-width: 448px;
+        padding: 2rem 2rem 4rem 2rem;
+        text-align: center;
+        box-shadow: 0px -4px 20px rgba(0, 0, 0, 0.2);
+        transform: translateY(100%);
+        animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes slideUp { to { transform: translateY(0); } }
+
+    .grade-badge {
+        font-size: 5rem;
+        font-weight: 800;
+        line-height: 1;
+        margin: 1rem 0;
+        color: var(--black);
+    }
+
+    .tab-panel {
+        display: none;
+        height: calc(100svh - 160px);
+        overflow-y: auto;
+        padding-bottom: 20px;
+    }
+
+    .nav-active {
+        background: var(--primary);
+        box-shadow: inset 2px 2px 0px #00000033;
+    }
+
+    table { width: 100%; font-size: 0.85rem; }
+    th { color: var(--text); background: var(--card-bg); border-bottom: 2px solid var(--border); padding: 10px; text-align: left; font-weight: 800; text-transform: uppercase; }
+    td { padding: 12px 10px; border-bottom: 2px solid var(--border); }
+
+    .nav-btn { transition: background-color 0.2s ease; }
+    .nav-btn:active { background: var(--primary); opacity: 0.8; }
+
+    .log-card {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.5rem;
+        padding: 1rem;
+        border-bottom: 2px solid var(--border);
+        background: var(--card-bg);
+        transition: background-color 0.2s;
+    }
+
+    .log-card:last-child { border-bottom: none; }
+    .log-card:active { background-color: var(--bg); }
+
+    .log-date {
+        font-size: 0.7rem;
+        font-weight: 800;
+        opacity: 0.7;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 2px;
+    }
+
+    .log-vehicle { font-size: 0.9rem; font-weight: 900; text-transform: uppercase; }
+    .log-cost { font-size: 1.25rem; font-weight: 900; text-align: right; }
+    .log-details { font-size: 0.75rem; font-weight: 800; display: flex; gap: 0.5rem; align-items: center; margin-top: 4px; }
+    .nav-icon { width: 24px; height: 24px; margin-bottom: 2px; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tab-panel.active {
+        display: block;
+        animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .vehicle-radio-group { display: none; gap: 0.5rem; }
+    .vehicle-radio {
+        flex: 1;
+        padding: 1rem;
+        background: var(--card-bg);
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 900;
+        cursor: pointer;
+        transition: all 0.2s;
+        opacity: 0.6;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+
+    .vehicle-radio.selected {
+        background: var(--primary);
+        color: var(--black);
+        opacity: 1;
+        box-shadow: 3px 3px 0px var(--shadow);
+        transform: translate(-2px, -2px);
+        border-color: var(--black);
+    }
+</style>

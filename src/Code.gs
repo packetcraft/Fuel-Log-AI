@@ -16,8 +16,14 @@ function doGet() {
 }
 
 /**
+ * Helper to include other HTML files in the main template.
+ */
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
+
+/**
  * Initializes the Google Sheet with necessary headers and formatting.
- * Can be called manually from the menu or automatically on first run.
  */
 function initializeDatabase() {
   try {
@@ -70,10 +76,6 @@ function getDataProtocol() {
   } catch (e) { return { success: false, message: e.toString() }; }
 }
 
-/**
- * Generic function to save entry data based on existing sheet headers.
- * This automatically handles new columns like 'notes' if they exist in headers.
- */
 function saveEntryDirect(entry) {
   try {
     initializeDatabase();
@@ -92,21 +94,7 @@ function saveEntryDirect(entry) {
 function processReceiptWithAI(base64Image) {
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_API_KEY;
   
-  // We ask for raw fields separately. This is much more reliable for the AI.
-  const promptText = `
-    Analyze this fuel receipt image and extract the following data into a strict JSON object.
-    
-    Fields required:
-    1. vendor: The fuel brand name (e.g., Shell, HP, Indian Oil, Nayara, BPCL). Look at logos and headers.
-    2. fuel_qty: Volume in Liters (Number). Ignore leading zeros.
-    3. fuel_price: Rate per Liter (Number).
-    4. refill_amount: Total sale amount (Number).
-    5. refill_date: Date as "YYYY-MM-DD".
-    6. city: The city name (e.g., Bangalore).
-    7. area: The specific area, road, or station location (e.g., Whitefield, Old Madras Road).
-    
-    If a numeric value is not visible, use null.
-  `;
+  const promptText = `Analyze this fuel receipt image and extract data into the specified format. Focus on vendor, total volume, rate, total cost, date, and location.`;
 
   const payload = {
     "contents": [{
@@ -116,7 +104,20 @@ function processReceiptWithAI(base64Image) {
       ]
     }],
     "generationConfig": {
-      "response_mime_type": "application/json"
+      "response_mime_type": "application/json",
+      "response_schema": {
+        "type": "object",
+        "properties": {
+          "vendor": { "type": "string" },
+          "fuel_qty": { "type": "number" },
+          "fuel_price": { "type": "number" },
+          "refill_amount": { "type": "number" },
+          "refill_date": { "type": "string", "description": "YYYY-MM-DD format" },
+          "city": { "type": "string" },
+          "area": { "type": "string" }
+        },
+        "required": ["vendor", "fuel_qty", "fuel_price", "refill_amount", "refill_date", "city", "area"]
+      }
     }
   };
 
@@ -138,19 +139,11 @@ function processReceiptWithAI(base64Image) {
 
     let extractedData = JSON.parse(result.candidates[0].content.parts[0].text);
 
-    // --- LOGIC FIX: Combine fields in JavaScript manually ---
-    
-    // 1. Clean up Vendor (fallback to "Fuel Station" if null)
+    // Combine Vendor and Location for notes
     const vendor = extractedData.vendor || "Fuel Station";
-
-    // 2. Clean up Location (Join Area and City, filtering out empty ones)
     const locationParts = [extractedData.area, extractedData.city].filter(part => part && part.trim() !== "");
     const locationStr = locationParts.length > 0 ? locationParts.join(", ") : "Unknown Location";
-
-    // 3. Create the 'notes' field programmatically
     extractedData.notes = `${vendor} - ${locationStr}`;
-
-    // ---------------------------------------------------------
 
     return { success: true, data: extractedData };
 
@@ -165,23 +158,43 @@ function getMarketData(lat, lon, lastPrice) {
     const geocode = Maps.newGeocoder().reverseGeocode(lat, lon);
     const city = geocode.results[0].address_components.find(c => c.types.includes("locality"))?.long_name || "Major Cities";
     const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_API_KEY;
-    const prompt = `Petrol and diesel prices today in ${city}, India. User last: ${lastPrice}. Return JSON {city, petrol, diesel, insight, sources: [{title, url}]}.`;
-    const response = UrlFetchApp.fetch(url, { "method": "post", "contentType": "application/json", "payload": JSON.stringify({ "contents": [{ "parts": [{ "text": prompt }] }], "tools": [{ "google_search": {} }] }) });
+    const prompt = `Petrol and diesel prices today in ${city}, India. User last: ${lastPrice}.`;
+    
+    const payload = {
+      "contents": [{ "parts": [{ "text": prompt }] }],
+      "tools": [{ "google_search": {} }],
+      "generationConfig": {
+        "response_mime_type": "application/json",
+        "response_schema": {
+          "type": "object",
+          "properties": {
+            "city": { "type": "string" },
+            "petrol": { "type": "number" },
+            "diesel": { "type": "number" },
+            "insight": { "type": "string" },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "url": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    const response = UrlFetchApp.fetch(url, { "method": "post", "contentType": "application/json", "payload": JSON.stringify(payload) });
     const result = JSON.parse(response.getContentText());
-    const json = result.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
-    return { success: true, market: JSON.parse(json) };
+    const market = JSON.parse(result.candidates[0].content.parts[0].text);
+    return { success: true, market: market };
   } catch (e) { return { success: false }; }
 }
 
-
-
 function processAppSheetReceipt(rowId) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Log");
-  const data = sheet.getDataRange().getValues();
-  
-  // 1. Find the row by ID
-  // 2. Get the Image URL from the "Receipt Image" column
-  // 3. Fetch the image bytes
-  // 4. Call your existing 'uploadImageToGemini' logic
-  // 5. sheet.getRange(rowIndex, colIndex).setValue(results)
+  // Stub for future use
 }

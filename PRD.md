@@ -1,14 +1,21 @@
 # Product Requirement Document (PRD): Fuel Log AI
 
-**Version:** 2.5  
+**Version:** 2.5.1  
 **Status:** Active  
-**Date:** 2026-02-22  
+**Date:** 2026-03-21  
 **Author:** Product Management Team (AI)
 
 ---
 
-## 1. Executive Summary
-**Fuel Log AI** is a mobile-first web application designed to simplify vehicle expense tracking. Leveraging Google Gemini 2.0 AI, the application automates data entry by extracting details directly from fuel receipts and provides real-time market insights on fuel prices. The system is built on Google Apps Script (GAS) with Google Sheets as the database, ensuring a lightweight, cost-effective, and highly accessible solution.
+## 1. Executive Summary (Update v2.5)
+**Fuel Log AI** has been upgraded to a modular architecture with enhanced AI reliability. This update focuses on internal code quality, deterministic AI parsing using `response_schema`, and a "Smart Odometer" prediction engine for better UX.
+
+## 2. New Features in v2.5
+- **Modular Architecture**: Separate HTML components for Styles and Scripts.
+- **Structured AI Outputs**: Guaranteed JSON schema for receipt and market data extraction.
+- **Smart Odometer Prediction**: Historical usage-based prediction to minimize manual input.
+- **Fuel Accumulation Logic**: Accurate mileage tracking even with partial refills.
+- **PWA Manifest**: Full installable mobile app support.
 
 ## 2. Product Objectives
 - **Minimize User Effort:** Reduce manual data entry by 80% using AI-powered receipt scanning.
