@@ -1,9 +1,9 @@
 # 🔍 Fuel Log AI — Project Review & Implementation Plan
 
 **Reviewed:** 2026-04-26  
-**Version:** 2.5.2 (Bugfix Edition)  
+**Version:** 2.5.1  
 **Stack:** Google Apps Script + Gemini 2.0 Flash  
-**Status:** ✅ Implementation Complete (Pending v2.6 Features)
+**Status:** Approved for Implementation
 
 ---
 
@@ -15,7 +15,7 @@ This document details the agreed-upon technical approaches for resolving all ide
 
 ---
 
-## 🔴 Critical Bugs (Fix Before Next Deploy)
+## [x]🔴 Critical Bugs (Fix Before Next Deploy)
 
 ### BUG-01 — Double `</body></html>` Tags
 **File:** `src/Index.html` — Lines 225–230  
@@ -108,7 +108,7 @@ The lifetime average formula `max(km) - min(km) / total_fuel` is inflated becaus
 
 ---
 
-## 📝 Documentation & Repository Polish
+## [ ]📝 Documentation & Repository Polish
 
 ### DOC-01 — Broken Markdown Heading in README
 **File:** `README.md` — Line 8  
