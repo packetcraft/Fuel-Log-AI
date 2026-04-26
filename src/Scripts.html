@@ -5,8 +5,11 @@
         lastPrice: 0,
         chart: null,
         colors: ["#1a1a1a", "#fde047", "#28a745", "#dc3545", "#fd7e14"],
-        predictions: {}, // { vehicleName: { lastKM: number, lastDate: Date, avgKmPerDay: number } }
-        efficiencies: {} // { logDate_vehicleName: effValue }
+        predictions: {},
+        efficiencies: {},
+        logFilter: 'ALL',
+        logVisible: 50,
+        chartPeriod: 'ALL'
     };
 
     const ui = {
@@ -193,6 +196,8 @@
                 }
                 
                 if (s.value) predictOdometer(s.value);
+
+                buildLogFilterPills();
             })
             .withFailureHandler(err => { ui.hideLoading(); ui.toast("Error: " + err.message); })
             .getDataProtocol();
@@ -285,117 +290,229 @@
         setTimeout(() => el.style.display = "none", 6000);
     }
 
+    function buildLogFilterPills() {
+        const bar = document.getElementById("logFilterBar");
+        if (!bar) return;
+        const pills = ['ALL', ...state.vehicles];
+        bar.innerHTML = pills.map(v =>
+            `<button class="log-filter-pill text-[0.6rem] font-black uppercase tracking-wider px-3 py-1.5 rounded border-2 border-[var(--border)] transition-colors ${v === state.logFilter ? 'bg-black text-white' : 'bg-white text-black'}" data-v="${v}" onclick="setLogFilter('${v}')">${v}</button>`
+        ).join('');
+    }
+
+    function setLogFilter(v) {
+        state.logFilter = v;
+        state.logVisible = 50;
+        document.querySelectorAll('.log-filter-pill').forEach(p => {
+            const active = p.dataset.v === v;
+            p.classList.toggle('bg-black', active);
+            p.classList.toggle('text-white', active);
+            p.classList.toggle('bg-white', !active);
+            p.classList.toggle('text-black', !active);
+        });
+        rend();
+    }
+
     function rend() {
         const container = document.getElementById("logList");
-        if (!state.logs.length) {
+        const isRawCoord = s => /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/.test((s || '').trim());
+
+        const filtered = state.logFilter === 'ALL'
+            ? state.logs
+            : state.logs.filter(e => e.vehicle_name === state.logFilter);
+
+        if (!filtered.length) {
             container.innerHTML = `<div class="text-center p-8 text-gray-400 font-black uppercase text-xs">No records found</div>`;
             return;
         }
 
-        container.innerHTML = state.logs.slice(0, 50).map((e, i) => {
+        const visible = filtered.slice(0, state.logVisible);
+        let lastMonth = '';
+        let html = '';
+
+        visible.forEach(e => {
             const isFull = e.full_tank == true || e.full_tank == "true";
-            let effDot = '';
-            if (isFull) {
-                const eff = state.efficiencies[`${e.refill_date.split("T")[0]}_${e.vehicle_name}`];
-                if (eff && eff > 0) {
-                    const color = eff >= 15 ? 'bg-green-500' : (eff >= 10 ? 'bg-yellow-500' : 'bg-red-500');
-                    effDot = `<div class="w-2.5 h-2.5 rounded-full ${color} border border-black/10" title="${eff.toFixed(1)} KM/L"></div>`;
-                }
+            const dateKey = e.refill_date.split("T")[0];
+            const d = new Date(dateKey + 'T00:00:00');
+            const monthKey = d.toLocaleString('default', { month: 'short', year: 'numeric' }).toUpperCase();
+
+            if (monthKey !== lastMonth) {
+                html += `<div class="px-4 pt-3 pb-1 text-[0.58rem] font-black uppercase tracking-widest opacity-40 border-b border-[var(--border)] bg-[var(--bg)]">${monthKey}</div>`;
+                lastMonth = monthKey;
             }
-            return `
+
+            const eff = isFull ? state.efficiencies[`${dateKey}_${e.vehicle_name}`] : null;
+            let effColor = '', effText = '';
+            if (eff && eff > 0) {
+                effColor = eff >= 15 ? 'text-green-600' : (eff >= 10 ? 'text-yellow-600' : 'text-red-500');
+                effText = eff.toFixed(1);
+            }
+
+            const fuelType = (e.fuel_type || '').toLowerCase();
+            const fuelBadgeColor = fuelType === 'diesel' ? 'bg-yellow-100 text-yellow-800'
+                : fuelType === 'cng' ? 'bg-green-100 text-green-800'
+                : 'bg-blue-100 text-blue-800';
+
+            const location = e.pump_location && !isRawCoord(e.pump_location) ? e.pump_location : '';
+            const kmReading = parseFloat(e.km_reading);
+
+            html += `
             <div class="log-card p-4 border-b-2 border-[var(--border)] last:border-0 grid grid-cols-[1fr_auto] gap-2 active:bg-black/5 transition-colors">
                 <div>
-                    <div class="text-[0.6rem] font-black opacity-50 uppercase tracking-tighter">${e.refill_date.split("T")[0]}</div>
-                    <div class="flex items-center gap-2 font-black text-sm uppercase">
-                        ${e.vehicle_name} ${effDot}
-                    </div>
-                    <div class="flex items-center gap-2 mt-1">
+                    <div class="text-[0.6rem] font-black opacity-50 uppercase tracking-tighter">${dateKey}</div>
+                    <div class="font-black text-sm uppercase">${e.vehicle_name}</div>
+                    <div class="flex items-center gap-2 mt-1 flex-wrap">
                         <span class="text-[0.6rem] font-black border-2 border-[var(--border)] px-1.5 py-0.5 rounded bg-white text-black">${parseFloat(e.fuel_qty).toFixed(2)}L</span>
                         <span class="text-[0.65rem] font-black ${isFull ? 'text-green-600' : 'text-orange-500'} uppercase">${isFull ? 'Full' : 'Partial'}</span>
+                        ${fuelType ? `<span class="text-[0.55rem] font-black px-1.5 py-0.5 rounded uppercase ${fuelBadgeColor}">${fuelType}</span>` : ''}
+                        ${effText ? `<span class="text-[0.6rem] font-black ${effColor} uppercase">${effText} KM/L</span>` : ''}
                     </div>
-                    ${e.notes ? `<div class="text-[0.6rem] opacity-60 mt-1 truncate max-w-[180px] font-medium italic">${e.notes}</div>` : ''}
+                    ${location ? `<div class="text-[0.6rem] opacity-60 mt-1 truncate max-w-[180px] font-medium italic">${location}</div>` : ''}
                 </div>
                 <div class="text-right flex flex-col justify-center">
-                     <div class="text-xl font-black leading-none">₹${parseFloat(e.refill_amount).toFixed(0)}</div>
-                     <div class="text-[0.6rem] font-black opacity-40 mt-1">₹${parseFloat(e.fuel_price).toFixed(2)}/L</div>
+                    <div class="text-xl font-black leading-none">₹${parseFloat(e.refill_amount).toFixed(0)}</div>
+                    <div class="text-[0.6rem] font-black opacity-40 mt-1">₹${parseFloat(e.fuel_price).toFixed(2)}/L</div>
+                    ${kmReading > 0 ? `<div class="text-[0.6rem] font-black opacity-30 mt-0.5">↑ ${kmReading.toLocaleString('en-IN')} km</div>` : ''}
                 </div>
             </div>`;
-        }).join('');
-        if (state.logs.length > 50) container.innerHTML += `<div class="py-3 text-center text-[0.6rem] font-black uppercase opacity-40 tracking-widest">Showing last 50 entries</div>`;
+        });
+
+        if (filtered.length > state.logVisible) {
+            const remaining = Math.min(25, filtered.length - state.logVisible);
+            html += `<button onclick="state.logVisible += 25; rend();" class="w-full py-3 text-[0.6rem] font-black uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity border-t-2 border-[var(--border)]">Load ${remaining} more ↓</button>`;
+        }
+
+        container.innerHTML = html;
     }
 
     function stats() {
         const grid = document.getElementById("statsGrid");
         grid.innerHTML = "";
-        const allPointsMap = {}; // { vehicleName: { YYYY-MM-DD: mileage } }
+        const allPointsMap = {};
         const allDatesSet = new Set();
+        let fleetKm = 0, fleetLiters = 0, fleetSpend = 0;
 
         state.vehicles.forEach((v, idx) => {
             const logs = state.logs
                 .filter(e => e.vehicle_name === v)
                 .sort((a, b) => new Date(a.refill_date) - new Date(b.refill_date));
 
-            // Lifetime Average calculation
             const fuel = logs.reduce((s, e) => s + (parseFloat(e.fuel_qty) || 0), 0);
-            const odos = logs.map(e => parseFloat(e.km_reading) || 0);
-            const dist = (logs.length > 0) ? Math.max(...odos) - Math.min(...odos) : 0;
-            const eff = dist > 0 ? (dist / fuel).toFixed(2) : "0.0";
+            const spend = logs.reduce((s, e) => s + (parseFloat(e.refill_amount) || 0), 0);
+            const odos = logs.map(e => parseFloat(e.km_reading) || 0).filter(k => k > 0);
+            const dist = odos.length > 1 ? Math.max(...odos) - Math.min(...odos) : 0;
+            const eff = dist > 0 && fuel > 0 ? (dist / fuel).toFixed(2) : "0.0";
+            const costPerKm = dist > 0 && spend > 0 ? (spend / dist).toFixed(2) : null;
             const color = state.colors[idx % state.colors.length];
 
-            grid.innerHTML += `
-                <div class="neo-card p-4 flex justify-between items-center">
-                    <span class="text-xs font-black uppercase opacity-70">${v}</span>
-                    <span class="text-2xl font-black" style="color: ${color}">${eff} <span class="text-xs">KM/L</span></span>
-                </div>`;
+            fleetKm += dist;
+            fleetLiters += fuel;
+            fleetSpend += spend;
 
-            if (logs.length < 2) return;
-
-            // Interval Calculation (Handling Partial Refills correctly)
+            // Per-fill efficiency (handles partial refills)
             allPointsMap[v] = {};
-            let accumulatedFuel = 0;
-            let lastFullKM = -1;
-
-            logs.forEach((log) => {
+            let accFuel = 0, lastFullKM = -1;
+            logs.forEach(log => {
                 const isFull = log.full_tank === true || log.full_tank === "true";
-                const currentKM = parseFloat(log.km_reading);
-                const currentFuel = parseFloat(log.fuel_qty);
-
+                const km = parseFloat(log.km_reading);
+                const qty = parseFloat(log.fuel_qty);
                 if (isFull) {
                     if (lastFullKM > 0) {
-                        const distSinceFull = currentKM - lastFullKM;
-                        const totalFuelSpent = accumulatedFuel + currentFuel;
-                        if (distSinceFull > 0 && totalFuelSpent > 0) {
-                            const dateKey = log.refill_date.split("T")[0];
-                            allPointsMap[v][dateKey] = (distSinceFull / totalFuelSpent).toFixed(2);
-                            allDatesSet.add(dateKey);
+                        const d = km - lastFullKM, f = accFuel + qty;
+                        if (d > 0 && f > 0) {
+                            const dk = log.refill_date.split("T")[0];
+                            allPointsMap[v][dk] = (d / f).toFixed(2);
+                            allDatesSet.add(dk);
                         }
                     }
-                    lastFullKM = currentKM;
-                    accumulatedFuel = 0;
+                    lastFullKM = km;
+                    accFuel = 0;
                 } else {
-                    accumulatedFuel += currentFuel;
+                    accFuel += qty;
                 }
             });
+
+            // Trend: last 3 fills vs all-time average
+            const effVals = Object.entries(allPointsMap[v])
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([, val]) => parseFloat(val));
+            const allAvg = effVals.length ? effVals.reduce((a, b) => a + b, 0) / effVals.length : 0;
+            const recentSlice = effVals.slice(-3);
+            const recentAvg = recentSlice.length ? recentSlice.reduce((a, b) => a + b, 0) / recentSlice.length : 0;
+            let trendArrow = '→', trendCls = 'opacity-30';
+            if (effVals.length >= 2 && allAvg) {
+                const delta = (recentAvg - allAvg) / allAvg;
+                if (delta > 0.05) { trendArrow = '↑'; trendCls = 'text-green-600'; }
+                else if (delta < -0.05) { trendArrow = '↓'; trendCls = 'text-red-500'; }
+            }
+
+            const best = effVals.length ? Math.max(...effVals).toFixed(1) : null;
+            const worst = effVals.length ? Math.min(...effVals).toFixed(1) : null;
+
+            grid.innerHTML += `
+                <div class="neo-card p-4">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-black uppercase opacity-70">${v}</span>
+                        <div class="text-right leading-none">
+                            <span class="text-2xl font-black" style="color:${color}">${eff}</span>
+                            <span class="text-xs font-black opacity-60"> KM/L</span>
+                            ${effVals.length >= 2 ? `<span class="text-base font-black ${trendCls} ml-1">${trendArrow}</span>` : ''}
+                        </div>
+                    </div>
+                    ${best ? `<div class="flex gap-3 mt-2 text-[0.6rem] font-black uppercase">
+                        <span class="text-green-600">↑ Best ${best}</span>
+                        <span class="text-red-500">↓ Worst ${worst}</span>
+                        <span class="opacity-40">${effVals.length} fills</span>
+                    </div>` : ''}
+                    ${costPerKm ? `<div class="flex justify-between mt-2 pt-2 border-t border-[var(--border)] text-[0.6rem] font-black uppercase opacity-60">
+                        <span>₹${costPerKm}/km</span>
+                        <span>₹${Math.round(spend).toLocaleString('en-IN')} total</span>
+                    </div>` : ''}
+                </div>`;
         });
 
-        // Generate and sort labels (X-axis slots)
+        // Summary bar
+        const summaryBar = document.getElementById("statsSummaryBar");
+        if (summaryBar) {
+            summaryBar.innerHTML = [
+                { label: 'Tracked KM', value: fleetKm > 0 ? Math.round(fleetKm).toLocaleString('en-IN') : '—' },
+                { label: 'Total Liters', value: fleetLiters > 0 ? fleetLiters.toFixed(0) + ' L' : '—' },
+                { label: 'Total Spend', value: fleetSpend > 0 ? '₹' + Math.round(fleetSpend).toLocaleString('en-IN') : '—' }
+            ].map(item => `
+                <div>
+                    <p class="text-[0.55rem] font-black uppercase opacity-50 tracking-widest">${item.label}</p>
+                    <p class="text-base font-black">${item.value}</p>
+                </div>`).join('');
+        }
+
+        // Time period filter
         const sortedDates = Array.from(allDatesSet).sort();
-        const displayLabels = sortedDates.map(d => {
-            const parts = d.split('-');
-            return `${parts[1]}-${parts[2]}`; // MM-DD for brevity
+        let filteredDates = sortedDates;
+        if (state.chartPeriod !== 'ALL') {
+            const months = state.chartPeriod === '3M' ? 3 : 6;
+            const cutoff = new Date();
+            cutoff.setMonth(cutoff.getMonth() - months);
+            filteredDates = sortedDates.filter(d => d >= cutoff.toISOString().split('T')[0]);
+        }
+
+        // X-axis: "Mon D" labels (e.g. "May 18")
+        const displayLabels = filteredDates.map(d => {
+            const dt = new Date(d + 'T00:00:00');
+            return dt.toLocaleString('default', { month: 'short' }) + ' ' + dt.getDate();
         });
 
-        // Build datasets mapped to these labels
-        const datasets = state.vehicles.map((v, idx) => {
-            if (!allPointsMap[v]) return null;
-            const color = state.colors[idx % state.colors.length];
-            
-            // Map mileage data to the sorted global timeline
-            const chartData = sortedDates.map(date => allPointsMap[v][date] || null);
-            
-            // Only add dataset if there's actual data to plot
-            if (chartData.every(val => val === null)) return null;
+        // Period pills
+        const pillContainer = document.getElementById("chartPeriodFilter");
+        if (pillContainer) {
+            pillContainer.innerHTML = ['3M', '6M', 'ALL'].map(p =>
+                `<button class="period-pill text-[0.6rem] font-black uppercase tracking-widest px-3 py-1.5 rounded border-2 border-[var(--border)] transition-colors ${state.chartPeriod === p ? 'bg-[var(--text)] text-[var(--card-bg)]' : 'bg-[var(--card-bg)] text-[var(--text)]'}" data-p="${p}" onclick="setChartPeriod('${p}')">${p}</button>`
+            ).join('');
+        }
 
+        const datasets = state.vehicles.map((v, idx) => {
+            if (!allPointsMap[v] || !Object.keys(allPointsMap[v]).length) return null;
+            const color = state.colors[idx % state.colors.length];
+            const chartData = filteredDates.map(date => allPointsMap[v][date] || null);
+            if (chartData.every(val => val === null)) return null;
             return {
                 label: v,
                 data: chartData,
@@ -406,9 +523,9 @@
                 borderWidth: 3,
                 pointRadius: 4,
                 pointHoverRadius: 6,
-                spanGaps: true // Connects lines across missing dates
+                spanGaps: true
             };
-        }).filter(d => d !== null);
+        }).filter(Boolean);
 
         if (datasets.length === 0) {
             grid.innerHTML += `<div class="neo-card p-6 text-center text-xs font-black uppercase opacity-50 col-span-full">Not enough data yet — log at least 2 full-tank refills per vehicle</div>`;
@@ -428,21 +545,24 @@
                 responsive: true,
                 scales: {
                     y: { grid: { color: gridColor }, ticks: { font: { weight: '800', size: 10 }, color: tickColor } },
-                    x: { grid: { display: false }, ticks: { font: { weight: '800', size: 10 }, color: tickColor } }
+                    x: { grid: { display: false }, ticks: { font: { weight: '800', size: 10 }, color: tickColor, maxRotation: 45 } }
                 },
                 plugins: {
                     legend: { labels: { font: { weight: '800' }, color: tickColor } },
                     tooltip: {
                         enabled: true,
                         callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': ' + context.parsed.y + ' KM/L';
-                            }
+                            label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + ' KM/L'
                         }
                     }
                 }
             }
         });
+    }
+
+    function setChartPeriod(p) {
+        state.chartPeriod = p;
+        stats();
     }
 
     function loadMarket() {
@@ -458,13 +578,13 @@
                     document.getElementById("mMarket").innerHTML = `
                         <div class="neo-card p-4 bg-[var(--primary)]/5">
                             <p class="text-[0.6rem] font-black uppercase opacity-60">Petrol</p>
-                            <p class="text-2xl font-black">₹${m.petrol}</p>
+                            <p class="text-2xl font-black">${m.petrol ? '₹' + m.petrol : 'N/A'}</p>
                         </div>
                         <div class="neo-card p-4 bg-[var(--primary)]/5">
                             <p class="text-[0.6rem] font-black uppercase opacity-60">Diesel</p>
-                            <p class="text-2xl font-black">₹${m.diesel}</p>
+                            <p class="text-2xl font-black">${m.diesel ? '₹' + m.diesel : 'N/A'}</p>
                         </div>`;
-                    document.getElementById("mSources").innerHTML = m.sources.map(s =>
+                    document.getElementById("mSources").innerHTML = (m.sources || []).map(s =>
                         `<a href="${s.url}" target="_blank" class="block p-3 neo-card text-[0.65rem] font-black uppercase hover:bg-black/5 transition-colors">Source: ${s.title} ↗</a>`
                     ).join("");
                 })
