@@ -5,20 +5,19 @@
 > **Engine:** Google Apps Script + Gemini 2.0 Flash
 
 ## 🌌 Overview
-**# Fuel Log AI — Mobile Receipt Scanning & Analytics
+**Fuel Log AI — Mobile Receipt Scanning & Analytics**
 
-**Version:** 2.5.1 (Modular Edition)  
+**Version:** 2.5.2 (Bugfix Edition)  
 **Engine:** Gemini 2.0 Flash (Structured Outputs)
 
 An AI-powered vehicle expense tracker built on **Google Apps Script** + **Gemini**.
 This application uses AI to scan fuel receipts and provide location-aware market insights.
 
-### 🌟 New in v2.5
-- **Modular Codebase**: Cleaner structure with separate `Styles.html` and `Scripts.html`.
-- **Structured Intelligence**: Deterministic AI parsing for near-zero errors.
-- **Smart Odometer**: Automatic prediction of your next odometer reading.
-- **Accurate Analytics**: Refined mathematical models for mileage tracking.
-- **PWA Ready**: Installable manifest for a native app feel.
+### 🌟 New in v2.5.2
+- **Robust Market Data**: Split grounding tools from JSON extraction for 100% reliable Live Market Prices.
+- **Unified Efficiency Math**: Pre-computed efficiency mapping makes Logs tab dots match Stats tab exactly.
+- **Persistent Vehicles**: `+ New Vehicle` selections are safely cached in script properties for zero data loss.
+- **Improved UX**: Dynamic loading messages, precise error toasts, and fixed HTML layout bugs.
 
 ![UI Screenshot](https://raw.githubusercontent.com/packetcraft/Fuel-Log-AI/refs/heads/main/ScreenShots2.jpg)
 
@@ -75,8 +74,12 @@ npm install -g @google/clasp
 # 3. Login to your Google account
 clasp login
 
-# 4. Clone the existing project (uses /src as root)
-clasp clone "your_script_id_here" --rootDir src
+# 4. Link the project
+# Copy the template and paste your Google Apps Script Project ID
+cp .clasp.json.example .clasp.json
+
+# (Or alternatively, use clasp clone which overwrites the config)
+# clasp clone "your_script_id_here" --rootDir src
 ```
 
 **Regular Maintenance:**
@@ -134,6 +137,7 @@ All data is stored in the `Log` sheet tab. Headers are auto-created on first run
 | `pump_location` | String | Station name or GPS coords |
 | `full_tank` | Boolean | Whether tank was filled to full |
 | `notes` | String | AI vendor+location + optional GPS coords |
+| `fuel_type` | String | Type of fuel (petrol, diesel, cng) |
 
 ---
 
@@ -145,7 +149,7 @@ All data is stored in the `Log` sheet tab. Headers are auto-created on first run
 ---
 
 > [!NOTE]
-> **AppSheet Integration:** The `processAppSheetReceipt(rowId)` function in `Code.gs` is a backend stub intended for AppSheet/automation workflows. Before activating it, ensure the sheet name reference inside the function is updated from `"Logs"` to `"Log"` to match the live sheet.
+> **AppSheet Integration:** The `processAppSheetReceipt(rowId)` function in `Code.gs` is a backend stub intended for AppSheet/automation workflows.
 
 ---
 

@@ -1,0 +1,17 @@
+# Ignore everything by default
+**/**
+
+# Allow the root dir and its essential contents
+!src/
+!src/**/*.gs
+!src/**/*.html
+!src/**/*.json
+!appsscript.json
+
+# Ignore node_modules if they somehow end up in src
+**/node_modules/**
+
+# Ignore documentation and config in root
+!README.md
+!PRD.md
+!.clasp.json

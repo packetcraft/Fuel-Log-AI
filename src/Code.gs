@@ -33,7 +33,7 @@ function initializeDatabase() {
       sheet = ss.insertSheet('Log');
     }
 
-    const requiredHeaders = ['vehicle_name', 'km_reading', 'fuel_qty', 'refill_amount', 'fuel_price', 'refill_date', 'pump_location', 'full_tank', 'notes'];
+    const requiredHeaders = ['vehicle_name', 'km_reading', 'fuel_qty', 'refill_amount', 'fuel_price', 'refill_date', 'pump_location', 'full_tank', 'notes', 'fuel_type'];
 
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(requiredHeaders);
@@ -61,7 +61,15 @@ function getDataProtocol() {
     const data = sheet.getDataRange().getValues();
     const headers = data[0];
     const rows = data.slice(1);
-    const vehicles = [...new Set(rows.map(r => r[0]))].filter(v => v);
+    
+    // Merge log vehicles and stored vehicles
+    const logVehicles = [...new Set(rows.map(r => r[0]))].filter(v => v);
+    let storedVehicles = [];
+    try {
+      const stored = PropertiesService.getScriptProperties().getProperty('SAVED_VEHICLES');
+      if (stored) storedVehicles = JSON.parse(stored);
+    } catch (e) {}
+    const vehicles = [...new Set([...logVehicles, ...storedVehicles])];
     const lastPrice = rows.length > 0 ? rows[rows.length - 1][4] : 0;
 
     const formattedData = rows.map(row => {
@@ -114,9 +122,10 @@ function processReceiptWithAI(base64Image) {
           "refill_amount": { "type": "number" },
           "refill_date": { "type": "string", "description": "YYYY-MM-DD format" },
           "city": { "type": "string" },
-          "area": { "type": "string" }
+          "area": { "type": "string" },
+          "fuel_type": { "type": "string", "enum": ["petrol", "diesel", "cng"], "description": "Type of fuel" }
         },
-        "required": ["vendor", "fuel_qty", "fuel_price", "refill_amount", "refill_date", "city", "area"]
+        "required": ["vendor", "fuel_qty", "fuel_price", "refill_amount", "refill_date", "city", "area", "fuel_type"]
       }
     }
   };
@@ -160,9 +169,29 @@ function getMarketData(lat, lon, lastPrice) {
     const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_API_KEY;
     const prompt = `Petrol and diesel prices today in ${city}, India. User last: ${lastPrice}.`;
     
-    const payload = {
+    // Step 1: Search for prices with Grounding
+    const searchPayload = {
       "contents": [{ "parts": [{ "text": prompt }] }],
-      "tools": [{ "google_search": {} }],
+      "tools": [{ "google_search": {} }]
+    };
+
+    const searchResponse = UrlFetchApp.fetch(url, {
+      "method": "post",
+      "contentType": "application/json",
+      "payload": JSON.stringify(searchPayload),
+      "muteHttpExceptions": true
+    });
+    
+    const searchResult = JSON.parse(searchResponse.getContentText());
+    if (searchResponse.getResponseCode() !== 200) {
+      return { success: false, error: searchResult.error?.message || "Market Search API failed" };
+    }
+    
+    const rawData = searchResult.candidates[0].content.parts[0].text;
+
+    // Step 2: Extract to JSON schema
+    const extractPayload = {
+      "contents": [{ "parts": [{ "text": `Extract market data from this text into JSON: ${rawData}` }] }],
       "generationConfig": {
         "response_mime_type": "application/json",
         "response_schema": {
@@ -187,14 +216,42 @@ function getMarketData(lat, lon, lastPrice) {
       }
     };
 
-    const response = UrlFetchApp.fetch(url, { "method": "post", "contentType": "application/json", "payload": JSON.stringify(payload) });
-    const result = JSON.parse(response.getContentText());
-    const market = JSON.parse(result.candidates[0].content.parts[0].text);
+    const extractResponse = UrlFetchApp.fetch(url, {
+      "method": "post",
+      "contentType": "application/json",
+      "payload": JSON.stringify(extractPayload),
+      "muteHttpExceptions": true
+    });
+    
+    const extractResult = JSON.parse(extractResponse.getContentText());
+    if (extractResponse.getResponseCode() !== 200) {
+      return { success: false, error: extractResult.error?.message || "Market Extraction API failed" };
+    }
+
+    const market = JSON.parse(extractResult.candidates[0].content.parts[0].text);
     return { success: true, market: market };
-  } catch (e) { return { success: false }; }
+  } catch (e) {
+    return { success: false, error: e.toString() };
+  }
 }
 
 function processAppSheetReceipt(rowId) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Log");
   // Stub for future use
+}
+
+function addVehicle(name) {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    let stored = [];
+    const saved = props.getProperty('SAVED_VEHICLES');
+    if (saved) stored = JSON.parse(saved);
+    if (!stored.includes(name)) {
+      stored.push(name);
+      props.setProperty('SAVED_VEHICLES', JSON.stringify(stored));
+    }
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: e.toString() };
+  }
 }

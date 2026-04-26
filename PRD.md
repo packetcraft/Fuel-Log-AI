@@ -1,34 +1,33 @@
 # Product Requirement Document (PRD): Fuel Log AI
 
-**Version:** 2.5.1  
+**Version:** 2.5.2 (Bugfix Edition)  
 **Status:** Active  
 **Date:** 2026-03-21  
 **Author:** Product Management Team (AI)
 
 ---
 
-## 1. Executive Summary (Update v2.5)
-**Fuel Log AI** has been upgraded to a modular architecture with enhanced AI reliability. This update focuses on internal code quality, deterministic AI parsing using `response_schema`, and a "Smart Odometer" prediction engine for better UX.
+## 1. Executive Summary
+**Fuel Log AI** has been upgraded to a modular architecture with enhanced AI reliability. Update v2.5.2 focuses on robust market data grounding, accurate efficiency modeling, and code quality.
 
-## 2. New Features in v2.5
-- **Modular Architecture**: Separate HTML components for Styles and Scripts.
-- **Structured AI Outputs**: Guaranteed JSON schema for receipt and market data extraction.
-- **Smart Odometer Prediction**: Historical usage-based prediction to minimize manual input.
-- **Fuel Accumulation Logic**: Accurate mileage tracking even with partial refills.
-- **PWA Manifest**: Full installable mobile app support.
+## 2. New Features in v2.5.2
+- **Robust Market Data**: Split grounding tools from JSON extraction for 100% reliable Live Market Prices.
+- **Unified Efficiency Math**: Pre-computed efficiency mapping makes Logs tab dots match Stats tab exactly.
+- **Persistent Vehicles**: `+ New Vehicle` selections are safely cached in script properties for zero data loss.
+- **Improved UX**: Dynamic loading messages, precise error toasts, and fixed HTML layout bugs.
 
-## 2. Product Objectives
+## 3. Product Objectives
 - **Minimize User Effort:** Reduce manual data entry by 80% using AI-powered receipt scanning.
 - **Accuracy:** Ensure precise tracking of mileage (KM readings), fuel quantity, and costs.
 - **Insight:** Provide users with contextual data (local market prices) to inform purchasing decisions.
 - **Accessibility:** Deliver a seamless experience across mobile devices via a responsive web interface.
 
-## 3. User Personas
+## 4. User Personas
 1.  **The Daily Commuter:** Wants to quickly log a refill at the pump without fumbling with numbers.
 2.  **The Fleet Driver:** Needs to report accurate expense data to managers with proof (receipts) and location data.
 3.  **The Cost-Conscious Owner:** Tracks fuel efficiency and compares pump prices to market averages.
 
-## 4. Feature Scope (MoSCoW)
+## 5. Feature Scope (MoSCoW)
 
 ### Must Have (P0)
 -   **AI Receipt Scanning:**
@@ -227,6 +226,25 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 - **Mission Report Animation:** Redesigned the post-log report as a non-blocking bottom-sheet with a smooth `slideUp` animation.
 - **Smart Vehicle Selector Logic:** Refined the logic for switching between radio buttons and dropdowns based on vehicle count.
 - **Visual Feedback:** Reduced opacity and blur on the loading overlay for a less intrusive UX.
+
+---
+
+## 10. Repository Hygiene & Maintenance Plan (v2.6 Proposal)
+
+### 10.1 GitHub Best Practices
+- **[x] Add `.gitignore`:** Exclude `node_modules/`, `.clasp.json` (if sensitive), and local temporary files.
+- **[x] Add `LICENSE`:** Formally include the MIT license file in the root directory.
+- **[x] Add `.claspignore`:** Ensure only production files (`src/*.gs`, `src/*.html`) are pushed to Google Apps Script.
+
+### 10.2 Documentation & Metadata Alignment
+- **[x] License Consistency:** Update `package.json` to reflect the "MIT" license specified in the README.
+- **[x] Script Update:** Align the `processAppSheetReceipt` stub in `Code.gs` to reference the correct sheet name (`Log`) and resolve the warning in the README.
+
+### 10.3 Tooling & Workflow Enhancements
+- **[x] npm Scripts:** Add utility scripts to `package.json` for streamlined development:
+  - `npm run push` (clasp push)
+  - `npm run watch` (clasp push --watch)
+  - `npm run lint` (eslint check)
 
 ---
 **End of Document**

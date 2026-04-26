@@ -1,10 +1,13 @@
 {
   "name": "fuel-log-ai",
   "version": "1.0.0",
-  "description": "> **Status:** UPLINK_ACTIVE  \r > **Theme:** Neo-Brutalist // Cyber-Yellow  \r > **Engine:** Google Apps Script + Gemini 2.0 Flash",
+  "description": "AI-powered fuel receipt scanner and expense tracker built on Google Apps Script.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "push": "clasp push",
+    "watch": "clasp push --watch",
+    "lint": "eslint src/**"
   },
   "repository": {
     "type": "git",
@@ -12,7 +15,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/packetcraft/Fuel-Log-AI/issues"
