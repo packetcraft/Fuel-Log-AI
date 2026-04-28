@@ -1,23 +1,29 @@
-# ⚡ Fuel Log AI // Protocol v2.5
+# ⚡ Fuel Log AI // Protocol v2.6
 
 > **Status:** UPLINK_ACTIVE  
 > **Theme:** Neo-Brutalist // Cyber-Yellow  
 > **Engine:** Google Apps Script + Gemini 2.0 Flash
 
 ## 🌌 Overview
-**Fuel Log AI — Mobile Receipt Scanning & Analytics**
 
-**Version:** 2.5.2 (Bugfix Edition)  
+Fuel Log AI — Mobile Receipt Scanning & Analytics
+
+**Version:** 2.6.0 (Code Quality + UX Polish)  
 **Engine:** Gemini 2.0 Flash (Structured Outputs)
 
 An AI-powered vehicle expense tracker built on **Google Apps Script** + **Gemini**.
 This application uses AI to scan fuel receipts and provide location-aware market insights.
 
-### 🌟 New in v2.5.2
-- **Robust Market Data**: Split grounding tools from JSON extraction for 100% reliable Live Market Prices.
-- **Unified Efficiency Math**: Pre-computed efficiency mapping makes Logs tab dots match Stats tab exactly.
-- **Persistent Vehicles**: `+ New Vehicle` selections are safely cached in script properties for zero data loss.
-- **Improved UX**: Dynamic loading messages, precise error toasts, and fixed HTML layout bugs.
+### 🌟 New in v2.6.0
+- **Fuel Type Chips**: Petrol / Diesel / CNG now displayed as tap-friendly segmented buttons instead of a dropdown.
+- **Odometer Toggle**: Full Tank is now an inline `✓ Full / Partial` pill beside the Odometer label, freeing a full grid column.
+- **Smarter Add Form**: Quantity field highlights with a dashed yellow border when empty; Notes collapses to 1 row by default.
+- **Scan Menu**: Two scanner buttons merged into a single 📷 button with a Camera / Gallery sub-menu.
+- **GPS Fix**: Station Location input no longer clips text behind the 📍 pin button.
+- **Dynamic Vehicle Colors**: Vehicle radio buttons use index-based colors instead of hardcoded brand names.
+- **Market Cache**: Live market data is cached in `sessionStorage` with a 4-hour TTL — no redundant API calls per session.
+- **Precise Efficiency**: Stats lifetime average now derived from correctly-calculated interval efficiencies, not inflated `max−min` odometer math.
+- **Semantic IDs**: All single-letter form element IDs renamed to readable names (`km-reading`, `fuel-qty`, `fuel-price`, etc.).
 
 ![UI Screenshot](https://raw.githubusercontent.com/packetcraft/Fuel-Log-AI/refs/heads/main/ScreenShots2.jpg)
 
@@ -27,13 +33,13 @@ This application uses AI to scan fuel receipts and provide location-aware market
 
 | Feature | Description |
 | :--- | :--- |
-| 📷 **Dual-Trigger Scanning** | Dedicated Cam (rear-camera) and File (gallery) buttons for receipt input |
+| 📷 **Scan Receipt Menu** | Single 📷 button expands to Camera (rear-camera) or Gallery sub-menu |
 | 🤖 **AI Receipt Decoding** | Gemini 2.0 Flash extracts Qty, Price, Vendor, City & Area from receipt images |
 | 📍 **GPS-Appended Notes** | After AI scan, GPS coordinates are fetched and appended to Notes automatically |
 | 🗜️ **Image Compression** | Client-side resize to max 800px + 0.7 JPEG quality before API call |
 | 🎖️ **Mission Report HUD** | **[NEW]** Animated bottom-sheet overlay showing KM/L efficiency and S–C Grade |
-| 🚗 **Smart Vehicle Selector** | Radio buttons (≤4 vehicles) or dropdown (5+), with per-vehicle accent colors |
-| 💰 **Live Market Scan** | GPS-based city lookup → Gemini fetches today's Petrol/Diesel prices with sources |
+| 🚗 **Smart Vehicle Selector** | Radio buttons (≤4 vehicles) or dropdown (5+), with dynamic index-based accent colors |
+| 💰 **Live Market Scan** | GPS-based city lookup → Gemini fetches today's Petrol/Diesel prices with sources; cached 4 hrs in `sessionStorage` |
 | 📊 **Stats & Charts** | Per-vehicle KM/L summary + Chart.js efficiency trend line with tap-to-inspect tooltips |
 | 🃏 **Card Log View** | Last 50 refills as scannable cards with Efficiency Dots (🟢🟡🔴) |
 | 🌙 **Dark Mode** | Manual toggle (🌓), persisted via `localStorage`, full CSS-variable theming |
@@ -90,8 +96,11 @@ clasp pull
 # Push local changes from /src to the cloud
 clasp push
 
-# Open the script editor in your browser
-clasp open
+# Open the Apps Script IDE in your browser
+clasp open-script
+
+# Open the deployed web app in your browser
+clasp open-web-app
 ```
 
 ### 3. Inject Intelligence (API Key)

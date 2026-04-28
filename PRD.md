@@ -1,20 +1,26 @@
 # Product Requirement Document (PRD): Fuel Log AI
 
-**Version:** 2.5.2 (Bugfix Edition)  
+**Version:** 2.6.0 (Code Quality + UX Polish)  
 **Status:** Active  
-**Date:** 2026-03-21  
+**Date:** 2026-04-28  
 **Author:** Product Management Team (AI)
 
 ---
 
 ## 1. Executive Summary
-**Fuel Log AI** has been upgraded to a modular architecture with enhanced AI reliability. Update v2.5.2 focuses on robust market data grounding, accurate efficiency modeling, and code quality.
+**Fuel Log AI** v2.6.0 delivers a comprehensive code quality overhaul and a redesigned Add tab UX. This update resolves all items from the v2.5.1 code review (CODE-01 through CODE-04) and ships six UX improvements to the primary data-entry flow.
 
-## 2. New Features in v2.5.2
-- **Robust Market Data**: Split grounding tools from JSON extraction for 100% reliable Live Market Prices.
-- **Unified Efficiency Math**: Pre-computed efficiency mapping makes Logs tab dots match Stats tab exactly.
-- **Persistent Vehicles**: `+ New Vehicle` selections are safely cached in script properties for zero data loss.
-- **Improved UX**: Dynamic loading messages, precise error toasts, and fixed HTML layout bugs.
+## 2. New Features in v2.6.0
+- **Fuel Type Chips**: Petrol / Diesel / CNG replaced the dropdown with segmented tap-buttons; AI scanner updates chip state with yellow highlight.
+- **Odometer Toggle**: Full Tank moved to an inline `✓ Full / Partial` pill beside the Odometer label, making the odometer input full-width.
+- **Quantity Emphasis**: Empty Qty field shows a dashed yellow border to direct first-entry attention; resets on input and after save.
+- **GPS Button Fix**: Station Location input and GPS pin button are now proper flex siblings — no more text clipping.
+- **Scan Menu**: Two header scanner buttons merged into a single 📷 dropdown (Camera / Gallery); closes on outside tap.
+- **Notes Collapse**: Notes textarea defaults to 1 row, expands to 4 on focus, collapses again if empty.
+- **Dynamic Vehicle Colors**: Vehicle radio buttons now use index-based CSS classes (`btn-color-0..3`) instead of hardcoded brand names.
+- **Market Cache**: `sessionStorage` cache (4-hour TTL) prevents redundant `getMarketData` calls on repeat Market tab visits.
+- **Precise Lifetime Average**: Stats card efficiency derived from the mean of correctly-calculated interval efficiencies (not inflated `max_km − min_km / total_fuel`).
+- **Semantic Element IDs**: All single-letter form IDs renamed (`k`→`km-reading`, `q`→`fuel-qty`, `p`→`fuel-price`, `n`→`notes`, `l`→`pump-location`, `d`→`refill-date`, `t`→`refill-total`).
 
 ## 3. Product Objectives
 - **Minimize User Effort:** Reduce manual data entry by 80% using AI-powered receipt scanning.
@@ -52,8 +58,8 @@
 
 -   **Vehicle Management:**
     -   Support multiple vehicles via a dropdown or radio-button selector.
-    -   **Smart Vehicle Selector:** Automatically switches from a Dropdown to large Radio Buttons when the vehicle count is between 1 and 4 (inclusive). Reverts to dropdown for 5+ vehicles. Vehicle-specific accent colors are applied (e.g., Kylaq = Green, Octavia = Red).
-    -   **Add New Vehicle:** Inline `+ New` prompt to add a vehicle name on the fly (stored in the current session's dropdown).
+    -   **Smart Vehicle Selector:** Automatically switches from a Dropdown to large Radio Buttons when the vehicle count is between 1 and 4 (inclusive). Reverts to dropdown for 5+ vehicles. Dynamic index-based accent colors applied (`btn-color-0..3`).
+    -   **Add New Vehicle:** Inline `+ New` prompt to add a vehicle name on the fly; persisted to Script Properties for zero data loss on reload.
 
 -   **Historical Log View:**
     -   Chronological card list of the last **50** refills (Date, Vehicle, Amount, Fuel Qty, Price/L).
@@ -97,9 +103,9 @@
 
 ---
 
-## 5. Functional Requirements
+## 6. Functional Requirements
 
-### 5.1 Receipt Processing (AI)
+### 6.1 Receipt Processing (AI)
 | ID | Requirement Description | Technical Implementation Reference |
 | :--- | :--- | :--- |
 | **FR-01** | System must accept image uploads (JPEG/PNG), compress to max 800px / 0.7 JPEG quality, and convert to Base64. | Frontend `FileReader` + `Canvas` resize |
@@ -107,7 +113,7 @@
 | **FR-03** | System must consolidate extracted location data (Vendor, Area, City) into the `Notes` field and pre-fill the form. | `processReceiptWithAI` backend logic |
 | **FR-04** | Frontend must attempt GPS acquisition post-scan and append coordinates to Notes (format: `| GPS: lat, lon`). | `processImage()` → `navigator.geolocation` |
 
-### 5.2 Data Management
+### 6.2 Data Management
 | ID | Requirement Description | Technical Implementation Reference |
 | :--- | :--- | :--- |
 | **FR-05** | System shall ensure the `Log` sheet exists and contains required headers on first run or manual trigger. | `initializeDatabase()` |
@@ -115,17 +121,17 @@
 | **FR-07** | System must retrieve historical data in **reverse chronological order** and expose unique vehicle list and last fuel price. | `getDataProtocol()` |
 | **FR-08** | Log view must display at most 50 entries. | `state.logs.slice(0, 50)` in `rend()` |
 
-### 5.3 Location & Market Data
+### 6.3 Location & Market Data
 | ID | Requirement Description | Technical Implementation Reference |
 | :--- | :--- | :--- |
 | **FR-09** | System obtains user's Lat/Lon (with permission) to fetch market data. | Geolocation API in `loadMarket()` |
 | **FR-10** | System resolves Lat/Lon to a "Locality" city name. | `Maps.newGeocoder()` in `getMarketData()` |
 | **FR-11** | System queries Gemini for current market rates in that city using Google Search grounding. | `getMarketData()` with `google_search` tool |
-| **FR-12** | GPS button on the entry form sets the Pump Location field to raw coordinates. | `fetchGPS()` → `input#l` |
+| **FR-12** | GPS button on the entry form sets the Pump Location field to raw coordinates. | `fetchGPS()` → `#pump-location` |
 
 ---
 
-## 6. User Interface (UI) Requirements
+## 7. User Interface (UI) Requirements
 
 The application's UI follows a **Neo-Brutalist** design philosophy: high-contrast elements, thick solid borders, hard drop-shadows, and heavy uppercase `Inter` typography.
 
@@ -138,19 +144,19 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 | `.neo-input` | Styled input with 2px borders, 8px radius, and mechanical focus shift |
 
 ### Layout Structure
-1.  **Header:** App title + theme toggle + dual scanner buttons (📷 Cam, 📁 File).
+1.  **Header:** App title + theme toggle + single 📷 Scan button (expands to Camera / Gallery sub-menu; closes on outside tap).
 2.  **Main Area:** 4-tab content panel, scrollable, height = `100svh - 160px`.
 3.  **Bottom Nav:** Fixed 4-column bar with SVG icons and labels (Add, Logs, Stats, Market). Active tab highlighted with primary yellow (`nav-active`). Tab switch triggers a `fadeIn` animation.
 
 ### Tab Details
-- **Add Tab:** Form grouped into 3 visual blocks — a) Vehicle/Fuel type grid, b) Fuel math row (Qty × Price = Total), c) Date/Location row. Total cost displayed as a highlighted non-editable card.
+- **Add Tab:** Form grouped into 3 visual blocks — a) Vehicle radio + Fuel Type chips grid, b) Full-width Odometer with inline `✓ Full / Partial` toggle + Fuel math row (Qty × Price = Total), c) Date/Location row. Qty field has dashed yellow emphasis when empty. Notes collapses to 1 row by default.
 - **Logs Tab:** Scrollable card list. Each card shows date, vehicle+efficiency dot, fuel qty badge, full/partial label, notes snippet, cost, and price/L.
 - **Stats Tab:** Per-vehicle summary cards + Chart.js line chart.
 - **Market Tab:** City header, AI insight, Petrol/Diesel price cards, and source links.
 
 ---
 
-## 7. Technical Constraints & Architecture
+## 8. Technical Constraints & Architecture
 - **Platform:** Google Apps Script Web App (`doGet`).
 - **Structure:** Core logic and UI moved to `/src` directory for better project organization and `clasp` compatibility.
 - **Development Tooling:** **Google Clasp** is the recommended tool for local development and CI/CD.
@@ -161,19 +167,19 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 -   **AI Engine:** Google Gemini 2.0 Flash (`gemini-2.0-flash`).
 -   **Zero-Cost Hosting:** Self-hosted within the user's Google Workspace/Drive account.
 -   **Templating:** Server-side HTML template (`HtmlService.createTemplateFromFile`).
--   **State Management:** Centralized `state` object on the frontend holding `logs`, `vehicles`, `lastPrice`, `chart`, and `colors`.
+-   **State Management:** Centralized `state` object on the frontend holding `logs`, `vehicles`, `lastPrice`, `chart`, `colors`, `buttonColors`, `predictions`, `efficiencies`, `logFilter`, `logVisible`, and `chartPeriod`.
 -   **Security:** Gemini API Key managed via `PropertiesService.getScriptProperties()`.
 -   **Quotas:** Subject to Google Apps Script quotas for `UrlFetchApp` calls and script runtime limits.
 
 ---
 
-## 8. Success Metrics
+## 9. Success Metrics
 -   **Task Completion Time:** < 30 seconds to log a fuel stop.
 -   **AI Accuracy:** > 90% correct extraction of Total Amount and Date from clear receipt images.
 
 ---
 
-## 9. Implementation History
+## 10. Implementation History
 
 ### 🛡️ v1.0 – Resilience & Error Handling
 - Global error management for all `google.script.run` calls.
@@ -220,7 +226,19 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 - **AppSheet Automation Hook:** `processAppSheetReceipt(rowId)` stub in `Code.gs`.
 - **Mission Report Resilience:** High-priority z-index layering for the HUD overlay.
 
-### 🛡️ v2.5 – Project Hardening & UI Refinement (Current)
+### 🎨 v2.6 – Code Quality & Add Tab UX Overhaul (Current)
+- **Semantic IDs:** All single-letter form element IDs renamed to readable semantic names.
+- **Dynamic Vehicle Colors:** Hardcoded brand color classes replaced with 4 index-based `btn-color-N` classes driven by `state.buttonColors`.
+- **Market Cache:** `sessionStorage` cache (4-hour TTL) added to `loadMarket()`; `renderMarket()` helper extracted for reuse by both cache-hit and fresh-fetch paths.
+- **Precise Lifetime Avg:** Stats card efficiency now computed as mean of `state.efficiencies` interval values instead of inflated `(max_km − min_km) / total_fuel`.
+- **Fuel Type Chips:** Dropdown replaced with `Petrol / Diesel / CNG` segmented buttons; AI scanner calls `selectFuelType()` to update chip state.
+- **Odometer Toggle:** Full Tank checkbox replaced with an inline `✓ Full / Partial` pill; odometer input promoted to full width.
+- **Qty Emphasis:** Dashed yellow border when Qty is empty; cleared on input and reset after save.
+- **GPS Layout Fix:** Station Location and 📍 GPS button are now proper flex siblings (no text overlap).
+- **Scan Menu:** Two header buttons merged into a single 📷 dropdown with outside-click dismiss.
+- **Notes Collapse:** Notes textarea defaults to 1 row; expands to 4 on focus; collapses if empty on blur.
+
+### 🛡️ v2.5 – Project Hardening & UI Refinement
 - **Structural Organization:** Moved core App Script files (`Code.gs`, `Index.html`, `appsscript.json`) to the `src/` directory.
 - **Neo-Brutalist 2.0 Refinement:** Standardized border widths to 2px, shadow depths to 3px, and refined the "Cyber Yellow" palette.
 - **Mission Report Animation:** Redesigned the post-log report as a non-blocking bottom-sheet with a smooth `slideUp` animation.
@@ -229,7 +247,7 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 
 ---
 
-## 10. Repository Hygiene & Maintenance Plan (v2.6 Proposal)
+## 11. Repository Hygiene & Maintenance Plan
 
 ### 10.1 GitHub Best Practices
 - **[x] Add `.gitignore`:** Exclude `node_modules/`, `.clasp.json` (if sensitive), and local temporary files.
