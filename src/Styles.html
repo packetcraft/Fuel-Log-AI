@@ -106,6 +106,38 @@
     .btn-color-2 { background-color: #3b82f6 !important; color: white !important; border-color: #1d4ed8 !important; }
     .btn-color-3 { background-color: #f97316 !important; color: white !important; border-color: #c2410c !important; }
 
+    /* Fuel Type Chips */
+    .fuel-chip {
+        flex: 1;
+        padding: 0.4rem 0.2rem;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.62rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        cursor: pointer;
+        background: var(--card-bg);
+        color: var(--text);
+        opacity: 0.55;
+        transition: all 0.15s;
+        text-align: center;
+    }
+    .fuel-chip.selected {
+        background: var(--primary);
+        color: var(--black);
+        opacity: 1;
+        box-shadow: 2px 2px 0px var(--shadow);
+    }
+
+    /* Full Tank Toggle */
+    .tank-toggle { transition: all 0.15s; }
+    .tank-toggle-full  { background: var(--primary) !important; color: var(--black) !important; opacity: 1; }
+    .tank-toggle-partial { background: var(--card-bg) !important; color: var(--text) !important; opacity: 0.55; }
+
+    /* Quantity field empty emphasis */
+    .qty-empty { border-color: var(--primary) !important; border-style: dashed !important; }
+
     /* Toast System */
     #toastContainer {
         position: fixed;

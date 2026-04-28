@@ -49,13 +49,12 @@
                 Fuel Log AI
             </h1>
         </div>
-        <div class="flex gap-2">
-            <button onclick="openScanner(true)" class="neo-btn p-3 text-2xl leading-none" title="Take Photo">
-                📷
-            </button>
-            <button onclick="openScanner(false)" class="neo-btn p-3 text-2xl leading-none" title="Browse Photo">
-                📁
-            </button>
+        <div class="relative" id="scanMenuWrapper">
+            <button onclick="toggleScanMenu()" class="neo-btn p-3 text-2xl leading-none" title="Scan Receipt">📷</button>
+            <div id="scanMenu" class="hidden absolute right-0 top-full mt-1 z-50 neo-card overflow-hidden" style="min-width:130px">
+                <button onclick="openScanner(true);closeScanMenu()" class="block w-full px-4 py-2.5 text-[0.65rem] font-black uppercase text-left hover:bg-[var(--primary)] transition-colors">📷 Camera</button>
+                <button onclick="openScanner(false);closeScanMenu()" class="block w-full px-4 py-2.5 text-[0.65rem] font-black uppercase text-left border-t-2 border-[var(--border)] hover:bg-[var(--primary)] transition-colors">📁 Gallery</button>
+            </div>
         </div>
 
         <input type="file" id="cam" accept="image/jpeg,image/png,image/heic" class="hidden"
@@ -88,26 +87,24 @@
                             </div>
                             <div>
                                 <label class="text-[0.7rem] uppercase">⛽ Fuel Type</label>
-                                <select name="fuel_type" id="fuelType" class="neo-input font-black h-11">
-                                    <option value="petrol">Petrol</option>
-                                    <option value="diesel">Diesel</option>
-                                    <option value="cng">CNG</option>
-                                </select>
+                                <input type="hidden" name="fuel_type" id="fuelType" value="petrol" />
+                                <div id="fuelTypeChips" class="flex gap-1 mt-1">
+                                    <button type="button" onclick="selectFuelType('petrol')" data-fuel="petrol" class="fuel-chip selected">Petrol</button>
+                                    <button type="button" onclick="selectFuelType('diesel')" data-fuel="diesel" class="fuel-chip">Diesel</button>
+                                    <button type="button" onclick="selectFuelType('cng')" data-fuel="cng" class="fuel-chip">CNG</button>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 items-end">
-                            <div>
-                                <label class="text-[0.7rem] uppercase">🏎️ Odometer (KM)</label>
-                                <input type="number" name="km_reading" id="km-reading" step="0.1" inputmode="decimal" required
-                                    class="neo-input h-11" />
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="!mb-0 text-[0.7rem] uppercase">🏎️ Odometer (KM)</label>
+                                <button type="button" id="fullTankToggle" onclick="toggleFullTank()"
+                                    class="tank-toggle tank-toggle-full text-[0.6rem] font-black uppercase tracking-widest px-2 py-1 rounded border-2 border-[var(--border)]">✓ Full</button>
                             </div>
-                            <div
-                                class="flex items-center gap-3 h-11 px-3 border-2 border-[var(--border)] rounded-lg bg-[var(--input-bg)]">
-                                <input type="checkbox" name="full_tank" id="ft" class="w-5 h-5 accent-yellow-400"
-                                    checked />
-                                <span class="text-xs font-black uppercase whitespace-nowrap">Full Tank</span>
-                            </div>
+                            <input type="number" name="km_reading" id="km-reading" step="0.1" inputmode="decimal" required
+                                class="neo-input h-11" />
+                            <input type="checkbox" name="full_tank" id="ft" class="hidden" checked />
                         </div>
                     </div>
 
@@ -138,20 +135,21 @@
                     <div class="p-4 border-t-2 border-[var(--border)] bg-[var(--bg)]/30">
                         <div class="grid grid-cols-2 gap-4">
                             <input type="date" name="refill_date" id="refill-date" required class="neo-input h-11" />
-                            <div class="flex relative">
+                            <div class="flex">
                                 <input type="text" name="pump_location" id="pump-location" list="stationOptions"
-                                    placeholder="📍 Station Location" autocomplete="off"
-                                    class="neo-input h-11 rounded-r-none pr-10" />
+                                    placeholder="📍 Station" autocomplete="off"
+                                    class="neo-input h-11 rounded-r-none flex-1 min-w-0" />
                                 <datalist id="stationOptions"></datalist>
                                 <button type="button" onclick="fetchGPS()"
-                                    class="neo-btn h-11 w-11 p-0 absolute right-0 rounded-l-none border-l-0 text-xl leading-none shadow-none translate-y-0 active:translate-y-0">📍</button>
+                                    class="neo-btn h-11 w-11 p-0 rounded-l-none border-l-0 text-xl leading-none shadow-none translate-y-0 active:translate-y-0 shrink-0">📍</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <textarea name="notes" id="notes" placeholder="📝 Additional Notes (AI results appear here)..." rows="2"
-                    class="neo-input text-sm"></textarea>
+                <textarea name="notes" id="notes" placeholder="📝 Notes (AI results appear here)..." rows="1"
+                    onfocus="this.rows=4" onblur="if(!this.value)this.rows=1"
+                    class="neo-input text-sm transition-all duration-200"></textarea>
 
                 <button type="submit" id="s" class="neo-btn w-full py-4 text-xl tracking-tighter">Save Log
                     Entry</button>

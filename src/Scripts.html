@@ -43,6 +43,16 @@
         if (navigator.geolocation && !document.getElementById("pump-location").value) {
             navigator.geolocation.getCurrentPosition(() => {}, (err) => console.log("Auto-GPS failed", err), { timeout: 5000 });
         }
+
+        const qtyField = document.getElementById('fuel-qty');
+        qtyField.addEventListener('input', () => qtyField.classList.toggle('qty-empty', !qtyField.value));
+        qtyField.classList.add('qty-empty');
+
+        document.addEventListener('click', (e) => {
+            const wrapper = document.getElementById('scanMenuWrapper');
+            if (wrapper && !wrapper.contains(e.target)) closeScanMenu();
+        });
+
         ref();
     };
 
@@ -68,6 +78,29 @@
         input.value = '';
         document.getElementById('newVehicleRow').classList.add('hidden');
     }
+
+    function selectFuelType(type, highlight = false) {
+        document.getElementById('fuelType').value = type;
+        document.querySelectorAll('#fuelTypeChips .fuel-chip').forEach(btn => {
+            btn.classList.toggle('selected', btn.dataset.fuel === type);
+            if (highlight && btn.dataset.fuel === type) {
+                btn.classList.add('ring-2', 'ring-yellow-400');
+                setTimeout(() => btn.classList.remove('ring-2', 'ring-yellow-400'), 3000);
+            }
+        });
+    }
+
+    function toggleFullTank() {
+        const cb = document.getElementById('ft');
+        cb.checked = !cb.checked;
+        const btn = document.getElementById('fullTankToggle');
+        btn.textContent = cb.checked ? '✓ Full' : 'Partial';
+        btn.classList.toggle('tank-toggle-full', cb.checked);
+        btn.classList.toggle('tank-toggle-partial', !cb.checked);
+    }
+
+    function toggleScanMenu() { document.getElementById('scanMenu').classList.toggle('hidden'); }
+    function closeScanMenu() { document.getElementById('scanMenu').classList.add('hidden'); }
 
     function setTab(idx) {
         document.querySelectorAll(".tab-panel").forEach((p, i) => p.classList.toggle("active", i === idx));
@@ -233,6 +266,13 @@
                 e.target.reset();
                 document.getElementById("refill-date").value = new Date().toISOString().split("T")[0];
                 document.getElementById("pump-location").value = "";
+                selectFuelType('petrol');
+                const ftBtn = document.getElementById('fullTankToggle');
+                ftBtn.textContent = '✓ Full';
+                ftBtn.classList.add('tank-toggle-full');
+                ftBtn.classList.remove('tank-toggle-partial');
+                document.getElementById('fuel-qty').classList.add('qty-empty');
+                document.getElementById('notes').rows = 1;
                 const firstRadio = document.querySelector('.vehicle-radio');
                 if (firstRadio) {
                     document.querySelectorAll('.vehicle-radio').forEach(d => d.classList.remove('selected'));
@@ -660,7 +700,8 @@
                         targetIds.forEach(id => document.getElementById(id).classList.remove('shimmer'));
                         if (!res?.success) return ui.toast("AI Scan Failed");
 
-                        const mapping = { 'fuel_qty': 'fuel-qty', 'fuel_price': 'fuel-price', 'refill_date': 'refill-date', 'notes': 'notes', 'fuel_type': 'fuelType' };
+                        if (res.data.fuel_type) selectFuelType(res.data.fuel_type, true);
+                        const mapping = { 'fuel_qty': 'fuel-qty', 'fuel_price': 'fuel-price', 'refill_date': 'refill-date', 'notes': 'notes' };
                         Object.entries(mapping).forEach(([key, id]) => {
                             const el = document.getElementById(id);
                             if (res.data[key] && el) {
