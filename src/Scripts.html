@@ -5,6 +5,7 @@
         lastPrice: 0,
         chart: null,
         colors: ["#1a1a1a", "#fde047", "#28a745", "#dc3545", "#fd7e14"],
+        buttonColors: ["#22c55e", "#ef4444", "#3b82f6", "#f97316"],
         predictions: {},
         efficiencies: {},
         logFilter: 'ALL',
@@ -38,8 +39,8 @@
     window.onload = () => {
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.body.setAttribute('data-theme', savedTheme);
-        document.getElementById("d").value = new Date().toISOString().split("T")[0];
-        if (navigator.geolocation && !document.getElementById("l").value) {
+        document.getElementById("refill-date").value = new Date().toISOString().split("T")[0];
+        if (navigator.geolocation && !document.getElementById("pump-location").value) {
             navigator.geolocation.getCurrentPosition(() => {}, (err) => console.log("Auto-GPS failed", err), { timeout: 5000 });
         }
         ref();
@@ -135,7 +136,7 @@
     }
 
     function predictOdometer(v) {
-        const kInput = document.getElementById('k');
+        const kInput = document.getElementById('km-reading');
         // Only predict if field is empty or likely a default
         if (kInput.value && kInput.value != "0") return;
 
@@ -169,8 +170,8 @@
                 const stations = [...new Set(state.logs.map(l => l.pump_location).filter(s => s?.trim()))].sort();
                 document.getElementById('stationOptions').innerHTML = stations.map(s => `<option value="${s}">`).join('');
 
-                if (state.lastPrice > 0 && !document.getElementById('p').value) {
-                    document.getElementById('p').value = state.lastPrice;
+                if (state.lastPrice > 0 && !document.getElementById('fuel-price').value) {
+                    document.getElementById('fuel-price').value = state.lastPrice;
                 }
 
                 const s = document.getElementById("vehicleSelect");
@@ -183,8 +184,8 @@
                 if (state.vehicles.length > 0 && state.vehicles.length <= 4) {
                     s.style.display = 'none';
                     rg.style.display = 'flex';
-                    rg.innerHTML = state.vehicles.map(v => {
-                        const cls = v.toLowerCase().includes('kylaq') ? 'btn-kylaq' : (v.toLowerCase().includes('octavia') ? 'btn-octavia' : '');
+                    rg.innerHTML = state.vehicles.map((v, i) => {
+                        const cls = `btn-color-${i % state.buttonColors.length}`;
                         return `<div class="vehicle-radio ${cls}" onclick="selectVehicle('${v}', this)">${v}</div>`;
                     }).join('');
 
@@ -211,10 +212,10 @@
     }
 
     function calc() {
-        const q = parseFloat(document.getElementById("q").value) || 0;
-        const p = parseFloat(document.getElementById("p").value) || 0;
+        const q = parseFloat(document.getElementById("fuel-qty").value) || 0;
+        const p = parseFloat(document.getElementById("fuel-price").value) || 0;
         const total = (q * p).toFixed(2);
-        document.getElementById("t").value = total;
+        document.getElementById("refill-total").value = total;
         document.getElementById("t_display").textContent = total;
     }
 
@@ -230,8 +231,8 @@
                 ui.hideLoading();
                 showMissionReport(data);
                 e.target.reset();
-                document.getElementById("d").value = new Date().toISOString().split("T")[0];
-                document.getElementById("l").value = "";
+                document.getElementById("refill-date").value = new Date().toISOString().split("T")[0];
+                document.getElementById("pump-location").value = "";
                 const firstRadio = document.querySelector('.vehicle-radio');
                 if (firstRadio) {
                     document.querySelectorAll('.vehicle-radio').forEach(d => d.classList.remove('selected'));
@@ -400,8 +401,15 @@
             const spend = logs.reduce((s, e) => s + (parseFloat(e.refill_amount) || 0), 0);
             const odos = logs.map(e => parseFloat(e.km_reading) || 0).filter(k => k > 0);
             const dist = odos.length > 1 ? Math.max(...odos) - Math.min(...odos) : 0;
-            const eff = dist > 0 && fuel > 0 ? (dist / fuel).toFixed(2) : "0.0";
             const costPerKm = dist > 0 && spend > 0 ? (spend / dist).toFixed(2) : null;
+
+            // Derive lifetime average from correctly-calculated interval efficiencies
+            const vEffVals = Object.entries(state.efficiencies)
+                .filter(([k]) => k.endsWith('_' + v))
+                .map(([, val]) => val);
+            const eff = vEffVals.length > 0
+                ? (vEffVals.reduce((a, b) => a + b, 0) / vEffVals.length).toFixed(2)
+                : "0.0";
             const color = state.colors[idx % state.colors.length];
 
             fleetKm += dist;
@@ -565,28 +573,47 @@
         stats();
     }
 
+    function renderMarket(m) {
+        document.getElementById("mCity").textContent = `REGION: ${m.city.toUpperCase()}`;
+        document.getElementById("mInsight").textContent = m.insight;
+        document.getElementById("mMarket").innerHTML = `
+            <div class="neo-card p-4 bg-[var(--primary)]/5">
+                <p class="text-[0.6rem] font-black uppercase opacity-60">Petrol</p>
+                <p class="text-2xl font-black">${m.petrol ? '₹' + m.petrol : 'N/A'}</p>
+            </div>
+            <div class="neo-card p-4 bg-[var(--primary)]/5">
+                <p class="text-[0.6rem] font-black uppercase opacity-60">Diesel</p>
+                <p class="text-2xl font-black">${m.diesel ? '₹' + m.diesel : 'N/A'}</p>
+            </div>`;
+        document.getElementById("mSources").innerHTML = (m.sources || []).map(s =>
+            `<a href="${s.url}" target="_blank" class="block p-3 neo-card text-[0.65rem] font-black uppercase hover:bg-black/5 transition-colors">Source: ${s.title} ↗</a>`
+        ).join("");
+    }
+
     function loadMarket() {
+        const CACHE_KEY = 'fuellog_market';
+        const CACHE_TTL = 4 * 60 * 60 * 1000;
+        try {
+            const cached = sessionStorage.getItem(CACHE_KEY);
+            if (cached) {
+                const { data, timestamp } = JSON.parse(cached);
+                if (Date.now() - timestamp < CACHE_TTL) {
+                    renderMarket(data);
+                    return;
+                }
+            }
+        } catch (e) {}
+
         ui.loading("Scanning live prices...");
         navigator.geolocation.getCurrentPosition((p) => {
             google.script.run
                 .withSuccessHandler((res) => {
                     ui.hideLoading();
                     if (!res?.success) return ui.toast(res.error || "Market API Error");
-                    const m = res.market;
-                    document.getElementById("mCity").textContent = `REGION: ${m.city.toUpperCase()}`;
-                    document.getElementById("mInsight").textContent = m.insight;
-                    document.getElementById("mMarket").innerHTML = `
-                        <div class="neo-card p-4 bg-[var(--primary)]/5">
-                            <p class="text-[0.6rem] font-black uppercase opacity-60">Petrol</p>
-                            <p class="text-2xl font-black">${m.petrol ? '₹' + m.petrol : 'N/A'}</p>
-                        </div>
-                        <div class="neo-card p-4 bg-[var(--primary)]/5">
-                            <p class="text-[0.6rem] font-black uppercase opacity-60">Diesel</p>
-                            <p class="text-2xl font-black">${m.diesel ? '₹' + m.diesel : 'N/A'}</p>
-                        </div>`;
-                    document.getElementById("mSources").innerHTML = (m.sources || []).map(s =>
-                        `<a href="${s.url}" target="_blank" class="block p-3 neo-card text-[0.65rem] font-black uppercase hover:bg-black/5 transition-colors">Source: ${s.title} ↗</a>`
-                    ).join("");
+                    try {
+                        sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data: res.market, timestamp: Date.now() }));
+                    } catch (e) {}
+                    renderMarket(res.market);
                 })
                 .withFailureHandler(err => { ui.hideLoading(); ui.toast(err.message || "Market Data Unavailable"); })
                 .getMarketData(p.coords.latitude, p.coords.longitude, state.lastPrice);
@@ -595,7 +622,7 @@
 
     function fetchGPS() {
         navigator.geolocation.getCurrentPosition((p) => {
-            document.getElementById("l").value = `${p.coords.latitude.toFixed(3)},${p.coords.longitude.toFixed(3)}`;
+            document.getElementById("pump-location").value = `${p.coords.latitude.toFixed(3)},${p.coords.longitude.toFixed(3)}`;
         }, () => ui.toast("GPS Signal Lost"), { enableHighAccuracy: true, timeout: 5000 });
     }
 
@@ -623,7 +650,7 @@
                 canvas.getContext("2d").drawImage(img, 0, 0, w, h);
                 
                 // UI feedback: Shimmer on predicted fields
-                const targetIds = ['q', 'p', 'd', 'n', 'fuelType'];
+                const targetIds = ['fuel-qty', 'fuel-price', 'refill-date', 'notes', 'fuelType'];
                 targetIds.forEach(id => document.getElementById(id).classList.add('shimmer'));
 
                 ui.loading("Scanning Receipt...");
@@ -633,7 +660,7 @@
                         targetIds.forEach(id => document.getElementById(id).classList.remove('shimmer'));
                         if (!res?.success) return ui.toast("AI Scan Failed");
 
-                        const mapping = { 'fuel_qty': 'q', 'fuel_price': 'p', 'refill_date': 'd', 'notes': 'n', 'fuel_type': 'fuelType' };
+                        const mapping = { 'fuel_qty': 'fuel-qty', 'fuel_price': 'fuel-price', 'refill_date': 'refill-date', 'notes': 'notes', 'fuel_type': 'fuelType' };
                         Object.entries(mapping).forEach(([key, id]) => {
                             const el = document.getElementById(id);
                             if (res.data[key] && el) {
@@ -643,7 +670,7 @@
                             }
                         });
                         calc();
-                        const notesField = document.getElementById('n');
+                        const notesField = document.getElementById('notes');
                         const aiNotes = res.data.notes || "";
                         navigator.geolocation.getCurrentPosition(
                             (pos) => {
