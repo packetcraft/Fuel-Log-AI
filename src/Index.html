@@ -76,7 +76,10 @@
                                 </div>
                                 <select name="vehicle_name" id="vehicleSelect"
                                     class="neo-input font-black h-11" onchange="predictOdometer(this.value)"></select>
-                                <div id="vehicleRadioGroup" class="vehicle-radio-group"></div>
+                                <div class="relative" id="vehicleRadioWrapper">
+                                    <div id="vehicleRadioGroup" class="vehicle-radio-group"></div>
+                                    <div id="vehicleScrollHint" class="hidden absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[var(--card-bg)] to-transparent pointer-events-none rounded-r"></div>
+                                </div>
                                 <div id="newVehicleRow" class="hidden flex gap-1 mt-1">
                                     <input type="text" id="newVehicleInput" placeholder="Vehicle name..."
                                         class="neo-input text-[0.7rem] py-1 px-2 flex-1 h-8"
@@ -97,7 +100,7 @@
                         </div>
 
                         <div>
-                            <div class="flex justify-between items-center mb-1">
+                            <div class="flex items-center gap-2 mb-1">
                                 <label class="!mb-0 text-[0.7rem] uppercase">🏎️ Odometer (KM)</label>
                                 <button type="button" id="fullTankToggle" onclick="toggleFullTank()"
                                     class="tank-toggle tank-toggle-full text-[0.6rem] font-black uppercase tracking-widest px-2 py-1 rounded border-2 border-[var(--border)]">✓ Full</button>
@@ -115,7 +118,7 @@
                                 <input type="number" name="fuel_qty" id="fuel-qty" step="0.01" inputmode="decimal" required
                                     oninput="calc()" class="neo-input !bg-white !text-black h-11" />
                             </div>
-                            <div class="text-2xl font-black mt-4">×</div>
+                            <div class="flex flex-col items-center justify-end pb-2 text-[0.55rem] font-black uppercase opacity-30 tracking-widest text-center leading-tight"><span>×</span><span>rate</span></div>
                             <div>
                                 <label class="text-[0.7rem] uppercase">Price / L</label>
                                 <input type="number" name="fuel_price" id="fuel-price" step="0.01" inputmode="decimal" required
@@ -134,7 +137,12 @@
 
                     <div class="p-4 border-t-2 border-[var(--border)] bg-[var(--bg)]/30">
                         <div class="grid grid-cols-2 gap-4">
-                            <input type="date" name="refill_date" id="refill-date" required class="neo-input h-11" />
+                            <div class="relative h-11">
+                                <input type="date" name="refill_date" id="refill-date" required
+                                    class="neo-input h-11 date-custom"
+                                    onchange="updateDateDisplay()" />
+                                <div id="dateDisplay" class="absolute inset-0 flex items-center px-3 text-sm pointer-events-none"><span id="dateText"></span></div>
+                            </div>
                             <div class="flex">
                                 <input type="text" name="pump_location" id="pump-location" list="stationOptions"
                                     placeholder="📍 Station" autocomplete="off"

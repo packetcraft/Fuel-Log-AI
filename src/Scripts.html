@@ -29,6 +29,14 @@
         }
     };
 
+    function updateDateDisplay() {
+        const val = document.getElementById('refill-date').value;
+        const el = document.getElementById('dateText');
+        if (!val || !el) return;
+        const d = new Date(val + 'T00:00:00');
+        el.textContent = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
     function toggleTheme() {
         const current = document.body.getAttribute('data-theme');
         const target = current === 'dark' ? 'light' : 'dark';
@@ -40,6 +48,7 @@
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.body.setAttribute('data-theme', savedTheme);
         document.getElementById("refill-date").value = new Date().toISOString().split("T")[0];
+        updateDateDisplay();
         if (navigator.geolocation && !document.getElementById("pump-location").value) {
             navigator.geolocation.getCurrentPosition(() => {}, (err) => console.log("Auto-GPS failed", err), { timeout: 5000 });
         }
@@ -224,6 +233,8 @@
 
                     const active = Array.from(rg.children).find(c => c.textContent === s.value);
                     if (active) active.classList.add('selected');
+                    const hint = document.getElementById('vehicleScrollHint');
+                    if (hint) setTimeout(() => hint.classList.toggle('hidden', rg.scrollWidth <= rg.clientWidth), 50);
                 } else {
                     s.style.display = 'block';
                     rg.style.display = 'none';
@@ -265,6 +276,7 @@
                 showMissionReport(data);
                 e.target.reset();
                 document.getElementById("refill-date").value = new Date().toISOString().split("T")[0];
+                updateDateDisplay();
                 document.getElementById("pump-location").value = "";
                 selectFuelType('petrol');
                 const ftBtn = document.getElementById('fullTankToggle');

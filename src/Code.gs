@@ -188,10 +188,16 @@ function getMarketData(lat, lon, lastPrice) {
     }
     
     const rawData = searchResult.candidates[0].content.parts[0].text;
+    // Grounding sources live in groundingMetadata, not in the text — extract them here
+    const groundingChunks = searchResult.candidates[0]?.groundingMetadata?.groundingChunks || [];
+    const sources = groundingChunks
+      .filter(c => c.web)
+      .map(c => ({ title: c.web.title || "Source", url: c.web.uri }))
+      .slice(0, 3);
 
-    // Step 2: Extract to JSON schema
+    // Step 2: Extract structured data from the raw text (no sources — those come from grounding above)
     const extractPayload = {
-      "contents": [{ "parts": [{ "text": `Extract market data from this text into JSON: ${rawData}` }] }],
+      "contents": [{ "parts": [{ "text": `Extract petrol and diesel fuel prices for India from this text. If a price is not found, use 0. Text: ${rawData}` }] }],
       "generationConfig": {
         "response_mime_type": "application/json",
         "response_schema": {
@@ -200,18 +206,9 @@ function getMarketData(lat, lon, lastPrice) {
             "city": { "type": "string" },
             "petrol": { "type": "number" },
             "diesel": { "type": "number" },
-            "insight": { "type": "string" },
-            "sources": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "title": { "type": "string" },
-                  "url": { "type": "string" }
-                }
-              }
-            }
-          }
+            "insight": { "type": "string" }
+          },
+          "required": ["city", "petrol", "diesel", "insight"]
         }
       }
     };
@@ -229,6 +226,7 @@ function getMarketData(lat, lon, lastPrice) {
     }
 
     const market = JSON.parse(extractResult.candidates[0].content.parts[0].text);
+    market.sources = sources;
     return { success: true, market: market };
   } catch (e) {
     return { success: false, error: e.toString() };

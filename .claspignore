@@ -1,17 +1,7 @@
-# Ignore everything by default
-**/**
-
-# Allow the root dir and its essential contents
-!src/
-!src/**/*.gs
-!src/**/*.html
-!src/**/*.json
-!appsscript.json
-
-# Ignore node_modules if they somehow end up in src
-**/node_modules/**
-
-# Ignore documentation and config in root
-!README.md
-!PRD.md
-!.clasp.json
+node_modules/
+package.json
+package-lock.json
+eslint.config*
+.eslintrc*
+README.md
+PRD.md
