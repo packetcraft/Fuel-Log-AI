@@ -29,6 +29,17 @@
         }
     };
 
+    function esc(s) {
+        return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function safeUrl(url) {
+        try {
+            const u = new URL(url);
+            return (u.protocol === 'https:' || u.protocol === 'http:') ? url : '#';
+        } catch { return '#'; }
+    }
+
     function updateDateDisplay() {
         const val = document.getElementById('refill-date').value;
         const el = document.getElementById('dateText');
@@ -210,7 +221,7 @@
                 calculateEfficiencies();
 
                 const stations = [...new Set(state.logs.map(l => l.pump_location).filter(s => s?.trim()))].sort();
-                document.getElementById('stationOptions').innerHTML = stations.map(s => `<option value="${s}">`).join('');
+                document.getElementById('stationOptions').innerHTML = stations.map(s => `<option value="${esc(s)}">`).join('');
 
                 if (state.lastPrice > 0 && !document.getElementById('fuel-price').value) {
                     document.getElementById('fuel-price').value = state.lastPrice;
@@ -228,7 +239,7 @@
                     rg.style.display = 'flex';
                     rg.innerHTML = state.vehicles.map((v, i) => {
                         const cls = `btn-color-${i % state.buttonColors.length}`;
-                        return `<div class="vehicle-radio ${cls}" onclick="selectVehicle('${v}', this)">${v}</div>`;
+                        return `<div class="vehicle-radio ${cls}" data-vehicle="${esc(v)}" onclick="selectVehicle(this.dataset.vehicle, this)">${esc(v)}</div>`;
                     }).join('');
 
                     const active = Array.from(rg.children).find(c => c.textContent === s.value);
@@ -348,7 +359,7 @@
         if (!bar) return;
         const pills = ['ALL', ...state.vehicles];
         bar.innerHTML = pills.map(v =>
-            `<button class="log-filter-pill text-[0.6rem] font-black uppercase tracking-wider px-3 py-1.5 rounded border-2 border-[var(--border)] transition-colors ${v === state.logFilter ? 'bg-black text-white' : 'bg-white text-black'}" data-v="${v}" onclick="setLogFilter('${v}')">${v}</button>`
+            `<button class="log-filter-pill text-[0.6rem] font-black uppercase tracking-wider px-3 py-1.5 rounded border-2 border-[var(--border)] transition-colors ${v === state.logFilter ? 'bg-black text-white' : 'bg-white text-black'}" data-v="${esc(v)}" onclick="setLogFilter(this.dataset.v)">${esc(v)}</button>`
         ).join('');
     }
 
@@ -411,15 +422,15 @@
             html += `
             <div class="log-card p-4 border-b-2 border-[var(--border)] last:border-0 grid grid-cols-[1fr_auto] gap-2 active:bg-black/5 transition-colors">
                 <div>
-                    <div class="text-[0.6rem] font-black opacity-50 uppercase tracking-tighter">${dateKey}</div>
-                    <div class="font-black text-sm uppercase">${e.vehicle_name}</div>
+                    <div class="text-[0.6rem] font-black opacity-50 uppercase tracking-tighter">${esc(dateKey)}</div>
+                    <div class="font-black text-sm uppercase">${esc(e.vehicle_name)}</div>
                     <div class="flex items-center gap-2 mt-1 flex-wrap">
                         <span class="text-[0.6rem] font-black border-2 border-[var(--border)] px-1.5 py-0.5 rounded bg-white text-black">${parseFloat(e.fuel_qty).toFixed(2)}L</span>
                         <span class="text-[0.65rem] font-black ${isFull ? 'text-green-600' : 'text-orange-500'} uppercase">${isFull ? 'Full' : 'Partial'}</span>
-                        ${fuelType ? `<span class="text-[0.55rem] font-black px-1.5 py-0.5 rounded uppercase ${fuelBadgeColor}">${fuelType}</span>` : ''}
-                        ${effText ? `<span class="text-[0.6rem] font-black ${effColor} uppercase">${effText} KM/L</span>` : ''}
+                        ${fuelType ? `<span class="text-[0.55rem] font-black px-1.5 py-0.5 rounded uppercase ${fuelBadgeColor}">${esc(fuelType)}</span>` : ''}
+                        ${effText ? `<span class="text-[0.6rem] font-black ${effColor} uppercase">${esc(effText)} KM/L</span>` : ''}
                     </div>
-                    ${location ? `<div class="text-[0.6rem] opacity-60 mt-1 truncate max-w-[180px] font-medium italic">${location}</div>` : ''}
+                    ${location ? `<div class="text-[0.6rem] opacity-60 mt-1 truncate max-w-[180px] font-medium italic">${esc(location)}</div>` : ''}
                 </div>
                 <div class="text-right flex flex-col justify-center">
                     <div class="text-xl font-black leading-none">₹${parseFloat(e.refill_amount).toFixed(0)}</div>
@@ -511,7 +522,7 @@
             grid.innerHTML += `
                 <div class="neo-card p-4">
                     <div class="flex justify-between items-start">
-                        <span class="text-xs font-black uppercase opacity-70">${v}</span>
+                        <span class="text-xs font-black uppercase opacity-70">${esc(v)}</span>
                         <div class="text-right leading-none">
                             <span class="text-2xl font-black" style="color:${color}">${eff}</span>
                             <span class="text-xs font-black opacity-60"> KM/L</span>
@@ -638,7 +649,7 @@
                 <p class="text-2xl font-black">${m.diesel ? '₹' + m.diesel : 'N/A'}</p>
             </div>`;
         document.getElementById("mSources").innerHTML = (m.sources || []).map(s =>
-            `<a href="${s.url}" target="_blank" class="block p-3 neo-card text-[0.65rem] font-black uppercase hover:bg-black/5 transition-colors">Source: ${s.title} ↗</a>`
+            `<a href="${safeUrl(s.url)}" target="_blank" rel="noopener noreferrer" class="block p-3 neo-card text-[0.65rem] font-black uppercase hover:bg-black/5 transition-colors">Source: ${esc(s.title)} ↗</a>`
         ).join("");
     }
 
