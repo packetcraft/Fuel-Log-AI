@@ -99,12 +99,33 @@ clasp pull
 # Push local changes from /src to the cloud
 clasp push
 
+# Force push (bypasses clasp's change-detection — use if push skips unexpectedly)
+clasp push --force
+
 # Open the Apps Script IDE in your browser
 clasp open-script
 
 # Open the deployed web app in your browser
 clasp open-web-app
 ```
+
+**Deploying a New Version:**
+```bash
+# Create a new deployment (generates a new version number)
+clasp deploy --description "v2.x.x — short description of changes"
+
+# List all existing deployments and their IDs
+clasp deployments
+
+# List all saved script versions
+clasp versions
+
+# Remove a specific deployment by its ID
+clasp undeploy <deploymentId>
+```
+
+> [!TIP]
+> Always run `clasp push` (or `clasp push --force`) before `clasp deploy` to ensure the latest local code is live in the new version.
 
 ### 3. Inject Intelligence (API Key)
 - Get your free API Key from [Google AI Studio](https://aistudio.google.com/).

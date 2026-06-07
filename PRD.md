@@ -162,7 +162,8 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 - **Development Tooling:** **Google Clasp** is the recommended tool for local development and CI/CD.
   - **Source Root:** All operational code is stored in the `src/` directory.
   - **Benefits:** Git integration, local IDE support, automated deployments, and structured directory support.
-  - **Sync Logic:** `clasp push` uploads files from `src/` to the GAS project; `clasp pull` synchronizes remote changes.
+  - **Sync Logic:** `clasp push` (or `clasp push --force` if push is skipped) uploads files from `src/` to the GAS project; `clasp pull` synchronizes remote changes.
+  - **Deployment:** `clasp deploy --description "vX.Y.Z — notes"` creates a new numbered deployment version. Use `clasp deployments` to list active deployments and `clasp undeploy <id>` to remove stale ones. Always push before deploying.
 - **Frontend:** Single-file `src/Index.html` using Tailwind CSS (CDN) + Chart.js (CDN) + Inter font (Google Fonts).
 -   **AI Engine:** Google Gemini 3.1 Flash-Lite (`gemini-3.1-flash-lite`).
 -   **Zero-Cost Hosting:** Self-hosted within the user's Google Workspace/Drive account.
