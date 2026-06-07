@@ -1,14 +1,14 @@
 # Product Requirement Document (PRD): Fuel Log AI
 
-**Version:** 2.6.0 (Code Quality + UX Polish)  
+**Version:** 2.7.0 (AI Model Upgrade)  
 **Status:** Active  
-**Date:** 2026-04-28  
+**Date:** 2026-06-07  
 **Author:** Product Management Team (AI)
 
 ---
 
 ## 1. Executive Summary
-**Fuel Log AI** v2.6.0 delivers a comprehensive code quality overhaul and a redesigned Add tab UX. This update resolves all items from the v2.5.1 code review (CODE-01 through CODE-04) and ships six UX improvements to the primary data-entry flow.
+**Fuel Log AI** v2.7.0 upgrades the AI backend from the deprecated `gemini-2.0-flash` model to `gemini-3.1-flash-lite`, restoring receipt scanning and market price grounding functionality. v2.6.0 delivered a comprehensive code quality overhaul and a redesigned Add tab UX, resolving all items from the v2.5.1 code review (CODE-01 through CODE-04) and shipping six UX improvements to the primary data-entry flow.
 
 ## 2. New Features in v2.6.0
 - **Fuel Type Chips**: Petrol / Diesel / CNG replaced the dropdown with segmented tap-buttons; AI scanner updates chip state with yellow highlight.
@@ -41,7 +41,7 @@
     -   **Dual-Trigger Input:** Specific buttons for direct Camera access (`📷`) vs. File explorer (`📁`).
     -   Frontend compresses image to max 800px and JPEG quality 0.7 before sending to backend.
     -   System extracts: `Fuel Quantity`, `Fuel Price`, `Total Amount`, `Date`, and granular location data (`Vendor`, `City`, `Area`).
-    -   Backend Model: Gemini 2.0 Flash (`gemini-2.0-flash`).
+    -   Backend Model: Gemini 3.1 Flash-Lite (`gemini-3.1-flash-lite`).
     -   **GPS-Appended Notes:** After AI extraction, the frontend attempts to fetch GPS coordinates and appends them to the `Notes` field (e.g., `"Shell - Whitefield, Bangalore | GPS: 12.9716, 77.5946"`). Falls back gracefully if GPS is unavailable.
     -   **AI Success Highlight:** AI-populated fields receive a yellow ring highlight (`ring-yellow-400`) for 3 seconds.
 
@@ -72,7 +72,7 @@
     -   Fetch current Petrol/Diesel prices for the user's current city using GPS.
     -   Compare user's paid price vs. market average with an AI-generated insight summary.
     -   Display source links for market data.
-    -   Backend: Gemini 2.0 Flash + Google Maps Reverse Geocoding + Google Search tool.
+    -   Backend: Gemini 3.1 Flash-Lite + Google Maps Reverse Geocoding + Google Search tool.
 
 -   **Mobile Optimization:**
     -   Viewport configuration for proper scaling (`user-scalable=no`, `viewport-fit=cover`).
@@ -109,7 +109,7 @@
 | ID | Requirement Description | Technical Implementation Reference |
 | :--- | :--- | :--- |
 | **FR-01** | System must accept image uploads (JPEG/PNG), compress to max 800px / 0.7 JPEG quality, and convert to Base64. | Frontend `FileReader` + `Canvas` resize |
-| **FR-02** | System must send Base64 image to Gemini 2.0 Flash for granular entity extraction (Vendor, City, Area, Qty, Price, Date). | `processReceiptWithAI(base64Image)` |
+| **FR-02** | System must send Base64 image to Gemini 3.1 Flash-Lite for granular entity extraction (Vendor, City, Area, Qty, Price, Date). | `processReceiptWithAI(base64Image)` |
 | **FR-03** | System must consolidate extracted location data (Vendor, Area, City) into the `Notes` field and pre-fill the form. | `processReceiptWithAI` backend logic |
 | **FR-04** | Frontend must attempt GPS acquisition post-scan and append coordinates to Notes (format: `| GPS: lat, lon`). | `processImage()` → `navigator.geolocation` |
 
@@ -164,7 +164,7 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
   - **Benefits:** Git integration, local IDE support, automated deployments, and structured directory support.
   - **Sync Logic:** `clasp push` uploads files from `src/` to the GAS project; `clasp pull` synchronizes remote changes.
 - **Frontend:** Single-file `src/Index.html` using Tailwind CSS (CDN) + Chart.js (CDN) + Inter font (Google Fonts).
--   **AI Engine:** Google Gemini 2.0 Flash (`gemini-2.0-flash`).
+-   **AI Engine:** Google Gemini 3.1 Flash-Lite (`gemini-3.1-flash-lite`).
 -   **Zero-Cost Hosting:** Self-hosted within the user's Google Workspace/Drive account.
 -   **Templating:** Server-side HTML template (`HtmlService.createTemplateFromFile`).
 -   **State Management:** Centralized `state` object on the frontend holding `logs`, `vehicles`, `lastPrice`, `chart`, `colors`, `buttonColors`, `predictions`, `efficiencies`, `logFilter`, `logVisible`, and `chartPeriod`.
@@ -226,7 +226,11 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 - **AppSheet Automation Hook:** `processAppSheetReceipt(rowId)` stub in `Code.gs`.
 - **Mission Report Resilience:** High-priority z-index layering for the HUD overlay.
 
-### 🎨 v2.6 – Code Quality & Add Tab UX Overhaul (Current)
+### 🤖 v2.7 – AI Model Upgrade (Current)
+- **Model Migration:** Replaced deprecated `gemini-2.0-flash` with `gemini-3.1-flash-lite` in both `processReceiptWithAI()` and `getMarketData()`.
+- **Reason:** Google shut down the `gemini-2.0-flash` alias on 2026-05-25; `gemini-3.1-flash-lite` offers a 1M-token context window, improved multimodal accuracy, and grounding support.
+
+### 🎨 v2.6 – Code Quality & Add Tab UX Overhaul
 - **Semantic IDs:** All single-letter form element IDs renamed to readable semantic names.
 - **Dynamic Vehicle Colors:** Hardcoded brand color classes replaced with 4 index-based `btn-color-N` classes driven by `state.buttonColors`.
 - **Market Cache:** `sessionStorage` cache (4-hour TTL) added to `loadMarket()`; `renderMarket()` helper extracted for reuse by both cache-hit and fresh-fetch paths.

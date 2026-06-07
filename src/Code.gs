@@ -100,8 +100,8 @@ function saveEntryDirect(entry) {
 }
 
 function processReceiptWithAI(base64Image) {
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_API_KEY;
-  
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=' + GEMINI_API_KEY;
+
   const promptText = `Analyze this fuel receipt image and extract data into the specified format. Focus on vendor, total volume, rate, total cost, date, and location.`;
 
   const payload = {
@@ -166,7 +166,7 @@ function getMarketData(lat, lon, lastPrice) {
   try {
     const geocode = Maps.newGeocoder().reverseGeocode(lat, lon);
     const city = geocode.results[0].address_components.find(c => c.types.includes("locality"))?.long_name || "Major Cities";
-    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_API_KEY;
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=' + GEMINI_API_KEY;
     const prompt = `Petrol and diesel prices today in ${city}, India. User last: ${lastPrice}.`;
     
     // Step 1: Search for prices with Grounding

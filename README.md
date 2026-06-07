@@ -1,20 +1,23 @@
-# ⚡ Fuel Log AI // Protocol v2.6
+# ⚡ Fuel Log AI // Protocol v2.7
 
 > **Status:** UPLINK_ACTIVE  
 > **Theme:** Neo-Brutalist // Cyber-Yellow  
-> **Engine:** Google Apps Script + Gemini 2.0 Flash
+> **Engine:** Google Apps Script + Gemini 3.1 Flash-Lite
 
 ## 🌌 Overview
 
 Fuel Log AI — Mobile Receipt Scanning & Analytics
 
-**Version:** 2.6.0 (Code Quality + UX Polish)  
-**Engine:** Gemini 2.0 Flash (Structured Outputs)
+**Version:** 2.7.0 (AI Model Upgrade)  
+**Engine:** Gemini 3.1 Flash-Lite
 
 An AI-powered vehicle expense tracker built on **Google Apps Script** + **Gemini**.
 This application uses AI to scan fuel receipts and provide location-aware market insights.
 
-### 🌟 New in v2.6.0
+### 🌟 New in v2.7.0
+- **AI Model Upgrade**: Migrated from deprecated `gemini-2.0-flash` to `gemini-3.1-flash-lite` for receipt scanning and market price grounding — faster inference, larger context window (1M tokens), and multimodal improvements.
+
+### v2.6.0
 - **Fuel Type Chips**: Petrol / Diesel / CNG now displayed as tap-friendly segmented buttons instead of a dropdown.
 - **Odometer Toggle**: Full Tank is now an inline `✓ Full / Partial` pill beside the Odometer label, freeing a full grid column.
 - **Smarter Add Form**: Quantity field highlights with a dashed yellow border when empty; Notes collapses to 1 row by default.
@@ -34,7 +37,7 @@ This application uses AI to scan fuel receipts and provide location-aware market
 | Feature | Description |
 | :--- | :--- |
 | 📷 **Scan Receipt Menu** | Single 📷 button expands to Camera (rear-camera) or Gallery sub-menu |
-| 🤖 **AI Receipt Decoding** | Gemini 2.0 Flash extracts Qty, Price, Vendor, City & Area from receipt images |
+| 🤖 **AI Receipt Decoding** | Gemini 3.1 Flash-Lite extracts Qty, Price, Vendor, City & Area from receipt images |
 | 📍 **GPS-Appended Notes** | After AI scan, GPS coordinates are fetched and appended to Notes automatically |
 | 🗜️ **Image Compression** | Client-side resize to max 800px + 0.7 JPEG quality before API call |
 | 🎖️ **Mission Report HUD** | **[NEW]** Animated bottom-sheet overlay showing KM/L efficiency and S–C Grade |
