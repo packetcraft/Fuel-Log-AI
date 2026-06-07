@@ -62,7 +62,7 @@
     </header>
 
     <main class="flex-1 overflow-hidden">
-        <div id="tab0" class="tab-panel active">
+        <div id="tab0" role="tabpanel" aria-labelledby="nav-tab0" class="tab-panel active">
             <form id="f" onsubmit="submitEntry(event)" class="space-y-4">
                 <div class="neo-card overflow-hidden">
                     <div class="p-4 space-y-4">
@@ -77,7 +77,7 @@
                                 <select name="vehicle_name" id="vehicleSelect"
                                     class="neo-input font-black h-11" onchange="predictOdometer(this.value)"></select>
                                 <div class="relative" id="vehicleRadioWrapper">
-                                    <div id="vehicleRadioGroup" class="vehicle-radio-group"></div>
+                                    <div id="vehicleRadioGroup" role="radiogroup" aria-label="Select vehicle" class="vehicle-radio-group"></div>
                                     <div id="vehicleScrollHint" class="hidden absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[var(--card-bg)] to-transparent pointer-events-none rounded-r"></div>
                                 </div>
                                 <div id="newVehicleRow" class="hidden flex gap-1 mt-1">
@@ -118,7 +118,7 @@
                                 <input type="number" name="fuel_qty" id="fuel-qty" step="0.01" inputmode="decimal" required
                                     oninput="calculateTotal()" class="neo-input !bg-white !text-black h-11" />
                             </div>
-                            <div class="flex flex-col items-center justify-end pb-2 text-[0.55rem] font-black uppercase opacity-30 tracking-widest text-center leading-tight"><span>×</span><span>rate</span></div>
+                            <div class="flex flex-col items-center justify-end pb-2 text-[0.65rem] font-black uppercase opacity-30 tracking-widest text-center leading-tight"><span>×</span><span>rate</span></div>
                             <div>
                                 <label class="text-[0.7rem] uppercase">Price / L</label>
                                 <input type="number" name="fuel_price" id="fuel-price" step="0.01" inputmode="decimal" required
@@ -164,7 +164,7 @@
             </form>
         </div>
 
-        <div id="tab1" class="tab-panel">
+        <div id="tab1" role="tabpanel" aria-labelledby="nav-tab1" class="tab-panel">
             <div id="logFilterBar" class="flex gap-2 flex-wrap mb-3"></div>
             <div class="neo-card overflow-hidden">
                 <div id="logList" class="flex flex-col">
@@ -172,7 +172,7 @@
             </div>
         </div>
 
-        <div id="tab2" class="tab-panel space-y-4">
+        <div id="tab2" role="tabpanel" aria-labelledby="nav-tab2" class="tab-panel space-y-4">
             <div id="statsSummaryBar" class="neo-card p-3 grid grid-cols-3 text-center gap-2"></div>
             <div id="statsGrid" class="grid gap-4"></div>
             <div class="p-3 neo-card space-y-3">
@@ -181,7 +181,7 @@
             </div>
         </div>
 
-        <div id="tab3" class="tab-panel space-y-4">
+        <div id="tab3" role="tabpanel" aria-labelledby="nav-tab3" class="tab-panel space-y-4">
             <div class="text-center neo-card p-4">
                 <p id="mCity" class="text-[0.7rem] font-black uppercase tracking-widest opacity-70">
                     —
@@ -193,9 +193,9 @@
         </div>
     </main>
 
-    <nav
+    <nav role="tablist"
         class="fixed bottom-0 left-0 right-0 bg-[var(--card-bg)] border-t-4 border-[var(--border)] grid grid-cols-4 h-16 z-50">
-        <button onclick="setTab(0)"
+        <button role="tab" aria-selected="true" aria-controls="tab0" onclick="setTab(0)"
             class="nav-btn flex flex-col items-center justify-center nav-active font-black text-[0.6rem] uppercase border-r-2 border-[var(--border)]">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                 stroke="currentColor" class="nav-icon">
@@ -203,7 +203,7 @@
             </svg>
             Add
         </button>
-        <button onclick="setTab(1)"
+        <button role="tab" aria-selected="false" aria-controls="tab1" onclick="setTab(1)"
             class="nav-btn flex flex-col items-center justify-center text-gray-400 font-black text-[0.6rem] uppercase border-r-2 border-[var(--border)]">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                 stroke="currentColor" class="nav-icon">
@@ -211,7 +211,7 @@
             </svg>
             Logs
         </button>
-        <button onclick="setTab(2)"
+        <button role="tab" aria-selected="false" aria-controls="tab2" onclick="setTab(2)"
             class="nav-btn flex flex-col items-center justify-center text-gray-400 font-black text-[0.6rem] uppercase border-r-2 border-[var(--border)]">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                 stroke="currentColor" class="nav-icon">
@@ -220,7 +220,7 @@
             </svg>
             Stats
         </button>
-        <button onclick="setTab(3)"
+        <button role="tab" aria-selected="false" aria-controls="tab3" onclick="setTab(3)"
             class="nav-btn flex flex-col items-center justify-center text-gray-400 font-black text-[0.6rem] uppercase">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
                 stroke="currentColor" class="nav-icon">

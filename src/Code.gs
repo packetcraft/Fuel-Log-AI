@@ -62,7 +62,7 @@ function getFuelData() {
     try {
       const stored = PropertiesService.getScriptProperties().getProperty('SAVED_VEHICLES');
       if (stored) storedVehicles = JSON.parse(stored);
-    } catch (e) {}
+    } catch (e) { /* ignore parse errors — storedVehicles stays [] */ }
     const vehicles = [...new Set([...logVehicles, ...storedVehicles])];
 
     const priceIdx = headers.map(h => h.toString().trim()).indexOf('fuel_price');

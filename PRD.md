@@ -1,6 +1,6 @@
 # Product Requirement Document (PRD): Fuel Log AI
 
-**Version:** 2.8.0 (Code Quality & Security Hardening)  
+**Version:** 2.9.0 (Accessibility & Tooling)  
 **Status:** Active  
 **Date:** 2026-06-07  
 **Author:** Product Management Team (AI)
@@ -118,8 +118,8 @@
 | :--- | :--- | :--- |
 | **FR-05** | System shall ensure the `Log` sheet exists and contains required headers on first run or manual trigger. | `initializeDatabase()` |
 | **FR-06** | Entries must handle specific data types: String (Vehicle, Location), Float (Price/Qty), Date (Refill Date), Boolean (Full Tank), String (Notes). | `saveEntryDirect(entry)` |
-| **FR-07** | System must retrieve historical data in **reverse chronological order** and expose unique vehicle list and last fuel price. | `getDataProtocol()` |
-| **FR-08** | Log view must display at most 50 entries. | `state.logs.slice(0, 50)` in `rend()` |
+| **FR-07** | System must retrieve historical data in **reverse chronological order** and expose unique vehicle list and last fuel price. | `getFuelData()` |
+| **FR-08** | Log view must display at most 50 entries. | `state.logs.slice(0, 50)` in `renderLogs()` |
 
 ### 6.3 Location & Market Data
 | ID | Requirement Description | Technical Implementation Reference |
@@ -168,7 +168,7 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 -   **AI Engine:** Google Gemini 3.1 Flash-Lite (`gemini-3.1-flash-lite`).
 -   **Zero-Cost Hosting:** Self-hosted within the user's Google Workspace/Drive account.
 -   **Templating:** Server-side HTML template (`HtmlService.createTemplateFromFile`).
--   **State Management:** Centralized `state` object on the frontend holding `logs`, `vehicles`, `lastPrice`, `chart`, `colors`, `buttonColors`, `predictions`, `efficiencies`, `logFilter`, `logVisible`, and `chartPeriod`.
+-   **State Management:** Centralized `state` object on the frontend holding `logs`, `vehicles`, `lastPrice`, `chart`, `colors`, `vehicleColorCount`, `predictions`, `efficiencies`, `logFilter`, `logVisible`, and `chartPeriod`.
 -   **Security:** Gemini API Key managed via `PropertiesService.getScriptProperties()`.
 -   **Quotas:** Subject to Google Apps Script quotas for `UrlFetchApp` calls and script runtime limits.
 
@@ -227,7 +227,14 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 - **AppSheet Automation Hook:** `processAppSheetReceipt(rowId)` stub in `Code.gs`.
 - **Mission Report Resilience:** High-priority z-index layering for the HUD overlay.
 
-### 🔒 v2.8 – Code Quality & Security Hardening (Current)
+### ♿ v2.9 – Accessibility & Tooling (Current)
+- **Full ARIA pass:** `<nav role="tablist">`, nav buttons get `role="tab"` + `aria-selected` + `aria-controls`; tab panels get `role="tabpanel"` + `aria-labelledby`; vehicle radio group gets `role="radiogroup"` + `aria-label`; radio items get `role="radio"` + `aria-checked` + `tabindex="0"` + Enter/Space `onkeydown`; log filter pills get `aria-pressed`.
+- **Dynamic ARIA state sync:** `setTab()`, `selectVehicle()`, and `setLogFilter()` keep all ARIA attributes in sync with UI state.
+- **Font size floor raised to 0.65rem:** `0.55rem`/`0.58rem` secondary labels across `Index.html` and `Scripts.html` template strings bumped to meet WCAG 2.1 SC 1.4.4 minimum.
+- **Pre-commit lint hook:** husky v9 installed; `.husky/pre-commit` runs `npm run lint` on every commit; `"prepare": "husky"` ensures hooks install automatically on `npm install`.
+- **Screenshots moved to `assets/`:** `ScreenShots.png` and `ScreenShots2.jpg` relocated from repo root; README image URL updated.
+
+### 🔒 v2.8 – Code Quality & Security Hardening
 - **XSS patched:** `esc()` and `safeUrl()` helpers applied to all `innerHTML` injection points; vehicle names moved from inline `onclick` string literals to `data-*` attributes.
 - **Function renaming:** `ref` → `syncData`, `rend` → `renderLogs`, `sub` → `submitEntry`, `calc` → `calculateTotal`, `stats` → `renderStats`.
 - **`renderVehicleSelector()` helper extracted:** shared between `syncData()` and `confirmVehicle()` — fixes missing radio button rebuild on new vehicle add.

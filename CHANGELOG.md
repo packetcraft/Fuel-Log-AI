@@ -6,6 +6,29 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [2.9.0] – 2026-06-07
+
+### Fixed
+- **Font sizes:** `0.55rem` and `0.58rem` secondary labels bumped to `0.65rem` minimum (WCAG 2.1 SC 1.4.4) across `Index.html` and `Scripts.html` template strings.
+- **Screenshots moved to `assets/`:** `ScreenShots.png` and `ScreenShots2.jpg` relocated from repo root; README image URL updated.
+
+### Added
+- **ARIA accessibility pass:** Full semantic markup for screen readers and keyboard navigation —
+  - `<nav role="tablist">`, nav buttons get `role="tab"` + `aria-selected` + `aria-controls`
+  - Tab panels get `role="tabpanel"` + `aria-labelledby`
+  - Vehicle radio group gets `role="radiogroup"` + `aria-label`; individual items get `role="radio"` + `aria-checked` + `tabindex="0"` + `onkeydown` (Enter / Space activation)
+  - Log filter pills get `aria-pressed`
+  - `setTab()`, `selectVehicle()`, and `setLogFilter()` keep all ARIA state in sync
+- **Pre-commit lint hook:** husky v9 installed; `.husky/pre-commit` runs `npm run lint` on every commit. `"prepare": "husky"` added to `package.json` so hooks install automatically on `npm install`.
+- **`.clasp.json.example` verified** — file confirmed present with correct template.
+
+### Closed as architectural constraints (not defects)
+- `getMarketData` two-API-call pattern — Gemini cannot combine `google_search` grounding with `response_mime_type: application/json` in a single request.
+- `showMissionReport` efficiency duplication — the HUD runs on the just-submitted entry before it exists in `state.logs`; refactor requires optimistic state management.
+- Tailwind CDN `!important` — `@layer components` requires a local Tailwind CLI build; not available with CDN.
+
+---
+
 ## [2.8.0] – 2026-06-07 · GAS @164
 
 ### Fixed

@@ -1,4 +1,4 @@
-# ⚡ Fuel Log AI // Protocol v2.8
+# ⚡ Fuel Log AI // Protocol v2.9
 
 > **Status:** UPLINK_ACTIVE  
 > **Theme:** Neo-Brutalist // Cyber-Yellow  
@@ -8,13 +8,19 @@
 
 Fuel Log AI — Mobile Receipt Scanning & Analytics
 
-**Version:** 2.8.0 (Code Quality & Security Hardening)  
+**Version:** 2.9.0 (Accessibility & Tooling)  
 **Engine:** Gemini 3.1 Flash-Lite
 
 An AI-powered vehicle expense tracker built on **Google Apps Script** + **Gemini**.
 This application uses AI to scan fuel receipts and provide location-aware market insights.
 
-### 🌟 New in v2.8.0
+### 🌟 New in v2.9.0
+- **Accessibility (ARIA):** Full semantic markup — tabs, vehicle radio group, and log filter pills now have correct `role`, `aria-selected`/`aria-checked`/`aria-pressed` attributes, and keyboard activation (Enter / Space) on radio items.
+- **Font sizes:** Secondary labels raised to 0.65rem minimum (WCAG 2.1 SC 1.4.4).
+- **Pre-commit hook:** husky v9 runs `npm run lint` automatically before every commit.
+- **Screenshots** moved from repo root to `assets/`.
+
+### v2.8.0
 - **Security hardening**: XSS patched across all `innerHTML` injection points — `esc()` helper sanitizes all user/AI data; `safeUrl()` blocks `javascript:` hrefs; vehicle names removed from inline `onclick` strings.
 - **Readable codebase**: Core functions renamed from single-letter abbreviations (`ref`, `rend`, `sub`, `calc`, `stats`) to descriptive names (`syncData`, `renderLogs`, `submitEntry`, `calculateTotal`, `renderStats`).
 - **`confirmVehicle()` fix**: Adding a new vehicle now immediately re-renders the radio button selector.
@@ -36,7 +42,7 @@ This application uses AI to scan fuel receipts and provide location-aware market
 - **Precise Efficiency**: Stats lifetime average now derived from correctly-calculated interval efficiencies, not inflated `max−min` odometer math.
 - **Semantic IDs**: All single-letter form element IDs renamed to readable names (`km-reading`, `fuel-qty`, `fuel-price`, etc.).
 
-![UI Screenshot](https://raw.githubusercontent.com/packetcraft/Fuel-Log-AI/refs/heads/main/ScreenShots2.jpg)
+![UI Screenshot](https://raw.githubusercontent.com/packetcraft/Fuel-Log-AI/refs/heads/main/assets/ScreenShots2.jpg)
 
 ---
 
