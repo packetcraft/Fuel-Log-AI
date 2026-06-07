@@ -6,7 +6,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [2.8.0] – 2026-06-07
+## [2.8.0] – 2026-06-07 · GAS @164
 
 ### Fixed
 - **Function naming:** Renamed all cryptic short-form functions to readable names — `ref()` → `syncData()`, `rend()` → `renderLogs()`, `sub()` → `submitEntry()`, `calc()` → `calculateTotal()`, `stats()` → `renderStats()`. Updated all call sites in `Index.html` and `Scripts.html`.
