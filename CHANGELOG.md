@@ -6,7 +6,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [2.9.0] – 2026-06-07
+## [2.9.0] – 2026-06-07 · GAS @165
 
 ### Fixed
 - **Font sizes:** `0.55rem` and `0.58rem` secondary labels bumped to `0.65rem` minimum (WCAG 2.1 SC 1.4.4) across `Index.html` and `Scripts.html` template strings.
