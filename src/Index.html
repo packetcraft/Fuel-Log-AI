@@ -63,7 +63,7 @@
 
     <main class="flex-1 overflow-hidden">
         <div id="tab0" class="tab-panel active">
-            <form id="f" onsubmit="sub(event)" class="space-y-4">
+            <form id="f" onsubmit="submitEntry(event)" class="space-y-4">
                 <div class="neo-card overflow-hidden">
                     <div class="p-4 space-y-4">
                         <div class="grid grid-cols-2 gap-4">
@@ -116,13 +116,13 @@
                             <div>
                                 <label class="text-[0.7rem] uppercase">Quantity (L)</label>
                                 <input type="number" name="fuel_qty" id="fuel-qty" step="0.01" inputmode="decimal" required
-                                    oninput="calc()" class="neo-input !bg-white !text-black h-11" />
+                                    oninput="calculateTotal()" class="neo-input !bg-white !text-black h-11" />
                             </div>
                             <div class="flex flex-col items-center justify-end pb-2 text-[0.55rem] font-black uppercase opacity-30 tracking-widest text-center leading-tight"><span>×</span><span>rate</span></div>
                             <div>
                                 <label class="text-[0.7rem] uppercase">Price / L</label>
                                 <input type="number" name="fuel_price" id="fuel-price" step="0.01" inputmode="decimal" required
-                                    oninput="calc()" class="neo-input !bg-white !text-black h-11" />
+                                    oninput="calculateTotal()" class="neo-input !bg-white !text-black h-11" />
                             </div>
                         </div>
                         <div id="total_cost_card"

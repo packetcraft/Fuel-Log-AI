@@ -1,6 +1,6 @@
 # Product Requirement Document (PRD): Fuel Log AI
 
-**Version:** 2.7.0 (AI Model Upgrade)  
+**Version:** 2.8.0 (Code Quality & Security Hardening)  
 **Status:** Active  
 **Date:** 2026-06-07  
 **Author:** Product Management Team (AI)
@@ -227,7 +227,16 @@ The application's UI follows a **Neo-Brutalist** design philosophy: high-contras
 - **AppSheet Automation Hook:** `processAppSheetReceipt(rowId)` stub in `Code.gs`.
 - **Mission Report Resilience:** High-priority z-index layering for the HUD overlay.
 
-### 🤖 v2.7 – AI Model Upgrade (Current)
+### 🔒 v2.8 – Code Quality & Security Hardening (Current)
+- **XSS patched:** `esc()` and `safeUrl()` helpers applied to all `innerHTML` injection points; vehicle names moved from inline `onclick` string literals to `data-*` attributes.
+- **Function renaming:** `ref` → `syncData`, `rend` → `renderLogs`, `sub` → `submitEntry`, `calc` → `calculateTotal`, `stats` → `renderStats`.
+- **`renderVehicleSelector()` helper extracted:** shared between `syncData()` and `confirmVehicle()` — fixes missing radio button rebuild on new vehicle add.
+- **Backend hardening:** `GEMINI_URL` constant, API key guard, standardized `{ success, error }` response shape, header-based `lastPrice` lookup, numeric field coercion in `saveEntryDirect()`.
+- **Dead code removed:** `processAppSheetReceipt` stub deleted; dead CSS classes (`.log-date`, `.log-vehicle`, `.log-cost`, `.log-details`) removed.
+- **`state.buttonColors` → `state.vehicleColorCount: 4`:** removes misleading parallel color array.
+- **`package.json` aligned:** version `2.8.0`, `deploy`/`push:force` scripts added, lint target corrected.
+
+### 🤖 v2.7 – AI Model Upgrade
 - **Model Migration:** Replaced deprecated `gemini-2.0-flash` with `gemini-3.1-flash-lite` in both `processReceiptWithAI()` and `getMarketData()`.
 - **Reason:** Google shut down the `gemini-2.0-flash` alias on 2026-05-25; `gemini-3.1-flash-lite` offers a 1M-token context window, improved multimodal accuracy, and grounding support.
 

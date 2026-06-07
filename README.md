@@ -1,4 +1,4 @@
-# ⚡ Fuel Log AI // Protocol v2.7
+# ⚡ Fuel Log AI // Protocol v2.8
 
 > **Status:** UPLINK_ACTIVE  
 > **Theme:** Neo-Brutalist // Cyber-Yellow  
@@ -8,13 +8,21 @@
 
 Fuel Log AI — Mobile Receipt Scanning & Analytics
 
-**Version:** 2.7.0 (AI Model Upgrade)  
+**Version:** 2.8.0 (Code Quality & Security Hardening)  
 **Engine:** Gemini 3.1 Flash-Lite
 
 An AI-powered vehicle expense tracker built on **Google Apps Script** + **Gemini**.
 This application uses AI to scan fuel receipts and provide location-aware market insights.
 
-### 🌟 New in v2.7.0
+### 🌟 New in v2.8.0
+- **Security hardening**: XSS patched across all `innerHTML` injection points — `esc()` helper sanitizes all user/AI data; `safeUrl()` blocks `javascript:` hrefs; vehicle names removed from inline `onclick` strings.
+- **Readable codebase**: Core functions renamed from single-letter abbreviations (`ref`, `rend`, `sub`, `calc`, `stats`) to descriptive names (`syncData`, `renderLogs`, `submitEntry`, `calculateTotal`, `renderStats`).
+- **`confirmVehicle()` fix**: Adding a new vehicle now immediately re-renders the radio button selector.
+- **API key guard**: Missing `GEMINI_API_KEY` now returns a clear error instead of silently sending `?key=null`.
+- **Backend hardening**: Numeric fields coerced server-side in `saveEntryDirect()`; `lastPrice` resolved by header name, not column index.
+- **CSS cleanup**: Dead utility classes removed; `transition: all` on `body` replaced with specific properties.
+
+### v2.7.0
 - **AI Model Upgrade**: Migrated from deprecated `gemini-2.0-flash` to `gemini-3.1-flash-lite` for receipt scanning and market price grounding — faster inference, larger context window (1M tokens), and multimodal improvements.
 
 ### v2.6.0

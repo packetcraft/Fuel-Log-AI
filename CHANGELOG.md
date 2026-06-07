@@ -6,6 +6,34 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [2.8.0] – 2026-06-07
+
+### Fixed
+- **Function naming:** Renamed all cryptic short-form functions to readable names — `ref()` → `syncData()`, `rend()` → `renderLogs()`, `sub()` → `submitEntry()`, `calc()` → `calculateTotal()`, `stats()` → `renderStats()`. Updated all call sites in `Index.html` and `Scripts.html`.
+- **`confirmVehicle()` missing radio rebuild:** Adding a new vehicle now correctly re-renders the radio button selector via the extracted `renderVehicleSelector()` helper, so the new vehicle appears immediately without waiting for the next sync.
+- **Efficiency key collision:** `state.efficiencies` no longer silently overwrites an earlier full-tank entry when two occur on the same date for the same vehicle — the first result is kept.
+- **Post-save sync delay reduced:** `setTimeout(syncData, 3000)` reduced to 1 000 ms; the GAS success handler already confirms the write is committed before firing.
+- **`lastPrice` fragile column index:** `getFuelData()` now resolves `fuel_price` by header name instead of hardcoded column index 4.
+- **API key missing silent failure:** `processReceiptWithAI()` and `getMarketData()` now return `{ success: false, error: "GEMINI_API_KEY not configured…" }` immediately if the key is absent, instead of sending a request with `?key=null`.
+- **Error response shape inconsistency:** All backend functions now return `{ success: false, error: "…" }` consistently (`message` key removed).
+- **Dead `processAppSheetReceipt` stub removed** from `Code.gs`.
+- **`transition: all` on body** replaced with `transition: background-color 0.3s ease, color 0.3s ease` in `Styles.html`.
+- **Dead CSS classes removed:** `.log-date`, `.log-vehicle`, `.log-cost`, `.log-details`, `table`, `th`, `td` definitions were never applied to rendered HTML — removed from `Styles.html`.
+- **Strict equality:** `!=` → `!==` in `predictOdometer()`.
+- **Stale BUG-06 comment removed** from `confirmVehicle()`.
+- **`sessionStorage` errors now logged** instead of silently swallowed in `loadMarket()`.
+- **AI scan error message improved:** failure toasts now show the actual `res.error` string from the backend.
+
+### Changed
+- **`GEMINI_URL` extracted as module-level constant** in `Code.gs` — model name appears once; future migrations require a single edit.
+- **`getDataProtocol()` renamed to `getFuelData()`** for clarity.
+- **`state.buttonColors` replaced with `state.vehicleColorCount: 4`** — the array values were never read; only the length was used to mod the CSS class index. Removes the misleading parallel color definition.
+- **Backend input validation added in `saveEntryDirect()`:** numeric fields are coerced to `parseFloat`, `full_tank` is coerced to boolean before writing to the sheet.
+- **`renderVehicleSelector()` extracted as shared helper** called by both `syncData()` and `confirmVehicle()`.
+- **`package.json` version bumped to `2.8.0`**, lint script fixed (`src/**` → `src/`), `deploy` and `push:force` scripts added.
+
+---
+
 ## [2.7.0] – 2026-06-07
 
 ### Changed

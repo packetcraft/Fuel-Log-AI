@@ -1,13 +1,15 @@
 {
   "name": "fuel-log-ai",
-  "version": "1.0.0",
+  "version": "2.8.0",
   "description": "AI-powered fuel receipt scanner and expense tracker built on Google Apps Script.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "push": "clasp push",
+    "push:force": "clasp push --force",
+    "deploy": "clasp push --force && clasp deploy",
     "watch": "clasp push --watch",
-    "lint": "eslint src/**"
+    "lint": "eslint src/"
   },
   "repository": {
     "type": "git",

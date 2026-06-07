@@ -1,4 +1,5 @@
 const GEMINI_API_KEY = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=' + GEMINI_API_KEY;
 
 function onOpen() {
   SpreadsheetApp.getUi()
@@ -15,16 +16,10 @@ function doGet() {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
-/**
- * Helper to include other HTML files in the main template.
- */
 function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
 
-/**
- * Initializes the Google Sheet with necessary headers and formatting.
- */
 function initializeDatabase() {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -47,13 +42,13 @@ function initializeDatabase() {
         }
       });
     }
-    return { success: true, message: "Database initialized successfully." };
+    return { success: true };
   } catch (e) {
-    return { success: false, message: e.toString() };
+    return { success: false, error: e.toString() };
   }
 }
 
-function getDataProtocol() {
+function getFuelData() {
   try {
     initializeDatabase();
     const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -61,8 +56,7 @@ function getDataProtocol() {
     const data = sheet.getDataRange().getValues();
     const headers = data[0];
     const rows = data.slice(1);
-    
-    // Merge log vehicles and stored vehicles
+
     const logVehicles = [...new Set(rows.map(r => r[0]))].filter(v => v);
     let storedVehicles = [];
     try {
@@ -70,18 +64,20 @@ function getDataProtocol() {
       if (stored) storedVehicles = JSON.parse(stored);
     } catch (e) {}
     const vehicles = [...new Set([...logVehicles, ...storedVehicles])];
-    const lastPrice = rows.length > 0 ? rows[rows.length - 1][4] : 0;
+
+    const priceIdx = headers.map(h => h.toString().trim()).indexOf('fuel_price');
+    const lastPrice = rows.length > 0 && priceIdx >= 0 ? rows[rows.length - 1][priceIdx] : 0;
 
     const formattedData = rows.map(row => {
-      let obj = {};
+      const obj = {};
       headers.forEach((h, i) => {
-        let val = row[i];
+        const val = row[i];
         obj[h.toString().trim()] = (val instanceof Date) ? val.toISOString() : val;
       });
       return obj;
     });
     return { success: true, data: formattedData.reverse(), vehicles: vehicles, lastPrice: lastPrice };
-  } catch (e) { return { success: false, message: e.toString() }; }
+  } catch (e) { return { success: false, error: e.toString() }; }
 }
 
 function saveEntryDirect(entry) {
@@ -90,17 +86,22 @@ function saveEntryDirect(entry) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheet = ss.getSheetByName('Log');
     const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+
+    const numericFields = ['km_reading', 'fuel_qty', 'refill_amount', 'fuel_price'];
+    numericFields.forEach(f => { if (entry[f] !== undefined) entry[f] = parseFloat(entry[f]) || 0; });
+    if (entry.full_tank !== undefined) entry.full_tank = entry.full_tank === true || entry.full_tank === 'true';
+
     const newRow = headers.map(h => {
       const key = h.toString().trim();
       return (entry[key] !== undefined) ? entry[key] : "";
     });
     sheet.appendRow(newRow);
     return { success: true };
-  } catch (e) { return { success: false, message: e.toString() }; }
+  } catch (e) { return { success: false, error: e.toString() }; }
 }
 
 function processReceiptWithAI(base64Image) {
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=' + GEMINI_API_KEY;
+  if (!GEMINI_API_KEY) return { success: false, error: "GEMINI_API_KEY not configured in Script Properties." };
 
   const promptText = `Analyze this fuel receipt image and extract data into the specified format. Focus on vendor, total volume, rate, total cost, date, and location.`;
 
@@ -131,7 +132,7 @@ function processReceiptWithAI(base64Image) {
   };
 
   try {
-    const response = UrlFetchApp.fetch(url, {
+    const response = UrlFetchApp.fetch(GEMINI_URL, {
       "method": "post",
       "contentType": "application/json",
       "payload": JSON.stringify(payload),
@@ -146,16 +147,13 @@ function processReceiptWithAI(base64Image) {
       return { success: false, error: result.error?.message || "API call failed" };
     }
 
-    let extractedData = JSON.parse(result.candidates[0].content.parts[0].text);
-
-    // Combine Vendor and Location for notes
+    const extractedData = JSON.parse(result.candidates[0].content.parts[0].text);
     const vendor = extractedData.vendor || "Fuel Station";
     const locationParts = [extractedData.area, extractedData.city].filter(part => part && part.trim() !== "");
     const locationStr = locationParts.length > 0 ? locationParts.join(", ") : "Unknown Location";
     extractedData.notes = `${vendor} - ${locationStr}`;
 
     return { success: true, data: extractedData };
-
   } catch (e) {
     console.error("Exception:", e);
     return { success: false, error: e.toString() };
@@ -163,63 +161,57 @@ function processReceiptWithAI(base64Image) {
 }
 
 function getMarketData(lat, lon, lastPrice) {
+  if (!GEMINI_API_KEY) return { success: false, error: "GEMINI_API_KEY not configured in Script Properties." };
+
   try {
     const geocode = Maps.newGeocoder().reverseGeocode(lat, lon);
     const city = geocode.results[0].address_components.find(c => c.types.includes("locality"))?.long_name || "Major Cities";
-    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=' + GEMINI_API_KEY;
     const prompt = `Petrol and diesel prices today in ${city}, India. User last: ${lastPrice}.`;
-    
-    // Step 1: Search for prices with Grounding
-    const searchPayload = {
-      "contents": [{ "parts": [{ "text": prompt }] }],
-      "tools": [{ "google_search": {} }]
-    };
 
-    const searchResponse = UrlFetchApp.fetch(url, {
+    const searchResponse = UrlFetchApp.fetch(GEMINI_URL, {
       "method": "post",
       "contentType": "application/json",
-      "payload": JSON.stringify(searchPayload),
+      "payload": JSON.stringify({
+        "contents": [{ "parts": [{ "text": prompt }] }],
+        "tools": [{ "google_search": {} }]
+      }),
       "muteHttpExceptions": true
     });
-    
+
     const searchResult = JSON.parse(searchResponse.getContentText());
     if (searchResponse.getResponseCode() !== 200) {
       return { success: false, error: searchResult.error?.message || "Market Search API failed" };
     }
-    
+
     const rawData = searchResult.candidates[0].content.parts[0].text;
-    // Grounding sources live in groundingMetadata, not in the text — extract them here
     const groundingChunks = searchResult.candidates[0]?.groundingMetadata?.groundingChunks || [];
     const sources = groundingChunks
       .filter(c => c.web)
       .map(c => ({ title: c.web.title || "Source", url: c.web.uri }))
       .slice(0, 3);
 
-    // Step 2: Extract structured data from the raw text (no sources — those come from grounding above)
-    const extractPayload = {
-      "contents": [{ "parts": [{ "text": `Extract petrol and diesel fuel prices for India from this text. If a price is not found, use 0. Text: ${rawData}` }] }],
-      "generationConfig": {
-        "response_mime_type": "application/json",
-        "response_schema": {
-          "type": "object",
-          "properties": {
-            "city": { "type": "string" },
-            "petrol": { "type": "number" },
-            "diesel": { "type": "number" },
-            "insight": { "type": "string" }
-          },
-          "required": ["city", "petrol", "diesel", "insight"]
-        }
-      }
-    };
-
-    const extractResponse = UrlFetchApp.fetch(url, {
+    const extractResponse = UrlFetchApp.fetch(GEMINI_URL, {
       "method": "post",
       "contentType": "application/json",
-      "payload": JSON.stringify(extractPayload),
+      "payload": JSON.stringify({
+        "contents": [{ "parts": [{ "text": `Extract petrol and diesel fuel prices for India from this text. If a price is not found, use 0. Text: ${rawData}` }] }],
+        "generationConfig": {
+          "response_mime_type": "application/json",
+          "response_schema": {
+            "type": "object",
+            "properties": {
+              "city": { "type": "string" },
+              "petrol": { "type": "number" },
+              "diesel": { "type": "number" },
+              "insight": { "type": "string" }
+            },
+            "required": ["city", "petrol", "diesel", "insight"]
+          }
+        }
+      }),
       "muteHttpExceptions": true
     });
-    
+
     const extractResult = JSON.parse(extractResponse.getContentText());
     if (extractResponse.getResponseCode() !== 200) {
       return { success: false, error: extractResult.error?.message || "Market Extraction API failed" };
@@ -231,11 +223,6 @@ function getMarketData(lat, lon, lastPrice) {
   } catch (e) {
     return { success: false, error: e.toString() };
   }
-}
-
-function processAppSheetReceipt(rowId) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Log");
-  // Stub for future use
 }
 
 function addVehicle(name) {

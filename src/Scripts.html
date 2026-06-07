@@ -5,7 +5,7 @@
         lastPrice: 0,
         chart: null,
         colors: ["#1a1a1a", "#fde047", "#28a745", "#dc3545", "#fd7e14"],
-        buttonColors: ["#22c55e", "#ef4444", "#3b82f6", "#f97316"],
+        vehicleColorCount: 4,
         predictions: {},
         efficiencies: {},
         logFilter: 'ALL',
@@ -73,7 +73,7 @@
             if (wrapper && !wrapper.contains(e.target)) closeScanMenu();
         });
 
-        ref();
+        syncData();
     };
 
     function addVehicle() {
@@ -86,17 +86,36 @@
         const input = document.getElementById('newVehicleInput');
         const n = input.value.trim();
         if (n) {
+            if (!state.vehicles.includes(n)) state.vehicles.push(n);
             const s = document.getElementById("vehicleSelect");
             s.add(new Option(n, n));
             s.value = n;
-            document.querySelectorAll('.vehicle-radio').forEach(d => d.classList.remove('selected'));
+            renderVehicleSelector(n);
             predictOdometer(n);
-            
-            // BUG-06 Fix: Persist vehicle to script properties
             google.script.run.addVehicle(n);
         }
         input.value = '';
         document.getElementById('newVehicleRow').classList.add('hidden');
+    }
+
+    function renderVehicleSelector(selectedVehicle) {
+        const s = document.getElementById("vehicleSelect");
+        const rg = document.getElementById("vehicleRadioGroup");
+        if (state.vehicles.length > 0 && state.vehicles.length <= 4) {
+            s.style.display = 'none';
+            rg.style.display = 'flex';
+            rg.innerHTML = state.vehicles.map((v, i) => {
+                const cls = `btn-color-${i % state.vehicleColorCount}`;
+                return `<div class="vehicle-radio ${cls}" data-vehicle="${esc(v)}" onclick="selectVehicle(this.dataset.vehicle, this)">${esc(v)}</div>`;
+            }).join('');
+            const active = Array.from(rg.children).find(c => c.dataset.vehicle === selectedVehicle);
+            if (active) active.classList.add('selected');
+            const hint = document.getElementById('vehicleScrollHint');
+            if (hint) setTimeout(() => hint.classList.toggle('hidden', rg.scrollWidth <= rg.clientWidth), 50);
+        } else {
+            s.style.display = 'block';
+            rg.style.display = 'none';
+        }
     }
 
     function selectFuelType(type, highlight = false) {
@@ -128,8 +147,8 @@
             b.classList.toggle("nav-active", i === idx);
             b.classList.toggle("text-gray-400", i !== idx);
         });
-        if (idx === 1) rend();
-        if (idx === 2) stats();
+        if (idx === 1) renderLogs();
+        if (idx === 2) renderStats();
         if (idx === 3) loadMarket();
     }
 
@@ -161,7 +180,7 @@
             const vLogs = state.logs
                 .filter(l => l.vehicle_name === v)
                 .sort((a, b) => new Date(a.refill_date) - new Date(b.refill_date));
-            
+
             let accumulatedFuel = 0;
             let lastFullKM = -1;
 
@@ -176,7 +195,10 @@
                         const totalFuelSpent = accumulatedFuel + currentFuel;
                         if (distSinceFull > 0 && totalFuelSpent > 0) {
                             const dateKey = log.refill_date.split("T")[0];
-                            state.efficiencies[`${dateKey}_${v}`] = distSinceFull / totalFuelSpent;
+                            const key = `${dateKey}_${v}`;
+                            if (state.efficiencies[key] === undefined) {
+                                state.efficiencies[key] = distSinceFull / totalFuelSpent;
+                            }
                         }
                     }
                     lastFullKM = currentKM;
@@ -190,8 +212,7 @@
 
     function predictOdometer(v) {
         const kInput = document.getElementById('km-reading');
-        // Only predict if field is empty or likely a default
-        if (kInput.value && kInput.value != "0") return;
+        if (kInput.value && kInput.value !== "0") return;
 
         const pred = state.predictions[v];
         if (pred && pred.avgKmPerDay > 0) {
@@ -206,12 +227,12 @@
         }
     }
 
-    function ref() {
+    function syncData() {
         ui.loading("Syncing...");
         google.script.run
             .withSuccessHandler((res) => {
                 ui.hideLoading();
-                if (!res.success) return ui.toast("Sync Failed");
+                if (!res.success) return ui.toast(res.error || "Sync Failed");
 
                 state.logs = res.data;
                 state.vehicles = res.vehicles;
@@ -233,30 +254,12 @@
                 state.vehicles.forEach(v => s.add(new Option(v, v)));
                 if (currentVal && state.vehicles.includes(currentVal)) s.value = currentVal;
 
-                const rg = document.getElementById("vehicleRadioGroup");
-                if (state.vehicles.length > 0 && state.vehicles.length <= 4) {
-                    s.style.display = 'none';
-                    rg.style.display = 'flex';
-                    rg.innerHTML = state.vehicles.map((v, i) => {
-                        const cls = `btn-color-${i % state.buttonColors.length}`;
-                        return `<div class="vehicle-radio ${cls}" data-vehicle="${esc(v)}" onclick="selectVehicle(this.dataset.vehicle, this)">${esc(v)}</div>`;
-                    }).join('');
-
-                    const active = Array.from(rg.children).find(c => c.textContent === s.value);
-                    if (active) active.classList.add('selected');
-                    const hint = document.getElementById('vehicleScrollHint');
-                    if (hint) setTimeout(() => hint.classList.toggle('hidden', rg.scrollWidth <= rg.clientWidth), 50);
-                } else {
-                    s.style.display = 'block';
-                    rg.style.display = 'none';
-                }
-                
+                renderVehicleSelector(s.value);
                 if (s.value) predictOdometer(s.value);
-
                 buildLogFilterPills();
             })
             .withFailureHandler(err => { ui.hideLoading(); ui.toast("Error: " + err.message); })
-            .getDataProtocol();
+            .getFuelData();
     }
 
     function selectVehicle(v, el) {
@@ -266,7 +269,7 @@
         predictOdometer(v);
     }
 
-    function calc() {
+    function calculateTotal() {
         const q = parseFloat(document.getElementById("fuel-qty").value) || 0;
         const p = parseFloat(document.getElementById("fuel-price").value) || 0;
         const total = (q * p).toFixed(2);
@@ -274,7 +277,7 @@
         document.getElementById("t_display").textContent = total;
     }
 
-    function sub(e) {
+    function submitEntry(e) {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(e.target));
         data.full_tank = document.getElementById("ft").checked;
@@ -300,9 +303,9 @@
                 if (firstRadio) {
                     document.querySelectorAll('.vehicle-radio').forEach(d => d.classList.remove('selected'));
                     firstRadio.classList.add('selected');
-                    document.getElementById('vehicleSelect').value = firstRadio.textContent.trim();
+                    document.getElementById('vehicleSelect').value = firstRadio.dataset.vehicle;
                 }
-                setTimeout(ref, 3000);
+                setTimeout(syncData, 1000);
             })
             .withFailureHandler(err => { ui.hideLoading(); ui.toast("Error: " + err.message); })
             .saveEntryDirect(data);
@@ -310,39 +313,29 @@
 
     function showMissionReport(entry) {
         const el = document.getElementById("missionReport");
-        // Sort logs newest to oldest
         const vLogs = state.logs
             .filter(l => l.vehicle_name === entry.vehicle_name)
             .sort((a, b) => new Date(b.refill_date) - new Date(a.refill_date));
 
         let eff = "--", grade = "B", trend = "STABLE";
 
-        // Only calculate mileage if current entry is a FULL TANK
         if (entry.full_tank && vLogs.length > 0) {
             let accumulatedFuel = 0;
             let lastFullLog = null;
 
-            // Find the most recent FULL tank log and sum partials in between
             for (const log of vLogs) {
                 const isFull = log.full_tank === true || log.full_tank === "true";
-                if (isFull) {
-                    lastFullLog = log;
-                    break;
-                }
+                if (isFull) { lastFullLog = log; break; }
                 accumulatedFuel += parseFloat(log.fuel_qty) || 0;
             }
 
             if (lastFullLog) {
                 const dist = parseFloat(entry.km_reading) - parseFloat(lastFullLog.km_reading);
                 const totalFuel = accumulatedFuel + parseFloat(entry.fuel_qty);
-
                 if (dist > 0 && totalFuel > 0) {
                     const eVal = dist / totalFuel;
                     eff = eVal.toFixed(1);
                     grade = eVal > 22 ? "S" : (eVal > 18 ? "A" : (eVal > 15 ? "B" : "C"));
-
-                    // Simple trend comparison if we had a previous calculation in state
-                    // (Optional: for now we just show current efficiency)
                 }
             }
         }
@@ -373,10 +366,10 @@
             p.classList.toggle('bg-white', !active);
             p.classList.toggle('text-black', !active);
         });
-        rend();
+        renderLogs();
     }
 
-    function rend() {
+    function renderLogs() {
         const container = document.getElementById("logList");
         const isRawCoord = s => /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/.test((s || '').trim());
 
@@ -400,7 +393,7 @@
             const monthKey = d.toLocaleString('default', { month: 'short', year: 'numeric' }).toUpperCase();
 
             if (monthKey !== lastMonth) {
-                html += `<div class="px-4 pt-3 pb-1 text-[0.58rem] font-black uppercase tracking-widest opacity-40 border-b border-[var(--border)] bg-[var(--bg)]">${monthKey}</div>`;
+                html += `<div class="px-4 pt-3 pb-1 text-[0.58rem] font-black uppercase tracking-widest opacity-40 border-b border-[var(--border)] bg-[var(--bg)]">${esc(monthKey)}</div>`;
                 lastMonth = monthKey;
             }
 
@@ -442,13 +435,13 @@
 
         if (filtered.length > state.logVisible) {
             const remaining = Math.min(25, filtered.length - state.logVisible);
-            html += `<button onclick="state.logVisible += 25; rend();" class="w-full py-3 text-[0.6rem] font-black uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity border-t-2 border-[var(--border)]">Load ${remaining} more ↓</button>`;
+            html += `<button onclick="state.logVisible += 25; renderLogs();" class="w-full py-3 text-[0.6rem] font-black uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity border-t-2 border-[var(--border)]">Load ${remaining} more ↓</button>`;
         }
 
         container.innerHTML = html;
     }
 
-    function stats() {
+    function renderStats() {
         const grid = document.getElementById("statsGrid");
         grid.innerHTML = "";
         const allPointsMap = {};
@@ -466,7 +459,6 @@
             const dist = odos.length > 1 ? Math.max(...odos) - Math.min(...odos) : 0;
             const costPerKm = dist > 0 && spend > 0 ? (spend / dist).toFixed(2) : null;
 
-            // Derive lifetime average from correctly-calculated interval efficiencies
             const vEffVals = Object.entries(state.efficiencies)
                 .filter(([k]) => k.endsWith('_' + v))
                 .map(([, val]) => val);
@@ -479,7 +471,6 @@
             fleetLiters += fuel;
             fleetSpend += spend;
 
-            // Per-fill efficiency (handles partial refills)
             allPointsMap[v] = {};
             let accFuel = 0, lastFullKM = -1;
             logs.forEach(log => {
@@ -502,7 +493,6 @@
                 }
             });
 
-            // Trend: last 3 fills vs all-time average
             const effVals = Object.entries(allPointsMap[v])
                 .sort(([a], [b]) => a.localeCompare(b))
                 .map(([, val]) => parseFloat(val));
@@ -541,7 +531,6 @@
                 </div>`;
         });
 
-        // Summary bar
         const summaryBar = document.getElementById("statsSummaryBar");
         if (summaryBar) {
             summaryBar.innerHTML = [
@@ -555,7 +544,6 @@
                 </div>`).join('');
         }
 
-        // Time period filter
         const sortedDates = Array.from(allDatesSet).sort();
         let filteredDates = sortedDates;
         if (state.chartPeriod !== 'ALL') {
@@ -565,13 +553,11 @@
             filteredDates = sortedDates.filter(d => d >= cutoff.toISOString().split('T')[0]);
         }
 
-        // X-axis: "Mon D" labels (e.g. "May 18")
         const displayLabels = filteredDates.map(d => {
             const dt = new Date(d + 'T00:00:00');
             return dt.toLocaleString('default', { month: 'short' }) + ' ' + dt.getDate();
         });
 
-        // Period pills
         const pillContainer = document.getElementById("chartPeriodFilter");
         if (pillContainer) {
             pillContainer.innerHTML = ['3M', '6M', 'ALL'].map(p =>
@@ -633,7 +619,7 @@
 
     function setChartPeriod(p) {
         state.chartPeriod = p;
-        stats();
+        renderStats();
     }
 
     function renderMarket(m) {
@@ -665,7 +651,7 @@
                     return;
                 }
             }
-        } catch (e) {}
+        } catch (e) { console.warn("Market cache read failed:", e); }
 
         ui.loading("Scanning live prices...");
         navigator.geolocation.getCurrentPosition((p) => {
@@ -675,7 +661,7 @@
                     if (!res?.success) return ui.toast(res.error || "Market API Error");
                     try {
                         sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data: res.market, timestamp: Date.now() }));
-                    } catch (e) {}
+                    } catch (e) { console.warn("Market cache write failed:", e); }
                     renderMarket(res.market);
                 })
                 .withFailureHandler(err => { ui.hideLoading(); ui.toast(err.message || "Market Data Unavailable"); })
@@ -703,7 +689,7 @@
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement("canvas");
-                const max = 1200; // Increased resolution for better AI extraction
+                const max = 1200;
                 let w = img.width, h = img.height;
                 if (w > max || h > max) {
                     if (w > h) { h *= max / w; w = max; }
@@ -711,8 +697,7 @@
                 }
                 canvas.width = w; canvas.height = h;
                 canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-                
-                // UI feedback: Shimmer on predicted fields
+
                 const targetIds = ['fuel-qty', 'fuel-price', 'refill-date', 'notes', 'fuelType'];
                 targetIds.forEach(id => document.getElementById(id).classList.add('shimmer'));
 
@@ -721,7 +706,7 @@
                     .withSuccessHandler((res) => {
                         ui.hideLoading();
                         targetIds.forEach(id => document.getElementById(id).classList.remove('shimmer'));
-                        if (!res?.success) return ui.toast("AI Scan Failed");
+                        if (!res?.success) return ui.toast(res.error || "AI Scan Failed");
 
                         if (res.data.fuel_type) selectFuelType(res.data.fuel_type, true);
                         const mapping = { 'fuel_qty': 'fuel-qty', 'fuel_price': 'fuel-price', 'refill_date': 'refill-date', 'notes': 'notes' };
@@ -733,7 +718,7 @@
                                 setTimeout(() => el.classList.remove('ring-2', 'ring-yellow-400'), 3000);
                             }
                         });
-                        calc();
+                        calculateTotal();
                         const notesField = document.getElementById('notes');
                         const aiNotes = res.data.notes || "";
                         navigator.geolocation.getCurrentPosition(
@@ -742,17 +727,17 @@
                                 notesField.value = aiNotes ? `${aiNotes} | ${gpsString}` : gpsString;
                                 ui.toast("SCANNED + GPS ADDED");
                             },
-                            (err) => {
+                            () => {
                                 if (aiNotes) notesField.value = aiNotes;
                                 ui.toast("SCANNED (NO GPS)");
                             },
                             { timeout: 4000, enableHighAccuracy: true }
                         );
                     })
-                    .withFailureHandler(err => { 
-                        ui.hideLoading(); 
+                    .withFailureHandler(err => {
+                        ui.hideLoading();
                         targetIds.forEach(id => document.getElementById(id).classList.remove('shimmer'));
-                        ui.toast("AI Error"); 
+                        ui.toast("AI Error");
                     })
                     .processReceiptWithAI(canvas.toDataURL("image/jpeg", 0.7).split(",")[1]);
             };
